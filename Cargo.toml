@@ -1,0 +1,21 @@
+[package]
+name = "complate"
+version = "0.1.0"
+authors = ["Heiko Alexander Weber <heiko.a.weber@gmail.com>"]
+edition = "2018"
+
+[profile]
+  [dev]
+    opt-level = 0
+  [release]
+    opt-level = 3
+
+[dependencies]
+bytes = "0.5.2"
+futures = "0.3.1"
+env_logger = "0.7.1"
+mime = "0.3.16"
+
+serde = { version = "1.0.104", features = ["derive"] }
+serde_json = "1.0.45"
+json = "0.12.1"
