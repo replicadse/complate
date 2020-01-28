@@ -1,0 +1,14 @@
+{
+    "templates": {
+        "internal": {
+            "file": "./res/templates/internal",
+            "prompt": [
+                "summary"
+            ],
+            "values": {
+                "static": {
+                }
+            }
+        }
+    }
+}

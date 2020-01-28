@@ -7,7 +7,7 @@ Complate is a currently work in progress application that allows the user to cre
 ## Idea
 
 The idea for implementing this is to have an application (`complate`) that substitutes the `git commit` command. It then shows a selection of the available templates for the user to select. After it loaded the templates, it will auto-fill certain information in them. All the information that is not automatically filled will be input by the user.\
-The templates themselves are plain text files that contain placeholders in the `gomplate` format (two curly brackets open & closed with key inside, like: `{{ git.branch }}`).\
+The templates themselves are plain text files that contain placeholders in the `handlebars` format (two curly brackets open & closed with key inside, like: `{{ git.branch }}`).\
 An example template for a defect could look like so:
 ```
 {{ user.name }}
