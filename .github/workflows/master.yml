@@ -1,0 +1,20 @@
+name: master
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  tag:
+    name: "Tag application"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Tag
+      id: tag
+      uses: anothrNick/github-tag-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: false
+        RELEASE_BRANCHES: master
+        DEFAULT_BUMP: patch
