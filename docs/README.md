@@ -36,7 +36,7 @@ This project is still in idea phase so feel free to suggest things.
 
 ## Current implementation
 
-The structure of the `./res/config.json` file is currently as follows:
+The structure of the `./.complate/config.json` file is currently as follows:
 ```
 templates                           # dictionary
 └──{{ template name }}              # dictionary

@@ -1,5 +1,5 @@
 extern crate clap;
-// use clap::{App, Arg};
+use clap::{App, Arg};
 
 extern crate dialoguer;
 extern crate handlebars;
@@ -9,9 +9,8 @@ use handlebars::{Handlebars};
 extern crate serde;
 extern crate serde_json;
 
-fn get_templates() -> std::io::Result<Vec<(String, String)>> {
-    let config = std::fs::read_to_string("./res/config.json")?;
-    let json: serde_json::Value = serde_json::from_str(config.as_ref())?;
+fn get_templates(config: &str) -> std::io::Result<Vec<(String, String)>> {
+    let json: serde_json::Value = serde_json::from_str(config)?;
     let mut templates = Vec::<(String, String)>::with_capacity(json.as_object().unwrap().len());
     for t in json["templates"].as_object().unwrap() {
         templates.push((t.0.to_owned(), t.1["file"].as_str().unwrap().to_owned()));
@@ -34,13 +33,32 @@ fn select_templates(templates: &Vec<(String, String)>) -> std::io::Result<((Stri
     Ok((templates[selection].clone(), selection_content))
 }
 
+fn config() -> std::io::Result<String> {
+    let matches = App::new("complate")
+        .version("0.1.0")
+        .about("A git commit buddy.")
+        .author("Weber, Heiko Alexander <heiko.a.weber@gmail.com>")
+        .arg(Arg::with_name("config")
+             .short("c")
+             .long("config")
+             .value_name("FILE")
+             .help("The configuration file to use.")
+             .default_value("./.complate/config.json")
+             .multiple(false)
+             .required(false)
+             .takes_value(true))
+        .get_matches();
+    Ok(matches.value_of("config").unwrap().to_owned())
+}
+
 fn main() -> std::io::Result<()> {
     env_logger::init();
 
-    let templates = get_templates()?;
+    let config = std::fs::read_to_string(config()?)?;
+
+    let templates = get_templates(config.as_ref())?;
     let selected_template = select_templates(&templates)?;
 
-    let config = std::fs::read_to_string("./res/config.json")?;
     let json: serde_json::Value = serde_json::from_str(config.as_ref())?;
     let json_template: &serde_json::Value = &json["templates"][&(selected_template.0).0];
     let json_prompt: &Vec<serde_json::Value> = json_template["prompt"].as_array().unwrap();

@@ -1,7 +1,7 @@
 {
     "templates": {
         "internal": {
-            "file": "./res/templates/internal",
+            "file": "./.complate/templates/internal",
             "prompt": [
                 "summary"
             ],
