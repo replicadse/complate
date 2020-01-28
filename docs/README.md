@@ -75,6 +75,33 @@ A matching template could look like so:
 ```
 Be aware of the fact that you are able to set static values using a flat hierarchy and nesting. Therefore `{ "git": { "author": "Reddingtion" } }` will lead to the same result as `{ "git.author": "Reddingtion" }`.
 
-## Example
+## Usage
 
-complate writes the generated commit message to the stdout pipe. Therefore you should be able to simply run `complate | git commit -F -` in order to create a new standardized commit.
+In order to use complate, the recommended way is to place the program including the configuration files and templates into the repository itself. Consider the following structure:
+```
+Repository root
+├──.git
+├──.complate
+│   ├──complate
+│   ├──config.json
+│   └──templates
+│       ├──template_a
+│       └──template_b
+├──src
+│   └──*
+└──docs
+    └──*
+```
+
+complate writes the generated commit message to the stdout pipe. Expecting the recommended folder structure, you should be able to simply run `./.complate/complate | git commit -F -` in order to create a new standardized commit.
+
+### Arguments
+
+complate can run without specifying any arguments. It will always look for the configuration file under `./.complate/config.json`. If you want to use a different configuration file, specify the path using `-c` argument. Example: `./.complate/complate -c "./unusual_folder/some-config.json" | git commit -F -`.
+
+All arguments can be found here:
+
+|Name|Short|Long|Description|
+|-- |-- |-- |-- |
+|Help|-h|--help|Calls the help that displays all the available arguments and commands.|
+|Config file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute.|
