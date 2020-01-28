@@ -51,20 +51,8 @@ fn config() -> std::io::Result<String> {
     Ok(matches.value_of("config").unwrap().to_owned())
 }
 
-fn main() -> std::io::Result<()> {
-    env_logger::init();
-
-    let config = std::fs::read_to_string(config()?)?;
-
-    let templates = get_templates(config.as_ref())?;
-    let selected_template = select_templates(&templates)?;
-
-    let json: serde_json::Value = serde_json::from_str(config.as_ref())?;
-    let json_template: &serde_json::Value = &json["templates"][&(selected_template.0).0];
-    let json_prompt: &Vec<serde_json::Value> = json_template["prompt"].as_array().unwrap();
-    let mut json_values: serde_json::Value = json_template["values"]["static"].clone();
-    
-    let prompts_to_values: Vec::<(String, String)> = json_prompt
+fn prompt_and_insert(prompts: &Vec<serde_json::Value>, values: &mut serde_json::Value) -> std::io::Result<()> {
+    let prompts_to_values: Vec::<(String, String)> = prompts
         .as_slice()
         .iter()
         .map(|k| {
@@ -78,13 +66,34 @@ fn main() -> std::io::Result<()> {
         .collect();
 
     for kv in prompts_to_values {
-        json_values[kv.0] = serde_json::to_value(kv.1)?;
+        values[kv.0] = serde_json::to_value(kv.1)?;
     }
 
+    Ok(())
+}
+
+fn replace(template_str: &str, values: &serde_json::Value) -> std::io::Result<String> {
     let mut hb = Handlebars::new();
     hb.set_strict_mode(true);
-    let commit_msg = hb.render_template(selected_template.1.as_ref(), &json_values).unwrap();
+    Ok(hb.render_template(template_str, values).unwrap())
+}
 
+fn main() -> std::io::Result<()> {
+    env_logger::init();
+
+    let config = std::fs::read_to_string(config()?)?;
+
+    let templates = get_templates(config.as_ref())?;
+    let selected_template = select_templates(&templates)?;
+
+    let json: serde_json::Value = serde_json::from_str(config.as_ref())?;
+    let json_template: &serde_json::Value = &json["templates"][&(selected_template.0).0];
+    let json_prompt: &Vec<serde_json::Value> = json_template["prompt"].as_array().unwrap();
+    let mut json_values: serde_json::Value = json_template["values"]["static"].clone();
+
+    prompt_and_insert(json_prompt, &mut json_values)?;
+
+    let commit_msg = replace(selected_template.1.as_ref(), &json_values)?;
     std::io::stdout().write_all(commit_msg.as_bytes())?;
 
     Ok(())
