@@ -5,7 +5,6 @@ templates:
                 {{ summary }}
                 {{ author }}
                 {{ git.staged.files }}
-
         values:
             author:
                 static: "Weber, Heiko Alexander <heiko.a.weber@gmail.com>"
@@ -20,7 +19,6 @@ templates:
                 {{ summary }}
                 {{ author }}
                 {{ git.staged.files }}
-
         values:
             author:
                 static: "Weber, Heiko Alexander <heiko.a.weber@gmail.com>"

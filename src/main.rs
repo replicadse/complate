@@ -102,8 +102,6 @@ fn main() -> std::io::Result<()> {
     let values = get_values(&template, &args.shell_mode)?;
     let rendered = replace(&template_str, &values)?;
 
-    //serde_yaml::to_writer(std::io::stdout(), &cfg).unwrap();
-    //println!("{:?}", config);
     std::io::stdout().write_all(rendered.as_bytes())?;
     Ok(())
 }
