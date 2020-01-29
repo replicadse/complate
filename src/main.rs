@@ -85,7 +85,6 @@ fn replace(template: &str, values: &std::collections::HashMap<String, String>) -
         recursive_add(&mut namespaces, &mut values_json, val.1);
     }
 
-    println!("{:?}", values_json);
     let rendered_template = hb.render_template(template, &values_json).unwrap();
     Ok(rendered_template)
 }

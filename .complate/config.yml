@@ -15,10 +15,7 @@ templates:
 
     feature:
         content:
-            inline: |-
-                {{ summary }}
-                {{ author }}
-                {{ git.staged.files }}
+            file: "./.complate/feature.cpl"
         values:
             author:
                 static: "Weber, Heiko Alexander <heiko.a.weber@gmail.com>"
