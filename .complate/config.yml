@@ -1,0 +1,30 @@
+templates:
+    internal:
+        content:
+            inline: |-
+                {{ summary }}
+                {{ author }}
+                {{ git.staged.files }}
+
+        values:
+            author:
+                static: "Weber, Heiko Alexander <heiko.a.weber@gmail.com>"
+            summary:
+                prompt: "Enter the summary"
+            git.staged.files:
+                shell: "git diff --name-status --cached"
+
+    feature:
+        content:
+            inline: |-
+                {{ summary }}
+                {{ author }}
+                {{ git.staged.files }}
+
+        values:
+            author:
+                static: "Weber, Heiko Alexander <heiko.a.weber@gmail.com>"
+            summary:
+                prompt: "Enter the summary"
+            git.staged.files:
+                shell: "git diff --name-status --cached"
