@@ -3,12 +3,14 @@ templates:
         content:
             inline: |-
                 {{ summary }} | {{ version }}
-                {{ components }}
-                {{ author }}
+                Components: {{ components }}
+                Author: {{ author }}
+                
+                Files:
                 {{ git.staged.files }}
         values:
             author:
-                static: "Weber, Heiko Alexander <heiko.a.weber@gmail.com>"
+                static: "Weber, Heiko Alexander"
             summary:
                 prompt: "Enter the summary"
             git.staged.files:
@@ -29,7 +31,7 @@ templates:
             file: "./.complate/feature.cpl"
         values:
             author:
-                static: "Weber, Heiko Alexander <heiko.a.weber@gmail.com>"
+                static: "Weber, Heiko Alexander"
             summary:
                 prompt: "Enter the summary"
             git.staged.files:
