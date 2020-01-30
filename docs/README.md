@@ -43,9 +43,8 @@ templates                           # dictionary
     ├── file                         # string, relative file path
     ├── prompt                       # array of values to prompt
     └── values                       # dictionary
-        └── A                   # dictionary
-            ├── {{ key 0 }}          # string
-            └── {{ key 1 }}          # string
+        ├── A
+        └── B
 ```
 An example for this could look like follows:
 ```
@@ -53,7 +52,8 @@ templates:
     feature:
         content:
             inline: |-
-                {{ summary }}
+                {{ summary }} | {{ version }}
+                {{ components }}
                 {{ author }}
                 {{ git.staged.files }}
 
@@ -64,6 +64,16 @@ templates:
                 prompt: "Enter the summary"
             git.staged.files:
                 shell: "git diff --name-status --cached"
+            version:
+                select:
+                    - "#patch"
+                    - "#minor"
+                    - "#major"
+            components:
+                check:
+                    - A
+                    - B
+                    - C
 ```
 
 ### Values
@@ -74,7 +84,9 @@ Values can be provided in three different ways.
 |-- |-- |
 |static|Replaces the value by a static string.|
 |prompt|Asks the user for input when executing the templating process.|
-|shell|Invokes a certain shell command and renders STDOUT as replacing string into the variable. Due to the fact that this option can run arbitrary shell commands, it is disabled by default. Pass the `--shell` flag to the CLI in order to activate this feature.|
+|shell|Invokes a certain shell command and renders STDOUT as replacing string into the variable. Due to the fact that this option can run arbitrary shell commands, it is disabled by default. Pass the `--shell-trust` flag to the CLI in order to activate this feature.|
+|select|Gives the user the option to select one item from the provided array of items.|
+|check|Gives the user the option to select _n_ items from the provided array of items.|
 
 ## Usage
 
@@ -97,7 +109,7 @@ complate writes the generated commit message to the stdout pipe. Expecting the r
 
 ### Arguments
 
-complate can run without specifying any arguments. It will always look for the configuration file under `./.complate/config.json`. If you want to use a different configuration file, specify the path using `-c` argument. Example: `./.complate/complate -c "./unusual_folder/some-config.json" | git commit -F -`.
+complate can run without specifying any arguments. It will always look for the configuration file under `./.complate/config.yml`. If you want to use a different configuration file, specify the path using `-c` argument. Example: `./.complate/complate -c "./unusual_folder/some-config.yml" | git commit -F -`.
 
 All arguments can be found here:
 
@@ -105,4 +117,4 @@ All arguments can be found here:
 |-- |-- |-- |-- |
 |Help|-h|--help|Calls the help that displays all the available arguments and commands.|
 |Config file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute.|
-|Enable shell mode||--shell|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default.|
+|Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`|

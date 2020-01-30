@@ -2,7 +2,8 @@ templates:
     internal:
         content:
             inline: |-
-                {{ summary }}
+                {{ summary }} | {{ version }}
+                {{ components }}
                 {{ author }}
                 {{ git.staged.files }}
         values:
@@ -12,6 +13,16 @@ templates:
                 prompt: "Enter the summary"
             git.staged.files:
                 shell: "git diff --name-status --cached"
+            version:
+                select:
+                    - "#patch"
+                    - "#minor"
+                    - "#major"
+            components:
+                check:
+                    - Security
+                    - ValueProvider
+                    - Misc
 
     feature:
         content:

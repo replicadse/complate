@@ -27,6 +27,10 @@ pub enum ValueProvider {
     Prompt(String),
     #[serde(rename="shell")]
     Shell(String),
+    #[serde(rename="select")]
+    Select(Vec<String>),
+    #[serde(rename="check")]
+    Check(Vec<String>),
 }
 
 impl Config {

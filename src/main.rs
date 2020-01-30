@@ -5,15 +5,16 @@ extern crate serde;
 extern crate serde_json;
 extern crate serde_yaml;
 
-use std::io::Write;
+use std::io::{Result, Write};
+use std::collections::{HashMap};
 use futures::executor::{block_on};
 
 pub mod args;
-use args::args::ShellMode;
+use args::args::{ShellMode, Trust};
 pub mod config;
 use config::config::{Config, Template, Content, ValueProvider};
 
-fn select_template<'a>(config: &'a Config) -> std::io::Result<&'a Template> {
+fn select_template<'a>(config: &'a Config) -> Result<&'a Template> {
     let keys: Vec<String> = config.templates.keys().map(
         |t| t.to_owned()
     ).collect();
@@ -25,8 +26,8 @@ fn select_template<'a>(config: &'a Config) -> std::io::Result<&'a Template> {
     Ok(config.templates.get(&keys[selection]).unwrap())
 }
 
-fn get_values(template: &Template, shell_mode: &ShellMode) -> std::io::Result<std::collections::HashMap<String, String>> {
-    let mut values = std::collections::HashMap::new();
+fn get_values(template: &Template, shell_mode: &ShellMode) -> Result<HashMap<String, String>> {
+    let mut values = HashMap::new();
     for value in &template.values {
         match value.1 {
             ValueProvider::Static(v) => { values.insert(value.0.to_owned(), v.to_owned()); },
@@ -39,15 +40,32 @@ fn get_values(template: &Template, shell_mode: &ShellMode) -> std::io::Result<st
                         .interact()
                         .unwrap());
             },
-            ValueProvider::Shell(v) => {
+            ValueProvider::Shell(command) => {
                 match shell_mode {
-                    ShellMode::Enabled => {
+                    ShellMode::Enabled(trust) => {
+                        match trust {
+                            Trust::None => {
+                                panic!("could not execute shell command due to the trust level\n{}", command);
+                            },
+                            Trust::Prompt => {
+                                let exec = dialoguer::Confirmation::new()
+                                    .with_text(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command))
+                                    .interact().unwrap();
+                                    match exec {
+                                        false => {
+                                            panic!("user declined command execution for command {}", command);
+                                        }
+                                        true => {},
+                                    }
+                            },
+                            Trust::Ultimate => {},
+                        }
                         let output = std::process::Command::new("sh")
                             .arg("-c")
-                            .arg(v)
+                            .arg(command)
                             .output()?;
                         if output.status.code().unwrap() != 0 {
-                            panic!("failed to run command {}", v);
+                            panic!("failed to run command {}", command);
                         }
                         values.insert(value.0.to_owned(), String::from_utf8(output.stdout).unwrap());
                     },
@@ -56,12 +74,42 @@ fn get_values(template: &Template, shell_mode: &ShellMode) -> std::io::Result<st
                     },
                 }
             },
+            ValueProvider::Select(items) => {
+                values.insert(value.0.to_owned(),
+                    items[dialoguer::Select::new()
+                        .with_prompt(value.0)
+                        .items(items.as_slice())
+                        .default(0)
+                        .interact()
+                        .unwrap()].to_owned());
+            },
+            ValueProvider::Check(items) => {
+                let indices = dialoguer::Checkboxes::new()
+                    .with_prompt(value.0)
+                    .items(items)
+                    .interact().unwrap();
+
+                values.insert(value.0.to_owned(),
+                    match indices.len() {
+                        0usize => "".to_owned(),
+                        _ => {
+                            let mut d = String::new();
+                            for i in indices {
+                                d.push_str(&items[i]);
+                                d.push_str(", ");
+                            }
+                            d.truncate(d.len() - 2);
+                            d
+                        }
+                    }
+                );
+            }
         }
     }
     Ok(values)
 }
 
-fn replace(template: &str, values: &std::collections::HashMap<String, String>) -> std::io::Result<String> {
+fn replace(template: &str, values: &HashMap<String, String>) -> Result<String> {
     fn recursive_add(namespace: &mut std::collections::VecDeque<String>, parent: &mut serde_json::Value, value: &str) {
         let current_namespace = namespace.pop_front().unwrap();
         match namespace.len() {
@@ -89,7 +137,7 @@ fn replace(template: &str, values: &std::collections::HashMap<String, String>) -
     Ok(rendered_template)
 }
 
-fn main() -> std::io::Result<()> {
+fn main() -> Result<()> {
     let args = block_on(crate::args::args::ClapArgumentLoader::load_from_cli())?; 
     let cfg: Config = serde_yaml::from_str(&args.configuration).unwrap();
 

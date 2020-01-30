@@ -3,9 +3,15 @@ pub struct Arguments {
     pub shell_mode: ShellMode,
 }
 
+pub enum Trust {
+    None,
+    Prompt,
+    Ultimate
+}
+
 pub enum ShellMode {
     Disabled,
-    Enabled,
+    Enabled(Trust),
 }
 
 pub struct ClapArgumentLoader {
@@ -26,24 +32,31 @@ impl ClapArgumentLoader {
                 .multiple(false)
                 .required(false)
                 .takes_value(true))
-            .arg(clap::Arg::with_name("shell")
-                .long("shell")
+            .arg(clap::Arg::with_name("shell-trust")
+                .long("shell-trust")
                 .help("Enables the shell mode. This is potentially insecure and should only be done for trustworthy sources.")
                 .multiple(false)
                 .required(false)
-                .takes_value(false))
+                .default_value("none")
+                .takes_value(true))
             .get_matches();
 
         let config_file = args.value_of("config").unwrap().to_owned();
         let config = std::fs::read_to_string(config_file)?;
-        let shell_mode = args.is_present("shell");
+
+        let shell_trust = match args.value_of("shell") {
+            Some(x) => match x {
+                "none" => ShellMode::Disabled,
+                "prompt" => ShellMode::Enabled(Trust::Prompt),
+                "ultimate" => ShellMode::Enabled(Trust::Ultimate),
+                _ => panic!("unrecognized trust option")
+            },
+            None => ShellMode::Disabled,
+        };
 
         Ok(Arguments {
             configuration: config,
-            shell_mode: match shell_mode {
-                true => ShellMode::Enabled,
-                false => ShellMode::Disabled,
-            },
+            shell_mode: shell_trust,
         })
     }
 }
