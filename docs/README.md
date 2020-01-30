@@ -35,17 +35,6 @@ o redis_client.cpp
 This project is still in idea phase so feel free to suggest things.
 
 ## Current implementation
-
-The structure of the `./.complate/config.yml` file is currently as follows:
-```
-templates                           # dictionary
-└── {{ template name }}              # dictionary
-    ├── file                         # string, relative file path
-    ├── prompt                       # array of values to prompt
-    └── values                       # dictionary
-        ├── A
-        └── B
-```
 An example for this could look like follows:
 ```
 templates:
