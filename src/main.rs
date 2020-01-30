@@ -10,11 +10,11 @@ use std::collections::{HashMap};
 use futures::executor::{block_on};
 
 pub mod args;
-use args::args::{ShellMode, Trust};
+use args::args::ShellTrust;
 pub mod config;
 use config::config::{Config, Template, Content, ValueProvider};
 
-fn select_template<'a>(config: &'a Config) -> Result<&'a Template> {
+async fn select_template<'a>(config: &'a Config) -> Result<&'a Template> {
     let keys: Vec<String> = config.templates.keys().map(
         |t| t.to_owned()
     ).collect();
@@ -26,7 +26,7 @@ fn select_template<'a>(config: &'a Config) -> Result<&'a Template> {
     Ok(config.templates.get(&keys[selection]).unwrap())
 }
 
-fn get_values(template: &Template, shell_mode: &ShellMode) -> Result<HashMap<String, String>> {
+async fn get_values(template: &Template, shell_trust: &ShellTrust) -> Result<HashMap<String, String>> {
     let mut values = HashMap::new();
     for value in &template.values {
         match value.1 {
@@ -41,38 +41,31 @@ fn get_values(template: &Template, shell_mode: &ShellMode) -> Result<HashMap<Str
                         .unwrap());
             },
             ValueProvider::Shell(command) => {
-                match shell_mode {
-                    ShellMode::Enabled(trust) => {
-                        match trust {
-                            Trust::None => {
-                                panic!("could not execute shell command due to the trust level\n{}", command);
-                            },
-                            Trust::Prompt => {
-                                let exec = dialoguer::Confirmation::new()
-                                    .with_text(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command))
-                                    .interact().unwrap();
-                                    match exec {
-                                        false => {
-                                            panic!("user declined command execution for command {}", command);
-                                        }
-                                        true => {},
-                                    }
-                            },
-                            Trust::Ultimate => {},
-                        }
-                        let output = std::process::Command::new("sh")
-                            .arg("-c")
-                            .arg(command)
-                            .output()?;
-                        if output.status.code().unwrap() != 0 {
-                            panic!("failed to run command {}", command);
-                        }
-                        values.insert(value.0.to_owned(), String::from_utf8(output.stdout).unwrap());
+                match shell_trust {
+                    ShellTrust::None => {
+                        panic!("could not execute shell command due to the trust level\n{}", command);
                     },
-                    ShellMode::Disabled => {
-                        panic!("tried to execute shell command with disabled shell mode for value {}", value.0);
+                    ShellTrust::Prompt => {
+                        let exec = dialoguer::Confirmation::new()
+                            .with_text(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command))
+                            .interact().unwrap();
+                            match exec {
+                                false => {
+                                    panic!("user declined command execution for command {}", command);
+                                }
+                                true => {},
+                            }
                     },
+                    ShellTrust::Ultimate => {},
                 }
+                let output = std::process::Command::new("sh")
+                    .arg("-c")
+                    .arg(command)
+                    .output()?;
+                if output.status.code().unwrap() != 0 {
+                    panic!("failed to run command {}", command);
+                }
+                values.insert(value.0.to_owned(), String::from_utf8(output.stdout).unwrap());
             },
             ValueProvider::Select(items) => {
                 values.insert(value.0.to_owned(),
@@ -109,7 +102,7 @@ fn get_values(template: &Template, shell_mode: &ShellMode) -> Result<HashMap<Str
     Ok(values)
 }
 
-fn replace(template: &str, values: &HashMap<String, String>) -> Result<String> {
+async fn replace(template: &str, values: &HashMap<String, String>) -> Result<String> {
     fn recursive_add(namespace: &mut std::collections::VecDeque<String>, parent: &mut serde_json::Value, value: &str) {
         let current_namespace = namespace.pop_front().unwrap();
         match namespace.len() {
@@ -137,18 +130,22 @@ fn replace(template: &str, values: &HashMap<String, String>) -> Result<String> {
     Ok(rendered_template)
 }
 
-fn main() -> Result<()> {
-    let args = block_on(crate::args::args::ClapArgumentLoader::load_from_cli())?; 
+async fn async_main() -> Result<()> {
+    let args = crate::args::args::ClapArgumentLoader::load_from_cli().await?;
     let cfg: Config = serde_yaml::from_str(&args.configuration).unwrap();
 
-    let template = select_template(&cfg)?;
+    let template = select_template(&cfg).await?;
     let template_str = match &template.content {
         Content::Inline(x) => x.to_owned(),
         Content::File(x) => std::fs::read_to_string(x)?,
     };
-    let values = get_values(&template, &args.shell_mode)?;
-    let rendered = replace(&template_str, &values)?;
+    let values = get_values(&template, &args.shell_trust).await?;
+    let rendered = replace(&template_str, &values).await?;
 
     std::io::stdout().write_all(rendered.as_bytes())?;
     Ok(())
+}
+
+fn main() -> Result<()> {
+    block_on(async_main())
 }
