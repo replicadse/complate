@@ -107,11 +107,14 @@ async fn replace(template: &str, values: &HashMap<String, String>) -> Result<Str
         let current_namespace = namespace.pop_front().unwrap();
         match namespace.len() {
             0 => {
-                parent.as_object_mut().unwrap().insert(current_namespace.to_owned(), serde_json::Value::String(value.to_owned()));
+                parent.as_object_mut().unwrap().entry(&current_namespace)
+                    .or_insert(serde_json::Value::String(value.to_owned()));
             }
             _ => {
-                parent.as_object_mut().unwrap().insert(current_namespace.to_owned(), serde_json::Value::Object(serde_json::Map::new()));
-                recursive_add(namespace, parent.as_object_mut().unwrap().get_mut(&current_namespace).unwrap(), value);
+                let p = parent.as_object_mut().unwrap().entry(&current_namespace)
+                    .or_insert(serde_json::Value::Object(serde_json::Map::new()));
+                recursive_add(
+                    namespace, p, value);
             }
         }
     }

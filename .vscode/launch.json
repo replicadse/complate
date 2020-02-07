@@ -19,7 +19,9 @@
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": [
+                "--shell-trust", "prompt"
+            ],
             "cwd": "${workspaceFolder}"
         },
         {

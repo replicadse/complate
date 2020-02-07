@@ -3,6 +3,7 @@ templates:
         content:
             inline: |-
                 {{ summary }} | {{ version }}
+                {{ git.author }}
                 Components: {{ components }}
                 Author: {{ author }}
                 
@@ -13,6 +14,8 @@ templates:
                 static: "Weber, Heiko Alexander"
             summary:
                 prompt: "Enter the summary"
+            git.author:
+                shell: "printf $(whoami)"
             git.staged.files:
                 shell: "git diff --name-status --cached"
             version:
