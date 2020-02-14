@@ -8,7 +8,7 @@ pub struct Template {
     #[serde(rename="content")]
     pub content: Content,
     #[serde(rename="values")]
-    pub values: std::collections::HashMap<String, ValueProvider>,
+    pub values: std::collections::HashMap<String, ValueDefinition>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -20,7 +20,7 @@ pub enum Content {
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
-pub enum ValueProvider {
+pub enum ValueDefinition {
     #[serde(rename="static")]
     Static(String),
     #[serde(rename="prompt")]
@@ -28,9 +28,9 @@ pub enum ValueProvider {
     #[serde(rename="shell")]
     Shell(String),
     #[serde(rename="select")]
-    Select(Vec<String>),
+    Select{text: String, options: Vec<String>},
     #[serde(rename="check")]
-    Check(Vec<String>),
+    Check{text: String, options: Vec<String>},
 }
 
 impl Config {

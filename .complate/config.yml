@@ -20,14 +20,18 @@ templates:
                 shell: "git diff --name-status --cached"
             version:
                 select:
-                    - "#patch"
-                    - "#minor"
-                    - "#major"
+                    text: Select the version level that shall be incremented
+                    options:
+                        - "#patch"
+                        - "#minor"
+                        - "#major"
             components:
                 check:
-                    - Security
-                    - ValueProvider
-                    - Misc
+                    text: Select the components that are affected
+                    options:
+                        - Security
+                        - ValueProvider
+                        - Misc
 
     feature:
         content:

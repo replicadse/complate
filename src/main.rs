@@ -12,7 +12,9 @@ use futures::executor::{block_on};
 pub mod args;
 use args::args::ShellTrust;
 pub mod config;
-use config::config::{Config, Template, Content, ValueProvider};
+use config::config::{Config, Template, Content};
+pub mod execute;
+use execute::execute::{Execute};
 
 async fn select_template<'a>(config: &'a Config) -> Result<&'a Template> {
     let keys: Vec<String> = config.templates.keys().map(
@@ -23,81 +25,17 @@ async fn select_template<'a>(config: &'a Config) -> Result<&'a Template> {
         .default(0)
         .paged(false)
         .interact()?;
-    Ok(config.templates.get(&keys[selection]).unwrap())
+    
+    match config.templates.get(&keys[selection]) {
+        Some(x) => Ok(x),
+        None => Err(std::io::Error::new(std::io::ErrorKind::Other, "failed")),
+    }
 }
 
 async fn get_values(template: &Template, shell_trust: &ShellTrust) -> Result<HashMap<String, String>> {
     let mut values = HashMap::new();
     for value in &template.values {
-        match value.1 {
-            ValueProvider::Static(v) => { values.insert(value.0.to_owned(), v.to_owned()); },
-            ValueProvider::Prompt(v) => {
-                values.insert(
-                    value.0.to_owned(), 
-                    dialoguer::Input::new()
-                        .allow_empty(true)
-                        .with_prompt(&v)
-                        .interact()
-                        .unwrap());
-            },
-            ValueProvider::Shell(command) => {
-                match shell_trust {
-                    ShellTrust::None => {
-                        panic!("could not execute shell command due to the trust level\n{}", command);
-                    },
-                    ShellTrust::Prompt => {
-                        let exec = dialoguer::Confirmation::new()
-                            .with_text(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command))
-                            .interact().unwrap();
-                            match exec {
-                                false => {
-                                    panic!("user declined command execution for command {}", command);
-                                }
-                                true => {},
-                            }
-                    },
-                    ShellTrust::Ultimate => {},
-                }
-                let output = std::process::Command::new("sh")
-                    .arg("-c")
-                    .arg(command)
-                    .output()?;
-                if output.status.code().unwrap() != 0 {
-                    panic!("failed to run command {}", command);
-                }
-                values.insert(value.0.to_owned(), String::from_utf8(output.stdout).unwrap());
-            },
-            ValueProvider::Select(items) => {
-                values.insert(value.0.to_owned(),
-                    items[dialoguer::Select::new()
-                        .with_prompt(value.0)
-                        .items(items.as_slice())
-                        .default(0)
-                        .interact()
-                        .unwrap()].to_owned());
-            },
-            ValueProvider::Check(items) => {
-                let indices = dialoguer::Checkboxes::new()
-                    .with_prompt(value.0)
-                    .items(items)
-                    .interact().unwrap();
-
-                values.insert(value.0.to_owned(),
-                    match indices.len() {
-                        0usize => "".to_owned(),
-                        _ => {
-                            let mut d = String::new();
-                            for i in indices {
-                                d.push_str(&items[i]);
-                                d.push_str(", ");
-                            }
-                            d.truncate(d.len() - 2);
-                            d
-                        }
-                    }
-                );
-            }
-        }
+        values.insert(value.0.to_owned(), value.1.execute(shell_trust).await?);
     }
     Ok(values)
 }
