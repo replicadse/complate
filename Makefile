@@ -1,8 +1,10 @@
-ifndef VERSION
-	VERSION := latest
-endif
+.PHONY: clean build release
 
-.PHONY: build
+clean:
+	cargo clean
 
 build:
+	cargo build
+
+release:
 	cargo build --release

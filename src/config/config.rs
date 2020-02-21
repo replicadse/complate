@@ -1,5 +1,6 @@
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct Config {
+    pub version: String,
     pub templates: std::collections::HashMap<String, Template>,
 }
 
@@ -34,8 +35,9 @@ pub enum ValueDefinition {
 }
 
 impl Config {
-    pub fn new() -> Self {
+    pub fn new(version: String) -> Self {
         Self {
+            version: version,
             templates: std::collections::HashMap::new(),
         }
     }

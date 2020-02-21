@@ -1,21 +1,29 @@
+version: 0.4
 templates:
-    internal:
+    test:
+        content:
+            inline: |-
+                {{ text }}
+        values:
+            text:
+                prompt: "Text"
+
+    default:
         content:
             inline: |-
                 {{ summary }} | {{ version }}
-                {{ git.author }}
-                Components: {{ components }}
-                Author: {{ author }}
+                Components: [{{ components }}]
+                Author: {{ author.name }} | {{ author.account }}
                 
                 Files:
                 {{ git.staged.files }}
         values:
-            author:
-                static: "Weber, Heiko Alexander"
             summary:
                 prompt: "Enter the summary"
-            git.author:
-                shell: "printf $(whoami)"
+            author.name:
+                static: "Weber, Heiko Alexander"
+            author.account:
+                shell: "whoami | tr -d '\n'"
             git.staged.files:
                 shell: "git diff --name-status --cached"
             version:
@@ -31,15 +39,5 @@ templates:
                     options:
                         - Security
                         - ValueProvider
+                        - CLI
                         - Misc
-
-    feature:
-        content:
-            file: "./.complate/feature.cpl"
-        values:
-            author:
-                static: "Weber, Heiko Alexander"
-            summary:
-                prompt: "Enter the summary"
-            git.staged.files:
-                shell: "git diff --name-status --cached"
