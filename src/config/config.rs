@@ -1,7 +1,7 @@
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct Config {
     pub version: String,
-    pub templates: std::collections::HashMap<String, Template>,
+    pub templates: std::collections::BTreeMap<String, Template>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -9,7 +9,7 @@ pub struct Template {
     #[serde(rename="content")]
     pub content: Content,
     #[serde(rename="values")]
-    pub values: std::collections::HashMap<String, ValueDefinition>,
+    pub values: std::collections::BTreeMap<String, ValueDefinition>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -38,7 +38,7 @@ impl Config {
     pub fn new(version: String) -> Self {
         Self {
             version: version,
-            templates: std::collections::HashMap::new(),
+            templates: std::collections::BTreeMap::new(),
         }
     }
 }
@@ -47,7 +47,7 @@ impl Template {
     pub fn new(content: Content) -> Self {
         Self {
             content: content,
-            values: std::collections::HashMap::new(),
+            values: std::collections::BTreeMap::new(),
         }
     }
 }

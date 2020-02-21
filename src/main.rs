@@ -6,7 +6,7 @@ extern crate serde_json;
 extern crate serde_yaml;
 
 use std::io::{Result, Write};
-use std::collections::{HashMap};
+use std::collections::{BTreeMap};
 use futures::executor::{block_on};
 
 pub mod args;
@@ -32,15 +32,15 @@ async fn select_template<'a>(config: &'a Config) -> Result<&'a Template> {
     }
 }
 
-async fn get_values(template: &Template, shell_trust: &ShellTrust) -> Result<HashMap<String, String>> {
-    let mut values = HashMap::new();
+async fn get_values(template: &Template, shell_trust: &ShellTrust) -> Result<BTreeMap<String, String>> {
+    let mut values = BTreeMap::new();
     for value in &template.values {
         values.insert(value.0.to_owned(), value.1.execute(shell_trust).await?);
     }
     Ok(values)
 }
 
-async fn replace(template: &str, values: &HashMap<String, String>) -> Result<String> {
+async fn replace(template: &str, values: &BTreeMap<String, String>) -> Result<String> {
     fn recursive_add(namespace: &mut std::collections::VecDeque<String>, parent: &mut serde_json::Value, value: &str) {
         let current_namespace = namespace.pop_front().unwrap();
         match namespace.len() {
