@@ -3,6 +3,14 @@ name = "complate"
 version = "0.3.0"
 authors = ["Heiko Alexander Weber <heiko.a.weber@gmail.com>"]
 edition = "2018"
+license = "MIT"
+description = "Standardizing messages the right way."
+readme = "docs/README.md"
+homepage = "https://heikoalexanderweber.github.io/complate/"
+repository = "https://github.com/HeikoAlexanderWeber/complate"
+keywords = ["cli", "template", "replace", "standardizing"]
+categories = ["command-line-utilities"]
+
 
 [profile]
   [dev]
