@@ -20,4 +20,7 @@ jobs:
         DEFAULT_BUMP: patch
     - name: Publish
       id: Publish
-      run: cargo login ${{ secrets.CRATES_IO_TOKEN }} && cargo publish
+      run: |
+        VERSION=${{ steps.tag.outputs.tag }} make update-version && 
+        cargo login ${{ secrets.CRATES_IO_TOKEN }} && 
+        cargo publish
