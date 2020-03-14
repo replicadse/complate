@@ -5,7 +5,7 @@ on:
       - master
 
 jobs:
-  tag:
+  tag-and-publish:
     name: "Tag application"
     runs-on: ubuntu-latest
     steps:
