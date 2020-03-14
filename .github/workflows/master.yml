@@ -18,3 +18,6 @@ jobs:
         WITH_V: false
         RELEASE_BRANCHES: master
         DEFAULT_BUMP: patch
+    - name: Publish
+      id: Publish
+      run: cargo login ${{ secrets.CRATES_IO_TOKEN }} && cargo publish
