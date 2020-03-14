@@ -15,7 +15,7 @@ pub struct ClapArgumentLoader {
 impl ClapArgumentLoader {
     pub async fn load_from_cli() -> std::io::Result<Arguments> {
         let args = clap::App::new("complate")
-            .version("0.1.0")
+            .version("0.0.0")
             .about("A git commit buddy.")
             .author("Weber, Heiko Alexander <heiko.a.weber@gmail.com>")
             .arg(clap::Arg::with_name("config")
