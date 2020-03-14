@@ -23,4 +23,4 @@ jobs:
       run: |
         VERSION=${{ steps.tag.outputs.tag }} make update-version && 
         cargo login ${{ secrets.CRATES_IO_TOKEN }} && 
-        cargo publish
+        cargo publish --allow-dirty
