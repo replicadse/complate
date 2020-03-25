@@ -71,20 +71,76 @@ async fn replace(template: &str, values: &BTreeMap<String, String>) -> Result<St
     Ok(rendered_template)
 }
 
-async fn async_main() -> Result<()> {
-    let args = crate::args::args::ClapArgumentLoader::load_from_cli().await?;
-    let cfg: Config = serde_yaml::from_str(&args.configuration).unwrap();
+async fn invoke(invoke_options: args::args::Arguments) -> Result<()> {
+    let cfg: Config = serde_yaml::from_str(&invoke_options.configuration).unwrap();
 
     let template = select_template(&cfg).await?;
     let template_str = match &template.content {
         Content::Inline(x) => x.to_owned(),
         Content::File(x) => std::fs::read_to_string(x)?,
     };
-    let values = get_values(&template, &args.shell_trust).await?;
+    let values = get_values(&template, &invoke_options.shell_trust).await?;
     let rendered = replace(&template_str, &values).await?;
 
     std::io::stdout().write_all(rendered.as_bytes())?;
     Ok(())
+}
+
+async fn default_config() -> String {
+    r###"version: 0.4
+
+templates:
+    default:
+        content:
+            inline: |-
+                {{ summary }} | {{ version }}
+                Components: [{{ components }}]
+                Author: {{ author.name }} | {{ author.account }}
+                
+                Files:
+                {{ git.staged.files }}
+        values:
+            summary:
+                prompt: "Enter the summary"
+            author.name:
+                static: "This is me!"
+            author.account:
+                shell: "whoami | tr -d '\n'"
+            git.staged.files:
+                shell: "git diff --name-status --cached"
+            version:
+                select:
+                    text: Select the version level that shall be incremented
+                    options:
+                        - "#patch"
+                        - "#minor"
+                        - "#major"
+            components:
+                check:
+                    text: Select the components that are affected
+                    options:
+                        - Default
+                        - Security
+"###.to_owned()
+}
+
+async fn async_main() -> Result<()> {
+    let action = crate::args::args::ClapArgumentLoader::load_from_cli().await?;
+
+    return match action {
+        crate::args::args::Action::Command(x) => {
+            match x {
+                crate::args::args::Command::Init => {
+                    std::fs::create_dir_all("./.complate")?;
+                    std::fs::write("./.complate/config.yml", default_config().await)?;
+                    Ok(())
+                }
+            }
+        }
+        crate::args::args::Action::Invoke(x) => {
+            invoke(x).await
+        }
+    }
 }
 
 fn main() -> Result<()> {

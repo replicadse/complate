@@ -1,13 +1,6 @@
 version: 0.4
-templates:
-    test:
-        content:
-            inline: |-
-                {{ text }}
-        values:
-            text:
-                prompt: "Text"
 
+templates:
     default:
         content:
             inline: |-

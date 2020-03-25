@@ -48,6 +48,7 @@ The template itself can be declared as string inside the configuration file or a
 |Name|Short|Long|Description|
 |-- |-- |-- |-- |
 |Help|-h|--help|Calls the help that displays all the available arguments and commands.|
+|Init||--init|Initializes the `.complate/config.yml` file that acts as default configuration.|
 |Config file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|
 |Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`|
 
