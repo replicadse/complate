@@ -71,7 +71,7 @@ async fn replace(template: &str, values: &BTreeMap<String, String>) -> Result<St
     Ok(rendered_template)
 }
 
-async fn invoke(invoke_options: args::args::Arguments) -> Result<()> {
+async fn print(invoke_options: args::args::PrintArguments) -> Result<()> {
     let cfg: Config = serde_yaml::from_str(&invoke_options.configuration).unwrap();
 
     let template = select_template(&cfg).await?;
@@ -125,20 +125,16 @@ templates:
 }
 
 async fn async_main() -> Result<()> {
-    let action = crate::args::args::ClapArgumentLoader::load_from_cli().await?;
+    let cmd = crate::args::args::ClapArgumentLoader::load_from_cli().await?;
 
-    return match action {
-        crate::args::args::Action::Command(x) => {
-            match x {
-                crate::args::args::Command::Init => {
-                    std::fs::create_dir_all("./.complate")?;
-                    std::fs::write("./.complate/config.yml", default_config().await)?;
-                    Ok(())
-                }
-            }
+    return match cmd {
+        crate::args::args::Command::Init => {
+            std::fs::create_dir_all("./.complate")?;
+            std::fs::write("./.complate/config.yml", default_config().await)?;
+            Ok(())
         }
-        crate::args::args::Action::Invoke(x) => {
-            invoke(x).await
+        crate::args::args::Command::Print(x) => {
+            print(x).await
         }
     }
 }

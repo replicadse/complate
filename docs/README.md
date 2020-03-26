@@ -9,8 +9,9 @@ Many projects and teams are standardizing their commit messages in a certain way
 
 ## Installation via `cargo`
 Find this project on [crates.io](https://crates.io/crates/complate).
+Install or update (update needs the `--force` flag) the software by executing:
 ```
-cargo install complate
+cargo install complate --force
 ```
 
 ## Idea
@@ -35,7 +36,7 @@ Repository root
 ```
 
 `complate` writes the generated message to the stdout pipe.\
-Expecting the recommended folder structure, you should be able to simply run `./.complate/complate | git commit -F -` in order to create a new standardized commit.
+Expecting the recommended folder structure, you should be able to simply run `./.complate/complate print | git commit -F -` in order to create a new standardized commit.
 
 ## General overview
 
@@ -43,12 +44,17 @@ The template itself can be declared as string inside the configuration file or a
 
 ## Technical documentation
 
-### CLI
+### Commands
 
+|Command|Description|
+|-- |-- |
+|help|Prints the help to `STDOUT`.|
+|init|Initializes the default configuration in `./.complate/config.yml`|
+|print|Prompts for the template, prompts for variable values and prints the data to `STDOUT`|
+
+#### `print` command flags
 |Name|Short|Long|Description|
 |-- |-- |-- |-- |
-|Help|-h|--help|Calls the help that displays all the available arguments and commands.|
-|Init||--init|Initializes the `.complate/config.yml` file that acts as default configuration.|
 |Config file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|
 |Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`|
 
@@ -58,7 +64,7 @@ The template itself can be declared as string inside the configuration file or a
 
 Please find an example for the configuration file here:
 ```
-version: 0.4
+version: 0.5
 templates:
     default:
         content:
