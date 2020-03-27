@@ -5,32 +5,26 @@ pub struct Config {
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all="snake_case")]
 pub struct Template {
-    #[serde(rename="content")]
     pub content: Content,
-    #[serde(rename="values")]
     pub values: std::collections::BTreeMap<String, ValueDefinition>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all="snake_case")]
 pub enum Content {
-    #[serde(rename="file")]
     File(String),
-    #[serde(rename="inline")]
     Inline(String),
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all="snake_case")]
 pub enum ValueDefinition {
-    #[serde(rename="static")]
     Static(String),
-    #[serde(rename="prompt")]
     Prompt(String),
-    #[serde(rename="shell")]
     Shell(String),
-    #[serde(rename="select")]
     Select{text: String, options: Vec<String>},
-    #[serde(rename="check")]
     Check{text: String, options: Vec<String>},
 }
 
