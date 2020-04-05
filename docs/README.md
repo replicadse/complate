@@ -1,6 +1,6 @@
 # complate
 
-![crates.io](https://img.shields.io/crates/v/complate.svg)
+[![crates.io](https://img.shields.io/crates/v/complate.svg)](https://crates.io/crates/complate)
 
 ## Introduction and use case
 
