@@ -10,13 +10,13 @@ use std::collections::{BTreeMap};
 use futures::executor::{block_on};
 
 pub mod args;
-use args::args::ShellTrust;
+use args::ShellTrust;
 pub mod config;
-use config::config::{Config, Template, Content};
+use config::{Config, Template, Content};
 pub mod execute;
-use execute::execute::{Execute};
+use execute::{Execute};
 
-async fn select_template<'a>(config: &'a Config) -> Result<&'a Template> {
+async fn select_template(config: &Config) -> Result<&Template> {
     let keys: Vec<String> = config.templates.keys().map(
         |t| t.to_owned()
     ).collect();
@@ -62,7 +62,7 @@ async fn replace(template: &str, values: &BTreeMap<String, String>) -> Result<St
 
     let mut values_json = serde_json::Value::Object(serde_json::Map::new());
     for val in values {
-        let namespaces_vec: Vec<String> = val.0.split(".").map(|s| s.to_string()).collect();
+        let namespaces_vec: Vec<String> = val.0.split('.').map(|s| s.to_string()).collect();
         let mut namespaces = std::collections::VecDeque::from(namespaces_vec);
         recursive_add(&mut namespaces, &mut values_json, val.1);
     }
@@ -71,7 +71,7 @@ async fn replace(template: &str, values: &BTreeMap<String, String>) -> Result<St
     Ok(rendered_template)
 }
 
-async fn print(invoke_options: args::args::PrintArguments) -> Result<()> {
+async fn print(invoke_options: args::PrintArguments) -> Result<()> {
     let cfg: Config = serde_yaml::from_str(&invoke_options.configuration).unwrap();
 
     let template = select_template(&cfg).await?;
@@ -125,15 +125,15 @@ templates:
 }
 
 async fn async_main() -> Result<()> {
-    let cmd = crate::args::args::ClapArgumentLoader::load_from_cli().await?;
+    let cmd = crate::args::ClapArgumentLoader::load_from_cli().await?;
 
-    return match cmd {
-        crate::args::args::Command::Init => {
+    match cmd {
+        crate::args::Command::Init => {
             std::fs::create_dir_all("./.complate")?;
             std::fs::write("./.complate/config.yml", default_config().await)?;
             Ok(())
         }
-        crate::args::args::Command::Print(x) => {
+        crate::args::Command::Print(x) => {
             print(x).await
         }
     }

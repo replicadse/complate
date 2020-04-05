@@ -12,5 +12,11 @@ clean:
 build:
 	cargo build
 
+test:
+	cargo test
+
+scan:
+	cargo clippy --all-targets --all-features -- -D warnings
+
 release:
 	cargo build --release

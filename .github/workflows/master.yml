@@ -10,6 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Build
+      run: cargo build
+    - name: Test
+      run: cargo test
+    - name: Scan
+      run: |
+        rustup component add clippy &&
+        cargo clippy --all-targets --all-features -- -D warnings
     - name: Tag
       id: tag
       uses: anothrNick/github-tag-action@master
