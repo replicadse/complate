@@ -1,0 +1,17 @@
+name: build
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: cargo build
+      - name: Test
+        run: cargo test
+      - name: Scan
+        run: |
+          rustup component add clippy &&
+          cargo clippy --all-targets --all-features -- -D warnings

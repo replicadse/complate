@@ -1,0 +1,34 @@
+name: master
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  tag-and-publish:
+    name: "Tag application"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build
+      run: cargo build
+    - name: Test
+      run: cargo test
+    - name: Scan
+      run: |
+        rustup component add clippy &&
+        cargo clippy --all-targets --all-features -- -D warnings
+    - name: Tag
+      id: tag
+      uses: anothrNick/github-tag-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: false
+        RELEASE_BRANCHES: master
+        DEFAULT_BUMP: patch
+    - name: Publish
+      id: Publish
+      run: |
+        VERSION=${{ steps.tag.outputs.tag }} make update-version && 
+        cargo login ${{ secrets.CRATES_IO_TOKEN }} && 
+        cargo publish --allow-dirty
