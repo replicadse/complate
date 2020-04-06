@@ -1,6 +1,7 @@
 # complate
 
-![crates.io](https://img.shields.io/crates/v/complate.svg)
+[![crates.io](https://img.shields.io/crates/v/complate.svg)](https://crates.io/crates/complate)
+[![pipeline](https://github.com/HeikoAlexanderWeber/complate/workflows/pipeline/badge.svg)](https://github.com/HeikoAlexanderWeber/complate/actions?query=workflow%3Apipeline)
 
 ## Introduction and use case
 

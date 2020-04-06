@@ -45,7 +45,7 @@ jobs:
         body: |
           Release ${{ steps.tag.outputs.tag }}.
         draft: false
-        prerelease: false
+        prerelease: true
     - run: printf ${{ steps.create_release.outputs.upload_url }} > ${{ env.RELEASE_FILE }}
     - name: Upload release id
       uses: actions/upload-artifact@v1.0.0
