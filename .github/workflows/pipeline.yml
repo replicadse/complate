@@ -44,7 +44,7 @@ jobs:
         release_name: ${{ steps.tag.outputs.tag }}
         body: |
           Release ${{ steps.tag.outputs.tag }}.
-        draft: false
+        draft: true
         prerelease: true
     - run: printf ${{ steps.create_release.outputs.upload_url }} > ${{ env.RELEASE_FILE }}
     - name: Upload release data
