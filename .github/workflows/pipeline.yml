@@ -70,6 +70,7 @@ jobs:
         cargo publish --allow-dirty
 
   publish:
+    needs: tag
     name: Publish for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
