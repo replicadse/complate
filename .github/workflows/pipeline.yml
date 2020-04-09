@@ -44,7 +44,7 @@ jobs:
         release_name: ${{ steps.tag.outputs.tag }}
         body: |
           Release ${{ steps.tag.outputs.tag }}.
-        draft: true
+        draft: false
         prerelease: true
     - run: printf ${{ steps.create_release.outputs.upload_url }} > ${{ env.RELEASE_FILE }}
     - name: Upload release data
@@ -91,7 +91,7 @@ jobs:
     - name: build-x86_64-apple-darwin
       run: |
         VERSION=${{ steps.get_version.outputs.VERSION }} make update-version && 
-        cargo build --release --target "x86_64-apple-darwin"
+        cargo build --release --target "x86_64-apple-darwin" --locked
     - name: zip
       run: cd ./target/x86_64-apple-darwin/release && tar -zcvf x86_64-apple-darwin.tar.gz complate
     - run: ls -algh
