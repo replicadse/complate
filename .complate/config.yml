@@ -14,7 +14,7 @@ templates:
             summary:
                 prompt: "Enter the summary"
             author.name:
-                static: "Weber, Heiko Alexander"
+                shell: "git config user.name"
             author.account:
                 shell: "whoami | tr -d '\n'"
             git.staged.files:
