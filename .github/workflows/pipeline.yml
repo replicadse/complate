@@ -53,22 +53,6 @@ jobs:
         name: RELEASE
         path: ${{ env.RELEASE_FILE }}
 
-  publish-cratesio:
-    needs: tag
-    name: crates.io
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Get version
-      id: get_version
-      run: echo ::set-output name=VERSION::$(git tag --points-at HEAD --sort -version:refname | head -1)
-    - name: Publish
-      id: publish
-      run: |
-        VERSION=${{ steps.get_version.outputs.VERSION }} make update-version && 
-        cargo login ${{ secrets.CRATES_IO_TOKEN }} && 
-        cargo publish --allow-dirty
-
   x86_64-apple-darwin:
     needs: tag
     name: x86_64-apple-darwin
