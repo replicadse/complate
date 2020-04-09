@@ -69,10 +69,18 @@ jobs:
         cargo login ${{ secrets.CRATES_IO_TOKEN }} && 
         cargo publish --allow-dirty
 
-  x86_64-apple-darwin:
-    needs: tag
-    name: x86_64-apple-darwin
-    runs-on: macos-latest
+  publish:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+        - os: macos-latest
+          target: x86_64-apple-darwin
+        - os: ubuntu-latest
+          target: x86_64-unknown-linux-gnu
+        - os: windows-latest
+          target: x86_64-pc-windows-gnu
     steps:
     - uses: actions/checkout@v1
     - name: Get version
@@ -86,19 +94,18 @@ jobs:
       id: get_release_data
       run: echo ::set-output name=upload_url::$(cat RELEASE/${{ env.RELEASE_FILE }})
     - name: install tools
-      run: |
-        rustup target install x86_64-apple-darwin
-    - name: build-x86_64-apple-darwin
+      run: rustup target install ${{ matrix.target }}
+    - name: build-${{ matrix.target }}
       run: |
         VERSION=${{ steps.get_version.outputs.VERSION }} make update-version && 
-        cargo build --release --target "x86_64-apple-darwin"
+        cargo build --release --target ${{ matrix.target }}
     - name: zip
-      run: cd ./target/x86_64-apple-darwin/release && tar -zcvf x86_64-apple-darwin.tar.gz complate
+      run: cd ./target/${{ matrix.target }}/release && tar -zcvf ${{ matrix.target }}.tar.gz complate
     - name: upload asset
       uses: svenstaro/upload-release-action@v1-release
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ./target/x86_64-apple-darwin/release/x86_64-apple-darwin.tar.gz
-        asset_name: x86_64-apple-darwin.tar.gz
+        file: ./target/${{ matrix.target }}/release/${{ matrix.target }}.tar.gz
+        asset_name: ${{ matrix.target }}.tar.gz
         tag: ${{ steps.get_version.outputs.VERSION }}
         overwrite: true
