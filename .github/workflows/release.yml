@@ -14,9 +14,6 @@ jobs:
     - uses: actions/checkout@v2
       with:
         ref: ${{ env.TAG }}
-        name: crates.io
-        runs-on: ubuntu-latest
-        steps:
     - name: Get version
       id: get_version
       run: echo ::set-output name=VERSION::$(git tag --points-at HEAD --sort -version:refname | head -1)
