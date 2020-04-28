@@ -6,8 +6,8 @@ edition = "2018"
 license = "MIT"
 description = "Standardizing messages the right way."
 readme = "docs/README.md"
-homepage = "https://heikoalexanderweber.github.io/complate/"
-repository = "https://github.com/HeikoAlexanderWeber/complate"
+homepage = "https://replicadse.github.io/complate/"
+repository = "https://github.com/replicadse/complate"
 keywords = ["cli", "template", "replace", "standardizing"]
 categories = ["command-line-utilities"]
 
