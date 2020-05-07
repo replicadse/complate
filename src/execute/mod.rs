@@ -1,7 +1,7 @@
+use crate::args::ShellTrust;
+use crate::config::ValueDefinition;
 use async_trait::async_trait;
-use std::io::{Result, Error, ErrorKind};
-use crate::args::{ShellTrust};
-use crate::config::{ValueDefinition};
+use std::io::{Error, ErrorKind, Result};
 
 #[async_trait]
 pub trait Execute {
@@ -15,8 +15,8 @@ impl Execute for ValueDefinition {
             ValueDefinition::Static(v) => Ok(v.to_owned()),
             ValueDefinition::Prompt(v) => prompt(v).await,
             ValueDefinition::Shell(cmd) => shell(cmd, shell_trust).await,
-            ValueDefinition::Select{text, options} => select(text, options).await,
-            ValueDefinition::Check{text, options} => check(text, options).await,
+            ValueDefinition::Select { text, options } => select(text, options).await,
+            ValueDefinition::Check { text, options } => check(text, options).await,
         }
     }
 }
@@ -30,18 +30,19 @@ async fn prompt(text: &str) -> Result<String> {
 
 async fn shell(command: &str, shell_trust: &ShellTrust) -> Result<String> {
     match shell_trust {
-        ShellTrust::None => {
-            return Err(Error::new(ErrorKind::Other, "no shell trust"))
-        },
+        ShellTrust::None => return Err(Error::new(ErrorKind::Other, "no shell trust")),
         ShellTrust::Prompt => {
             let exec = dialoguer::Confirmation::new()
                 .with_text(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command))
                 .interact()?;
-               if !exec {
-                   return Err(Error::new(ErrorKind::Other, "user declined command execution"));
-               }
-        },
-        ShellTrust::Ultimate => {},
+            if !exec {
+                return Err(Error::new(
+                    ErrorKind::Other,
+                    "user declined command execution",
+                ));
+            }
+        }
+        ShellTrust::Ultimate => {}
     }
 
     let output = std::process::Command::new("sh")
@@ -49,7 +50,7 @@ async fn shell(command: &str, shell_trust: &ShellTrust) -> Result<String> {
         .arg(command)
         .output()?;
     if output.status.code().unwrap() != 0 {
-        return Err(Error::new(ErrorKind::Other, "failed to run command"))
+        return Err(Error::new(ErrorKind::Other, "failed to run command"));
     }
     Ok(String::from_utf8(output.stdout).unwrap())
 }
@@ -67,7 +68,8 @@ async fn check(prompt: &str, options: &[String]) -> Result<String> {
     let indices = dialoguer::Checkboxes::new()
         .with_prompt(prompt)
         .items(options)
-        .interact().unwrap();
+        .interact()
+        .unwrap();
 
     match indices.len() {
         0usize => Ok("".to_owned()),

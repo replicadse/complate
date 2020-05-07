@@ -11,11 +11,10 @@ pub struct PrintArguments {
 pub enum ShellTrust {
     None,
     Prompt,
-    Ultimate
+    Ultimate,
 }
 
-pub struct ClapArgumentLoader {
-}
+pub struct ClapArgumentLoader {}
 
 impl ClapArgumentLoader {
     pub async fn load_from_cli() -> std::io::Result<Command> {
@@ -51,25 +50,26 @@ impl ClapArgumentLoader {
             Some(x) => {
                 let config_file = x.value_of("config").unwrap().to_owned();
                 let config = std::fs::read_to_string(config_file)?;
-        
+
                 let shell_trust = match x.value_of("shell-trust") {
                     Some(x) => match x {
                         "none" => ShellTrust::None,
                         "prompt" => ShellTrust::Prompt,
                         "ultimate" => ShellTrust::Ultimate,
-                        _ => ShellTrust::None
+                        _ => ShellTrust::None,
                     },
                     None => ShellTrust::None,
                 };
 
                 Ok(Command::Print(PrintArguments {
                     configuration: config,
-                    shell_trust
+                    shell_trust,
                 }))
             }
-            None => {
-                Err(std::io::Error::new(std::io::ErrorKind::Other, "could not resolve subcommand", ))
-            }
+            None => Err(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "could not resolve subcommand",
+            )),
         }
     }
 }

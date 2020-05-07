@@ -10,11 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Build
+    - name: Build program
       run: cargo build
-    - name: Test
+    - name: Check formatting
+      run: cargo fmt --all -- --check
+    - name: Execute tests
       run: cargo test
-    - name: Scan
+    - name: Scan code
       run: |
         rustup component add clippy &&
         cargo clippy --all-targets --all-features -- -D warnings

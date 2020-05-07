@@ -5,34 +5,35 @@ extern crate serde;
 extern crate serde_json;
 extern crate serde_yaml;
 
+use futures::executor::block_on;
+use std::collections::BTreeMap;
 use std::io::{Result, Write};
-use std::collections::{BTreeMap};
-use futures::executor::{block_on};
 
 pub mod args;
 use args::ShellTrust;
 pub mod config;
-use config::{Config, Template, Content};
+use config::{Config, Content, Template};
 pub mod execute;
-use execute::{Execute};
+use execute::Execute;
 
 async fn select_template(config: &Config) -> Result<&Template> {
-    let keys: Vec<String> = config.templates.keys().map(
-        |t| t.to_owned()
-    ).collect();
+    let keys: Vec<String> = config.templates.keys().map(|t| t.to_owned()).collect();
     let selection = dialoguer::Select::new()
         .items(keys.as_slice())
         .default(0)
         .paged(false)
         .interact()?;
-    
+
     match config.templates.get(&keys[selection]) {
         Some(x) => Ok(x),
         None => Err(std::io::Error::new(std::io::ErrorKind::Other, "failed")),
     }
 }
 
-async fn get_values(template: &Template, shell_trust: &ShellTrust) -> Result<BTreeMap<String, String>> {
+async fn get_values(
+    template: &Template,
+    shell_trust: &ShellTrust,
+) -> Result<BTreeMap<String, String>> {
     let mut values = BTreeMap::new();
     for value in &template.values {
         values.insert(value.0.to_owned(), value.1.execute(shell_trust).await?);
@@ -41,18 +42,27 @@ async fn get_values(template: &Template, shell_trust: &ShellTrust) -> Result<BTr
 }
 
 async fn replace(template: &str, values: &BTreeMap<String, String>) -> Result<String> {
-    fn recursive_add(namespace: &mut std::collections::VecDeque<String>, parent: &mut serde_json::Value, value: &str) {
+    fn recursive_add(
+        namespace: &mut std::collections::VecDeque<String>,
+        parent: &mut serde_json::Value,
+        value: &str,
+    ) {
         let current_namespace = namespace.pop_front().unwrap();
         match namespace.len() {
             0 => {
-                parent.as_object_mut().unwrap().entry(&current_namespace)
+                parent
+                    .as_object_mut()
+                    .unwrap()
+                    .entry(&current_namespace)
                     .or_insert(serde_json::Value::String(value.to_owned()));
             }
             _ => {
-                let p = parent.as_object_mut().unwrap().entry(&current_namespace)
+                let p = parent
+                    .as_object_mut()
+                    .unwrap()
+                    .entry(&current_namespace)
                     .or_insert(serde_json::Value::Object(serde_json::Map::new()));
-                recursive_add(
-                    namespace, p, value);
+                recursive_add(namespace, p, value);
             }
         }
     }
@@ -121,7 +131,8 @@ templates:
                     options:
                         - Default
                         - Security
-"###.to_owned()
+"###
+    .to_owned()
 }
 
 async fn async_main() -> Result<()> {
@@ -133,9 +144,7 @@ async fn async_main() -> Result<()> {
             std::fs::write("./.complate/config.yml", default_config().await)?;
             Ok(())
         }
-        crate::args::Command::Print(x) => {
-            print(x).await
-        }
+        crate::args::Command::Print(x) => print(x).await,
     }
 }
 
