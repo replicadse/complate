@@ -114,3 +114,8 @@ This project also uses complate templates that can be found in `./complate/confi
 |shell|Invokes a certain shell command and renders STDOUT as replacing string into the variable. Due to the fact that this option can run arbitrary shell commands, it is disabled by default. Pass the `--shell-trust` flag to the CLI in order to activate this feature.|-|
 |select|Gives the user the option to select _one_ item from the provided array of items.|text: string, options: []string|
 |check|Gives the user the option to select _n_ items from the provided array of items.|text: string, options: []string|
+
+<!-- cargo-sync-readme start -->
+
+
+<!-- cargo-sync-readme end -->

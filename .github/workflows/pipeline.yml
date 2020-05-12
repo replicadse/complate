@@ -14,11 +14,15 @@ jobs:
       run: cargo build
     - name: Check formatting
       run: cargo fmt --all -- --check
+    - name: Check README.md synchronization
+      run: |
+        cargo install --force cargo-sync-readme
+        cargo sync-readme -c
     - name: Execute tests
       run: cargo test
     - name: Scan code
       run: |
-        rustup component add clippy &&
+        rustup component add clippy
         cargo clippy --all-targets --all-features -- -D warnings
 
   tag:
