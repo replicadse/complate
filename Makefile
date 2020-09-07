@@ -30,6 +30,7 @@ open-coverage-html:
 
 scan:
 	cargo clippy --all-targets --all-features -- -D warnings
+	cargo fmt --all -- --check
 
 release:
 	cargo build --release
