@@ -1,3 +1,18 @@
+pub struct CallArgs {
+    pub call_mode: CallMode,
+    pub command: Command,
+}
+
+impl CallArgs {
+    pub async fn validate(&self) {
+    }
+}
+
+pub enum CallMode {
+    Normal,
+    Experimental
+}
+
 pub enum Command {
     Init,
     Print(PrintArguments),
@@ -17,11 +32,18 @@ pub enum ShellTrust {
 pub struct ClapArgumentLoader {}
 
 impl ClapArgumentLoader {
-    pub async fn load_from_cli() -> std::io::Result<Command> {
+    pub async fn load_from_cli() -> std::io::Result<CallArgs> {
         let command = clap::App::new("complate")
             .version(env!("CARGO_PKG_VERSION"))
             .about("A git commit buddy.")
             .author("Weber, Heiko Alexander <heiko.a.weber@gmail.com>")
+            .arg(clap::Arg::with_name("experimental")
+                    .short("e")
+                    .long("experimental")
+                    .value_name("EXPERIMENTAL")
+                    .help("Enables experimental features that do not count as stable.")
+                    .required(false)
+                    .takes_value(false))
             .subcommand(clap::App::new("init"))
             .subcommand(clap::App::new("print")
                 .arg(clap::Arg::with_name("config")
@@ -42,8 +64,17 @@ impl ClapArgumentLoader {
                     .takes_value(true)))
             .get_matches();
 
+        let call_mode = if command.is_present("experimental") {
+            CallMode::Experimental
+        } else {
+            CallMode::Normal
+        };
+
         if command.subcommand_matches("init").is_some() {
-            return Ok(Command::Init);
+            return Ok(CallArgs{
+                call_mode,
+                command: Command::Init,
+            });
         }
 
         match command.subcommand_matches("print") {
@@ -61,10 +92,13 @@ impl ClapArgumentLoader {
                     None => ShellTrust::None,
                 };
 
-                Ok(Command::Print(PrintArguments {
-                    configuration: config,
-                    shell_trust,
-                }))
+                Ok(CallArgs{
+                    call_mode,
+                    command: Command::Print(PrintArguments {
+                        configuration: config,
+                        shell_trust,
+                    })
+                })
             }
             None => Err(std::io::Error::new(
                 std::io::ErrorKind::Other,

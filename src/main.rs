@@ -137,8 +137,9 @@ templates:
 
 async fn async_main() -> Result<()> {
     let cmd = crate::args::ClapArgumentLoader::load_from_cli().await?;
+    cmd.validate().await;
 
-    match cmd {
+    match cmd.command {
         crate::args::Command::Init => {
             std::fs::create_dir_all("./.complate")?;
             std::fs::write("./.complate/config.yml", default_config().await)?;
