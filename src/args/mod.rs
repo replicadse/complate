@@ -1,16 +1,34 @@
+use std::io::Result;
+
 pub struct CallArgs {
-    pub call_mode: CallMode,
+    pub privileges: Privilege,
     pub command: Command,
 }
 
 impl CallArgs {
-    pub async fn validate(&self) {
+    #[allow(clippy::single_match)]
+    pub async fn validate(&self) -> Result<()> {
+        match self.privileges {
+            Privilege::Normal => match &self.command {
+                Command::Print(args) => match args.backend {
+                    #[cfg(feature = "backend::cli")]
+                    Backend::CLI => Ok(()),
+                    #[cfg(feature = "backend::ui")]
+                    Backend::UI => Err(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        "can not use backend::ui without experimental features being activated",
+                    )),
+                },
+                _ => Ok(()),
+            },
+            Privilege::Experimental => Ok(()),
+        }
     }
 }
 
-pub enum CallMode {
+pub enum Privilege {
     Normal,
-    Experimental
+    Experimental,
 }
 
 pub enum Command {
@@ -21,6 +39,7 @@ pub enum Command {
 pub struct PrintArguments {
     pub configuration: String,
     pub shell_trust: ShellTrust,
+    pub backend: Backend,
 }
 
 pub enum ShellTrust {
@@ -29,14 +48,29 @@ pub enum ShellTrust {
     Ultimate,
 }
 
+pub enum Backend {
+    #[cfg(feature = "backend::cli")]
+    CLI,
+    #[cfg(feature = "backend::ui")]
+    UI,
+}
+
 pub struct ClapArgumentLoader {}
 
 impl ClapArgumentLoader {
     pub async fn load_from_cli() -> std::io::Result<CallArgs> {
+        let mut backend_values = Vec::new();
+        if cfg!(feature = "backend::cli") {
+            backend_values.push("cli");
+        }
+        if cfg!(feature = "backend::ui") {
+            backend_values.push("ui");
+        }
+
         let command = clap::App::new("complate")
             .version(env!("CARGO_PKG_VERSION"))
             .about("A git commit buddy.")
-            .author("Weber, Heiko Alexander <heiko.a.weber@gmail.com>")
+            .author("Weber, Heiko Alexander <haw@voidpointergroup.com>")
             .arg(clap::Arg::with_name("experimental")
                     .short("e")
                     .long("experimental")
@@ -57,22 +91,34 @@ impl ClapArgumentLoader {
                     .takes_value(true))
                 .arg(clap::Arg::with_name("shell-trust")
                     .long("shell-trust")
+                    .value_name("SHELL_TRUST")
                     .help("Enables the shell mode. This is potentially insecure and should only be done for trustworthy sources.")
+                    .possible_values(&["none", "prompt", "ultimate"])
                     .multiple(false)
                     .required(false)
                     .default_value("none")
+                    .takes_value(true))
+                .arg(clap::Arg::with_name("backend")
+                    .short("b")
+                    .long("backend")
+                    .value_name("BACKEND")
+                    .help("The execution backend (cli=native-terminal, ui=ui emulator in terminal).")
+                    .possible_values(backend_values.as_slice())
+                    .default_value(backend_values.first().unwrap_or(&""))
+                    .multiple(false)
+                    .required(false)
                     .takes_value(true)))
             .get_matches();
 
-        let call_mode = if command.is_present("experimental") {
-            CallMode::Experimental
+        let privileges = if command.is_present("experimental") {
+            Privilege::Experimental
         } else {
-            CallMode::Normal
+            Privilege::Normal
         };
 
         if command.subcommand_matches("init").is_some() {
-            return Ok(CallArgs{
-                call_mode,
+            return Ok(CallArgs {
+                privileges,
                 command: Command::Init,
             });
         }
@@ -92,12 +138,33 @@ impl ClapArgumentLoader {
                     None => ShellTrust::None,
                 };
 
-                Ok(CallArgs{
-                    call_mode,
+                let backend = match x.value_of("backend") {
+                    Some(x) => match x {
+                        #[cfg(feature = "backend::cli")]
+                        "cli" => Backend::CLI,
+                        #[cfg(feature = "backend::ui")]
+                        "ui" => Backend::UI,
+                        _ => {
+                            return Err(std::io::Error::new(
+                                std::io::ErrorKind::Other,
+                                "unknown backend configuration",
+                            ))
+                        }
+                    },
+                    #[cfg(feature = "backend::cli")]
+                    None => Backend::CLI,
+                    #[cfg(feature = "backend::ui")]
+                    #[allow(unreachable_patterns)]
+                    None => Backend::UI,
+                };
+
+                Ok(CallArgs {
+                    privileges,
                     command: Command::Print(PrintArguments {
                         configuration: config,
                         shell_trust,
-                    })
+                        backend,
+                    }),
                 })
             }
             None => Err(std::io::Error::new(
