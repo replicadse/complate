@@ -58,6 +58,10 @@ All features that are marked as `experimental` are _not_ considered a public API
 |backend::cli|The CLI backend which maps to the original dialoguer implementation.|Yes|
 |baclend::ui|The UI backend which maps to the new cursive/fui implementation.|No|
 
+#### `backend::`
+
+Either one of the `backend::` flags (or both) MUST be enabled for `complate` to work (it won't compile otherwise).
+
 ### Application level arguments
 
 |Name|Short|Long|Description|
