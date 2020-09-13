@@ -56,7 +56,7 @@ All features that are marked as `experimental` are _not_ considered a public API
 |Name|Description|Default|
 |-- |-- |-- |
 |backend+cli|The CLI backend which maps to the original dialoguer implementation.|Yes|
-|baclend::ui|The UI backend which maps to the new cursive/fui implementation.|No|
+|backend+ui|The UI backend which maps to the new cursive/fui implementation.|No|
 
 #### `backend+`
 
