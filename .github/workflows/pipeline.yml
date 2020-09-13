@@ -6,10 +6,21 @@ env:
 
 jobs:
   check:
-    name: check
+    name: check (${{ matrix.name }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+        - name: "default"
+          features: ""
+        - name: "all"
+          features: --all-features
+        - name: "backend::ui"
+          features: --features "backend::ui" --no-default-features
     steps:
     - uses: actions/checkout@v1
+    - name: Install tools
+      run: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
     - name: Check formatting
       run: cargo fmt --all -- --check
     - name: Check README.md synchronization
@@ -19,11 +30,11 @@ jobs:
     - name: Scan code
       run: |
         rustup component add clippy
-        cargo clippy --all-targets --all-features -- -D warnings
+        cargo clippy --all-targets ${{ matrix.features }} -- -D warnings
     - name: Execute tests
-      run: cargo test
+      run: cargo test ${{ matrix.features }}
     - name: Build program
-      run: cargo build
+      run: cargo build ${{ matrix.features }}
 
   tag:
     if: github.ref == 'refs/heads/master'
@@ -51,7 +62,7 @@ jobs:
         body: |
           Release ${{ steps.tag.outputs.new_tag }}.
         draft: false
-        prerelease: true
+        prerelease: false
     - run: printf ${{ steps.create_release.outputs.upload_url }} > ${{ env.RELEASE_FILE }}
     - name: Upload release data
       uses: actions/upload-artifact@v1.0.0
@@ -68,6 +79,8 @@ jobs:
     - name: Get version
       id: get_version
       run: echo ::set-output name=VERSION::$(git tag --points-at HEAD --sort -version:refname | head -1)
+    - name: Install tools
+      run: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
     - name: Publish
       id: publish
       run: |
@@ -99,7 +112,9 @@ jobs:
       id: get_release_data
       run: echo ::set-output name=upload_url::$(cat RELEASE/${{ env.RELEASE_FILE }})
     - name: install tools
-      run: rustup target install ${{ matrix.target }}
+      run: |
+        sudo apt-get install build-essential libncurses5-dev libncursesw5-dev && 
+        rustup target install ${{ matrix.target }}
     - name: build-${{ matrix.target }}
       run: |
         VERSION=${{ steps.get_version.outputs.VERSION }} make update-version && 

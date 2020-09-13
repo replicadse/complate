@@ -1,5 +1,14 @@
+#[cfg(not(feature = "backend::cli"))]
+#[cfg(not(feature = "backend::ui"))]
+extern crate DO_NOT_COMPILE_WITHOUT_ANY_ENABLED_BACKEND;
+
 extern crate clap;
+#[cfg(feature = "backend::ui")]
+extern crate cursive;
+#[cfg(feature = "backend::cli")]
 extern crate dialoguer;
+#[cfg(feature = "backend::ui")]
+extern crate fui;
 extern crate handlebars;
 extern crate serde;
 extern crate serde_json;
@@ -10,21 +19,20 @@ use std::collections::BTreeMap;
 use std::io::{Result, Write};
 
 pub mod args;
-use args::ShellTrust;
+use args::{Backend, ShellTrust};
 pub mod config;
 use config::{Config, Content, Template};
-pub mod execute;
-use execute::Execute;
+pub mod print;
+use print::Print;
 
-async fn select_template(config: &Config) -> Result<&Template> {
+#[allow(clippy::needless_lifetimes)]
+async fn select_template<'a>(config: &'a Config, backend: &Backend) -> Result<&'a Template> {
     let keys: Vec<String> = config.templates.keys().map(|t| t.to_owned()).collect();
-    let selection = dialoguer::Select::new()
-        .items(keys.as_slice())
-        .default(0)
-        .paged(false)
-        .interact()?;
 
-    match config.templates.get(&keys[selection]) {
+    let be = backend.to_input()?;
+    let selection = be.select("", keys.as_slice()).await?;
+
+    match config.templates.get(&selection) {
         Some(x) => Ok(x),
         None => Err(std::io::Error::new(std::io::ErrorKind::Other, "failed")),
     }
@@ -33,10 +41,14 @@ async fn select_template(config: &Config) -> Result<&Template> {
 async fn get_values(
     template: &Template,
     shell_trust: &ShellTrust,
+    backend: &Backend,
 ) -> Result<BTreeMap<String, String>> {
     let mut values = BTreeMap::new();
     for value in &template.values {
-        values.insert(value.0.to_owned(), value.1.execute(shell_trust).await?);
+        values.insert(
+            value.0.to_owned(),
+            value.1.execute(shell_trust, backend).await?,
+        );
     }
     Ok(values)
 }
@@ -84,12 +96,17 @@ async fn replace(template: &str, values: &BTreeMap<String, String>) -> Result<St
 async fn print(invoke_options: args::PrintArguments) -> Result<()> {
     let cfg: Config = serde_yaml::from_str(&invoke_options.configuration).unwrap();
 
-    let template = select_template(&cfg).await?;
+    let template = select_template(&cfg, &invoke_options.backend).await?;
     let template_str = match &template.content {
         Content::Inline(x) => x.to_owned(),
         Content::File(x) => std::fs::read_to_string(x)?,
     };
-    let values = get_values(&template, &invoke_options.shell_trust).await?;
+    let values = get_values(
+        &template,
+        &invoke_options.shell_trust,
+        &invoke_options.backend,
+    )
+    .await?;
     let rendered = replace(&template_str, &values).await?;
 
     std::io::stdout().write_all(rendered.as_bytes())?;
@@ -97,48 +114,52 @@ async fn print(invoke_options: args::PrintArguments) -> Result<()> {
 }
 
 async fn default_config() -> String {
-    r###"version: 0.5
-
+    r###"version: 0.6
 templates:
     default:
         content:
             inline: |-
-                {{ summary }} | {{ version }}
-                Components: [{{ components }}]
-                Author: {{ author.name }} | {{ author.account }}
+                {{ a.summary }} | {{ e.version }}
+                Components: [{{ f.components }}]
+                Author: {{ b.author.name }} | {{ c.author.account }}
                 
                 Files:
-                {{ git.staged.files }}
+                {{ d.git.staged.files }}
         values:
-            summary:
+            a.summary:
                 prompt: "Enter the summary"
-            author.name:
-                static: "This is me!"
-            author.account:
+            b.author.name:
+                shell: "git config user.name | tr -d '\n'"
+            c.author.account:
                 shell: "whoami | tr -d '\n'"
-            git.staged.files:
+            d.git.staged.files:
                 shell: "git diff --name-status --cached"
-            version:
+            e.version:
                 select:
                     text: Select the version level that shall be incremented
                     options:
                         - "#patch"
                         - "#minor"
                         - "#major"
-            components:
+            f.components:
                 check:
                     text: Select the components that are affected
                     options:
-                        - Default
-                        - Security
+                        - security
+                        - command::print
+                        - backend::cli
+                        - backend::ui
+                        - misc
+    
 "###
     .to_owned()
 }
 
 async fn async_main() -> Result<()> {
     let cmd = crate::args::ClapArgumentLoader::load_from_cli().await?;
+    cmd.validate().await?;
 
-    match cmd {
+    match cmd.command {
         crate::args::Command::Init => {
             std::fs::create_dir_all("./.complate")?;
             std::fs::write("./.complate/config.yml", default_config().await)?;

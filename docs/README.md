@@ -47,61 +47,82 @@ The template itself can be declared as string inside the configuration file or a
 
 ## Technical documentation
 
-### Commands
+### Disclaimer
 
-|Command|Description|
-|-- |-- |
-|help|Prints the help to `STDOUT`.|
-|init|Initializes the default configuration in `./.complate/config.yml`|
-|print|Prompts for the template, prompts for variable values and prints the data to `STDOUT`|
+All features that are marked as `experimental` are _not_ considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see [semver v2](https://semver.org)). Use these features on your own risk!
 
-#### `print` command flags
+### Features
+
+|Name|Description|Default|
+|-- |-- |-- |
+|backend::cli|The CLI backend which maps to the original dialoguer implementation.|Yes|
+|baclend::ui|The UI backend which maps to the new cursive/fui implementation.|No|
+
+#### `backend::`
+
+Either one of the `backend::` flags (or both) MUST be enabled for `complate` to work (it won't compile otherwise).
+
+### Application level arguments
+
 |Name|Short|Long|Description|
 |-- |-- |-- |-- |
-|Config file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|
-|Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`|
+|Experimental|-e|--experimental|Activates experimental features that are not stable yet. All features that are marked as experimental are not referenced when keeping backwards compatibility inside one major version.|
+
+### Commands
+
+|Command|Description|Status|
+|-- |-- |-- |
+|help|Prints the help to `STDOUT`.|stable|
+|init|Initializes the default configuration in `./.complate/config.yml`|stable|
+|print|Prompts for the template, prompts for variable values and prints the data to `STDOUT`|stable|
+
+### `print` command flags
+|Name|Short|Long|Description|Status|
+|-- |-- |-- |-- |-- |
+|Config file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|stable|
+|Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`|stable|
+|Backend|-b|--backend|Defines the backend for the user interaction.|`CLI` is stable. `UI` is experimental (feature = "backend::ui").|
 
 ### Configuration file
 
-#### Example
-
 Please find an example for the configuration file here:
 ```
-version: 0.5
+version: 0.6
 templates:
     default:
         content:
             inline: |-
-                {{ summary }} | {{ version }}
-                Components: [{{ components }}]
-                Author: {{ author.name }} | {{ author.account }}
+                {{ a.summary }} | {{ e.version }}
+                Components: [{{ f.components }}]
+                Author: {{ b.author.name }} | {{ c.author.account }}
                 
                 Files:
-                {{ git.staged.files }}
+                {{ d.git.staged.files }}
         values:
-            summary:
+            a.summary:
                 prompt: "Enter the summary"
-            author.name:
-                static: "Reddington, Raymond"
-            author.account:
-                shell: "whoami"
-            git.staged.files:
+            b.author.name:
+                shell: "git config user.name | tr -d '\n'"
+            c.author.account:
+                shell: "whoami | tr -d '\n'"
+            d.git.staged.files:
                 shell: "git diff --name-status --cached"
-            version:
+            e.version:
                 select:
                     text: Select the version level that shall be incremented
                     options:
                         - "#patch"
                         - "#minor"
                         - "#major"
-            components:
+            f.components:
                 check:
                     text: Select the components that are affected
                     options:
-                        - Security
-                        - ValueProvider
-                        - CLI
-                        - Misc
+                        - security
+                        - command::print
+                        - backend::cli
+                        - backend::ui
+                        - misc
 
 ```
 This project also uses complate templates that can be found in `./complate/config.yml`.

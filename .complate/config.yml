@@ -1,36 +1,36 @@
-version: 0.5
-
+version: 0.6
 templates:
     default:
         content:
             inline: |-
-                {{ summary }} | {{ version }}
-                Components: [{{ components }}]
-                Author: {{ author.name }} | {{ author.account }}
+                {{ a.summary }} | {{ e.version }}
+                Components: [{{ f.components }}]
+                Author: {{ b.author.name }} | {{ c.author.account }}
                 
                 Files:
-                {{ git.staged.files }}
+                {{ d.git.staged.files }}
         values:
-            summary:
+            a.summary:
                 prompt: "Enter the summary"
-            author.name:
-                shell: "git config user.name"
-            author.account:
+            b.author.name:
+                shell: "git config user.name | tr -d '\n'"
+            c.author.account:
                 shell: "whoami | tr -d '\n'"
-            git.staged.files:
+            d.git.staged.files:
                 shell: "git diff --name-status --cached"
-            version:
+            e.version:
                 select:
                     text: Select the version level that shall be incremented
                     options:
                         - "#patch"
                         - "#minor"
                         - "#major"
-            components:
+            f.components:
                 check:
                     text: Select the components that are affected
                     options:
-                        - Security
-                        - ValueProvider
-                        - CLI
-                        - Misc
+                        - security
+                        - command::print
+                        - backend::cli
+                        - backend::ui
+                        - misc
