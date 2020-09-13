@@ -87,7 +87,7 @@ Either one of the `backend::` flags (or both) MUST be enabled for `complate` to 
 
 Please find an example for the configuration file here:
 ```
-version: 0.5
+version: 0.6
 templates:
     default:
         content:

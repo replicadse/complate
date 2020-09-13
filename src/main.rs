@@ -114,7 +114,7 @@ async fn print(invoke_options: args::PrintArguments) -> Result<()> {
 }
 
 async fn default_config() -> String {
-    r###"version: 0.5
+    r###"version: 0.6
 templates:
     default:
         content:
