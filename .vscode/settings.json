@@ -1,6 +1,6 @@
 {
     "rust-analyzer.cargo.features": [
-        "backend::cli",
-        "backend::ui",
+        "backend+cli",
+        "backend+ui",
     ]
 }

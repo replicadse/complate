@@ -55,12 +55,12 @@ All features that are marked as `experimental` are _not_ considered a public API
 
 |Name|Description|Default|
 |-- |-- |-- |
-|backend::cli|The CLI backend which maps to the original dialoguer implementation.|Yes|
+|backend+cli|The CLI backend which maps to the original dialoguer implementation.|Yes|
 |baclend::ui|The UI backend which maps to the new cursive/fui implementation.|No|
 
-#### `backend::`
+#### `backend+`
 
-Either one of the `backend::` flags (or both) MUST be enabled for `complate` to work (it won't compile otherwise).
+Either one of the `backend+` flags (or both) MUST be enabled for `complate` to work (it won't compile otherwise).
 
 ### Application level arguments
 
@@ -81,7 +81,7 @@ Either one of the `backend::` flags (or both) MUST be enabled for `complate` to 
 |-- |-- |-- |-- |-- |
 |Config file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|stable|
 |Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`|stable|
-|Backend|-b|--backend|Defines the backend for the user interaction.|`CLI` is stable. `UI` is experimental (feature = "backend::ui").|
+|Backend|-b|--backend|Defines the backend for the user interaction.|`CLI` is stable. `UI` is experimental (feature = "backend+ui").|
 
 ### Configuration file
 
@@ -120,8 +120,8 @@ templates:
                     options:
                         - security
                         - command::print
-                        - backend::cli
-                        - backend::ui
+                        - backend+cli
+                        - backend+ui
                         - misc
 
 ```

@@ -19,9 +19,9 @@ pub trait UserInput: Send + Sync {
 impl Backend {
     pub fn to_input(&self) -> Result<Box<dyn UserInput>> {
         Ok(match self {
-            #[cfg(feature = "backend::cli")]
+            #[cfg(feature = "backend+cli")]
             Backend::CLI => Box::new(cli::CLIBackend::new()) as Box<dyn UserInput>,
-            #[cfg(feature = "backend::ui")]
+            #[cfg(feature = "backend+ui")]
             Backend::UI => Box::new(ui::UIBackend::new()) as Box<dyn UserInput>,
         })
     }
@@ -69,7 +69,7 @@ async fn shell(command: &str, shell_trust: &ShellTrust, backend: &Backend) -> Re
     Ok(String::from_utf8(output.stdout).unwrap())
 }
 
-#[cfg(feature = "backend::cli")]
+#[cfg(feature = "backend+cli")]
 mod cli {
     use super::UserInput;
     use async_trait::async_trait;
@@ -129,7 +129,7 @@ mod cli {
     }
 }
 
-#[cfg(feature = "backend::ui")]
+#[cfg(feature = "backend+ui")]
 mod ui {
     use super::UserInput;
     use async_trait::async_trait;

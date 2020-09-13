@@ -31,6 +31,6 @@ templates:
                     options:
                         - security
                         - command::print
-                        - backend::cli
-                        - backend::ui
+                        - backend+cli
+                        - backend+ui
                         - misc

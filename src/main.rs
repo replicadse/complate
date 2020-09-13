@@ -1,13 +1,13 @@
-#[cfg(not(feature = "backend::cli"))]
-#[cfg(not(feature = "backend::ui"))]
+#[cfg(not(feature = "backend+cli"))]
+#[cfg(not(feature = "backend+ui"))]
 extern crate DO_NOT_COMPILE_WITHOUT_ANY_ENABLED_BACKEND;
 
 extern crate clap;
-#[cfg(feature = "backend::ui")]
+#[cfg(feature = "backend+ui")]
 extern crate cursive;
-#[cfg(feature = "backend::cli")]
+#[cfg(feature = "backend+cli")]
 extern crate dialoguer;
-#[cfg(feature = "backend::ui")]
+#[cfg(feature = "backend+ui")]
 extern crate fui;
 extern crate handlebars;
 extern crate serde;
@@ -147,8 +147,8 @@ templates:
                     options:
                         - security
                         - command::print
-                        - backend::cli
-                        - backend::ui
+                        - backend+cli
+                        - backend+ui
                         - misc
     
 "###

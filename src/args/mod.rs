@@ -11,12 +11,12 @@ impl CallArgs {
         match self.privileges {
             Privilege::Normal => match &self.command {
                 Command::Print(args) => match args.backend {
-                    #[cfg(feature = "backend::cli")]
+                    #[cfg(feature = "backend+cli")]
                     Backend::CLI => Ok(()),
-                    #[cfg(feature = "backend::ui")]
+                    #[cfg(feature = "backend+ui")]
                     Backend::UI => Err(std::io::Error::new(
                         std::io::ErrorKind::Other,
-                        "can not use backend::ui without experimental features being activated",
+                        "can not use backend+ui without experimental features being activated",
                     )),
                 },
                 _ => Ok(()),
@@ -49,9 +49,9 @@ pub enum ShellTrust {
 }
 
 pub enum Backend {
-    #[cfg(feature = "backend::cli")]
+    #[cfg(feature = "backend+cli")]
     CLI,
-    #[cfg(feature = "backend::ui")]
+    #[cfg(feature = "backend+ui")]
     UI,
 }
 
@@ -60,10 +60,10 @@ pub struct ClapArgumentLoader {}
 impl ClapArgumentLoader {
     pub async fn load_from_cli() -> std::io::Result<CallArgs> {
         let mut backend_values = Vec::new();
-        if cfg!(feature = "backend::cli") {
+        if cfg!(feature = "backend+cli") {
             backend_values.push("cli");
         }
-        if cfg!(feature = "backend::ui") {
+        if cfg!(feature = "backend+ui") {
             backend_values.push("ui");
         }
 
@@ -140,9 +140,9 @@ impl ClapArgumentLoader {
 
                 let backend = match x.value_of("backend") {
                     Some(x) => match x {
-                        #[cfg(feature = "backend::cli")]
+                        #[cfg(feature = "backend+cli")]
                         "cli" => Backend::CLI,
-                        #[cfg(feature = "backend::ui")]
+                        #[cfg(feature = "backend+ui")]
                         "ui" => Backend::UI,
                         _ => {
                             return Err(std::io::Error::new(
@@ -151,9 +151,9 @@ impl ClapArgumentLoader {
                             ))
                         }
                     },
-                    #[cfg(feature = "backend::cli")]
+                    #[cfg(feature = "backend+cli")]
                     None => Backend::CLI,
-                    #[cfg(feature = "backend::ui")]
+                    #[cfg(feature = "backend+ui")]
                     #[allow(unreachable_patterns)]
                     None => Backend::UI,
                 };
