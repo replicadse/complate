@@ -2,18 +2,6 @@
 #[cfg(not(feature = "backend+ui"))]
 extern crate DO_NOT_COMPILE_WITHOUT_ANY_ENABLED_BACKEND;
 
-extern crate clap;
-#[cfg(feature = "backend+ui")]
-extern crate cursive;
-#[cfg(feature = "backend+cli")]
-extern crate dialoguer;
-#[cfg(feature = "backend+ui")]
-extern crate fui;
-extern crate handlebars;
-extern crate serde;
-extern crate serde_json;
-extern crate serde_yaml;
-
 use futures::executor::block_on;
 use std::collections::BTreeMap;
 use std::io::{Result, Write};
