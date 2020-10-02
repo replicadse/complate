@@ -8,7 +8,7 @@ pub struct Config {
 #[serde(rename_all = "snake_case")]
 pub struct Template {
     pub content: Content,
-    pub values: std::collections::BTreeMap<String, ValueDefinition>,
+    pub values: std::collections::BTreeMap<String, VariableDefinition>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -20,7 +20,7 @@ pub enum Content {
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub enum ValueDefinition {
+pub enum VariableDefinition {
     Static(String),
     Prompt(String),
     Shell(String),
