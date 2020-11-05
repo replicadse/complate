@@ -84,7 +84,8 @@ Either one of the `backend+` flags (or both) MUST be enabled for `complate` to w
 
 |Name|Short|Long|Description|Remark|Status|
 |-- |-- |-- |-- |-- |--|
-|Config via file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./.complate/config.yml`.|Can not be used in conjunction with the `pipe` argument.|stable|
+|Config via STDIN pipe|-||The indicator that the config get's passed to the program via STDIN pipe.|Can not be used in conjunction with the `config` argument.|stable|
+|Config via file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|Can not be used in conjunction with the `pipe` argument.|stable|
 |Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`||stable|
 |Backend|-b|--backend|Defines the backend for the user interaction.||`CLI` is stable. `UI` is experimental (feature = "backend+ui").
 

@@ -1,4 +1,4 @@
-use std::io::Result;
+use std::io::{stdin, Read, Result};
 
 pub struct CallArgs {
     pub privileges: Privilege,
@@ -80,6 +80,12 @@ impl ClapArgumentLoader {
                     .takes_value(false))
             .subcommand(clap::App::new("init"))
             .subcommand(clap::App::new("print")
+                .arg(clap::Arg::with_name("-")
+                    .short("-")
+                    .help("Pipe indicates to read the config from STDIN")
+                    .multiple(false)
+                    .required(false)
+                    .takes_value(false))
                 .arg(clap::Arg::with_name("config")
                     .short("c")
                     .long("config")
@@ -125,8 +131,22 @@ impl ClapArgumentLoader {
 
         match command.subcommand_matches("print") {
             Some(x) => {
-                let config_file = x.value_of("config").unwrap().to_owned();
-                let config = std::fs::read_to_string(config_file)?;
+                let mut config = Option::<String>::None;
+                if x.is_present("-") {
+                    let mut buffer = String::new();
+                    let mut stdin = stdin();
+                    stdin.read_to_string(&mut buffer)?;
+                    config = Some(buffer)
+                } else if x.is_present("config") {
+                    let config_file = x.value_of("config").unwrap().to_owned();
+                    config = Some(std::fs::read_to_string(config_file)?);
+                }
+                if config.is_none() {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        "configuration not specified",
+                    ));
+                }
 
                 let shell_trust = match x.value_of("shell-trust") {
                     Some(x) => match x {
@@ -161,7 +181,7 @@ impl ClapArgumentLoader {
                 Ok(CallArgs {
                     privileges,
                     command: Command::Print(PrintArguments {
-                        configuration: config,
+                        configuration: config.unwrap(),
                         shell_trust,
                         backend,
                     }),
