@@ -134,8 +134,8 @@ impl ClapArgumentLoader {
                 let mut config = Option::<String>::None;
                 if x.is_present("-") {
                     let mut buffer = String::new();
-                    let mut stdin = stdin();
-                    stdin.read_to_string(&mut buffer)?;
+                    let stdin = stdin();
+                    stdin.lock().read_to_string(&mut buffer)?;
                     config = Some(buffer)
                 } else if x.is_present("config") {
                     let config_file = x.value_of("config").unwrap().to_owned();
