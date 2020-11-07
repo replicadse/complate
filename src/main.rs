@@ -61,7 +61,8 @@ async fn async_main() -> Result<()> {
             Ok(())
         }
         crate::args::Command::Print(x) => {
-            std::io::stdout().write_all(crate::render::select_and_render(x).await?.as_bytes())?;
+            let res = crate::render::select_and_render(x).await?;
+            std::io::stdout().write_all(res.as_bytes())?;
             Ok(())
         }
     }

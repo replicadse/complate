@@ -10,15 +10,17 @@ impl CallArgs {
     pub async fn validate(&self) -> Result<()> {
         match self.privileges {
             Privilege::Normal => match &self.command {
-                Command::Print(args) => match args.backend {
-                    #[cfg(feature = "backend+cli")]
-                    Backend::CLI => Ok(()),
-                    #[cfg(feature = "backend+ui")]
-                    Backend::UI => Err(std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        "can not use backend+ui without experimental features being activated",
-                    )),
-                },
+                Command::Print(args) => {
+                    match args.backend {
+                        #[cfg(feature = "backend+ui")]
+                        Backend::UI => return Err(std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            "can not use backend+ui without experimental features being activated",
+                        )),
+                        Backend::CLI => {}
+                    };
+                    Ok(())
+                }
                 _ => Ok(()),
             },
             Privilege::Experimental => Ok(()),
@@ -131,22 +133,29 @@ impl ClapArgumentLoader {
 
         match command.subcommand_matches("print") {
             Some(x) => {
-                let mut config = Option::<String>::None;
-                if x.is_present("-") {
+                let config = if x.is_present("-") {
+                    match privileges {
+                        Privilege::Normal => {
+                            return Err(std::io::Error::new(
+                                std::io::ErrorKind::Other,
+                                "can not use pipe argument without experimental features being activated",
+                            ));
+                        }
+                        Privilege::Experimental => {}
+                    }
                     let mut buffer = String::new();
                     let stdin = stdin();
                     stdin.lock().read_to_string(&mut buffer)?;
-                    config = Some(buffer)
+                    buffer
                 } else if x.is_present("config") {
                     let config_file = x.value_of("config").unwrap().to_owned();
-                    config = Some(std::fs::read_to_string(config_file)?);
-                }
-                if config.is_none() {
+                    std::fs::read_to_string(config_file)?
+                } else {
                     return Err(std::io::Error::new(
                         std::io::ErrorKind::Other,
                         "configuration not specified",
                     ));
-                }
+                };
 
                 let shell_trust = match x.value_of("shell-trust") {
                     Some(x) => match x {
@@ -181,7 +190,7 @@ impl ClapArgumentLoader {
                 Ok(CallArgs {
                     privileges,
                     command: Command::Print(PrintArguments {
-                        configuration: config.unwrap(),
+                        configuration: config,
                         shell_trust,
                         backend,
                     }),
