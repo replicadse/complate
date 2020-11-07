@@ -17,6 +17,7 @@ impl CallArgs {
                             std::io::ErrorKind::Other,
                             "can not use backend+ui without experimental features being activated",
                         )),
+                        #[cfg(feature = "backend+cli")]
                         Backend::CLI => {}
                     };
                     Ok(())
