@@ -10,6 +10,10 @@ case $1 in
         ln -s ../scripts/git-hooks .git/hooks
         chmod -R +x ./scripts/*
         ;;
+    
+    docs)
+        cd ./docs/wiki && mdbook serve
+        ;;
 
     update-version)
         sed 's/version = "0.0.0"/version = "'$2'"/g' Cargo.toml > Cargo.toml.tmp
