@@ -12,7 +12,7 @@ case $1 in
         ;;
     
     docs)
-        cd ./docs/wiki && mdbook serve
+        cd ./docs/wiki && mdbook serve & open http://localhost:3000 && fg
         ;;
 
     update-version)
