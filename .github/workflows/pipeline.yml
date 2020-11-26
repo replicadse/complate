@@ -84,7 +84,8 @@ jobs:
     - name: Publish
       id: publish
       run: |
-        VERSION=${{ steps.get_version.outputs.VERSION }} make update-version && 
+        chmod +x ./do.sh && 
+        bash ./do.sh update-version ${{ steps.get_version.outputs.VERSION }} && 
         cargo login ${{ secrets.CRATES_IO_TOKEN }} && 
         cargo publish --allow-dirty
 
@@ -119,7 +120,8 @@ jobs:
         rustup target install ${{ matrix.target }}
     - name: build-${{ matrix.target }}
       run: |
-        VERSION=${{ steps.get_version.outputs.VERSION }} make update-version && 
+        chmod +x ./do.sh && 
+        bash ./do.sh update-version ${{ steps.get_version.outputs.VERSION }} && 
         cargo build --release --target ${{ matrix.target }}
     - name: zip
       run: cd ./target/${{ matrix.target }}/release && tar -zcvf ${{ matrix.target }}.tar.gz complate
