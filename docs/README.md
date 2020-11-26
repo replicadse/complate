@@ -34,16 +34,18 @@ Repository root
 │       └── template-a.tpl
 ├── src
 │   └── *
-└── docs
+├── docs
     └── *
+└── ...
 ```
 
-`complate` writes the generated message to the stdout pipe.\
+This way, the `complate` program is redistributed via the GIT repository. If that's not what you want, simply keep the binary in your machine. As long as the configuration file version number fits your installed program major version you're good to go.
 Expecting the recommended folder structure, you should be able to simply run `./.complate/complate print | git commit -F -` in order to create a new standardized commit.
 
 ## General overview
 
-The template itself can be declared as string inside the configuration file or as a reference to a file that contains the template. The template string can contain variables in handlebars syntax ( `{{ variable}}` ). All distinct variables must have a representation in the according section that then also defines on how to find the value for this variable.
+The template itself can be declared as string inside the configuration file or as a reference to a file that contains the template. The template string can contain variables in handlebars syntax ( `{{ variable}}` ). All distinct variables must have a representation in the according section that then also defines on how to find the value for this variable.\
+Pro tip: Variables are prompted in alphabetical order. Prefix you variable with `a`, `b`, `c` and such to generate a custom order.
 
 ## Technical documentation
 
@@ -66,7 +68,7 @@ Either one of the `backend+` flags (or both) MUST be enabled for `complate` to w
 
 |Name|Short|Long|Description|
 |-- |-- |-- |-- |
-|Experimental|-e|--experimental|Activates experimental features that are not stable yet. All features that are marked as experimental are not referenced when keeping backwards compatibility inside one major version.|
+|Experimental|-e|--experimental|Activates experimental features that are not stable yet. All features that are marked as experimental are ignored when keeping backwards compatibility inside one major version.|
 
 ### Commands
 
@@ -77,11 +79,12 @@ Either one of the `backend+` flags (or both) MUST be enabled for `complate` to w
 |print|Prompts for the template, prompts for variable values and prints the data to `STDOUT`|stable|
 
 ### `print` command flags
-|Name|Short|Long|Description|Status|
-|-- |-- |-- |-- |-- |
-|Config file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|stable|
-|Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`|stable|
-|Backend|-b|--backend|Defines the backend for the user interaction.|`CLI` is stable. `UI` is experimental (feature = "backend+ui").|
+
+|Name|Short|Long|Description|Remark|Status|
+|-- |-- |-- |-- |-- |--|
+|Config via file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./.complate/config.yml`.|Can not be used in conjunction with the `pipe` argument.|stable|
+|Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`||stable|
+|Backend|-b|--backend|Defines the backend for the user interaction.||`CLI` is stable. `UI` is experimental (feature = "backend+ui").
 
 ### Configuration file
 
@@ -91,6 +94,7 @@ version: 0.6
 templates:
     default:
         content:
+            file: ./.complate/templates/template-a.tpl
             inline: |-
                 {{ a.summary }} | {{ e.version }}
                 Components: [{{ f.components }}]
@@ -125,7 +129,7 @@ templates:
                         - misc
 
 ```
-This project also uses complate templates that can be found in `./complate/config.yml`.
+This project also uses complate. The templates that can be found in `./complate/config.yml`.
 
 #### Value providers
 
