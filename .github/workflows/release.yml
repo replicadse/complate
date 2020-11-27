@@ -48,7 +48,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - run: git tag ${{ github.event.inputs.version }} && git push origin ${{ github.event.inputs.version }}
     - name: create release
       id: create_release
       uses: actions/create-release@latest
