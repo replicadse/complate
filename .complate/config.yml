@@ -3,7 +3,7 @@ templates:
     default:
         content:
             inline: |-
-                Summary: {{ a.summary }}
+                {{ a.summary }}
                 Remarks: {{ b.remarks }}
                 Components: {{ c.components }}
         values:
