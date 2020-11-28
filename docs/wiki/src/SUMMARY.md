@@ -1,6 +1,6 @@
 # Summary
 
-- [Architecture Decision Records]()
+- [Architecture Decision Records](SUMMARY.md)
   - [ADR 1: Usage of ADRs](./adrs/1.md)
   - [ADR 2: Usage of key words](./adrs/2.md)
   - [ADR 3: Versioning](./adrs/3.md)

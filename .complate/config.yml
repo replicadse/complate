@@ -3,34 +3,23 @@ templates:
     default:
         content:
             inline: |-
-                {{ a.summary }} | {{ e.version }}
-                Components: [{{ f.components }}]
-                Author: {{ b.author.name }} | {{ c.author.account }}
-                
-                Files:
-                {{ d.git.staged.files }}
+                Summary: {{ a.summary }}
+                Remarks: {{ b.remarks }}
+                Components: {{ c.components }}
         values:
             a.summary:
-                prompt: "Enter the summary"
-            b.author.name:
-                shell: "git config user.name | tr -d '\n'"
-            c.author.account:
-                shell: "whoami | tr -d '\n'"
-            d.git.staged.files:
-                shell: "git diff --name-status --cached"
-            e.version:
-                select:
-                    text: Select the version level that shall be incremented
-                    options:
-                        - "#patch"
-                        - "#minor"
-                        - "#major"
-            f.components:
+                prompt: "Summary"
+            b.remarks:
+                prompt: "Remarks"
+            c.components:
                 check:
                     text: Select the components that are affected
                     options:
                         - security
-                        - command::print
+                        - command:init
+                        - command:print
                         - backend+cli
                         - backend+ui
+                        - docs
+                        - ci
                         - misc
