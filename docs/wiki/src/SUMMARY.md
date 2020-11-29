@@ -1,5 +1,7 @@
 # Summary
 
+- [Documentation](SUMMARY.md)
+  - [Configuration schema](./config.md)
 - [Architecture Decision Records](SUMMARY.md)
   - [ADR 1: Usage of ADRs](./adrs/1.md)
   - [ADR 2: Usage of key words](./adrs/2.md)

@@ -90,63 +90,8 @@ Either one of the `backend+` flags (or both) MUST be enabled for `complate` to w
 
 ### Configuration file
 
-Please find an example for the configuration file here:
-```
-version: 0.6
-templates:
-    one:
-        content:
-            file: ./.complate/templates/arbitraty-template-file.tpl
-        values:
-            a.summary:
-                static: "random summary"
-    two:
-        content:
-            inline: |-
-                {{ a.summary }} | {{ e.version }}
-                Components: [{{ f.components }}]
-                Author: {{ b.author.name }} | {{ c.author.account }}
-                
-                Files:
-                {{ d.git.staged.files }}
-        values:
-            a.summary:
-                prompt: "Enter the summary"
-            b.author.name:
-                shell: "git config user.name | tr -d '\n'"
-            c.author.account:
-                shell: "whoami | tr -d '\n'"
-            d.git.staged.files:
-                shell: "git diff --name-status --cached"
-            e.version:
-                select:
-                    text: Select the version level that shall be incremented
-                    options:
-                        - "#patch"
-                        - "#minor"
-                        - "#major"
-            f.components:
-                check:
-                    text: Select the components that are affected
-                    options:
-                        - security
-                        - command::print
-                        - backend+cli
-                        - backend+ui
-                        - misc
-
-```
+Please find an example for the configuration file in the wiki.
 This project also uses complate. The templates that can be found in `./complate/config.yml`.
-
-#### Value providers
-
-|Type|Description|Fields|
-|-- |-- |-- |
-|static|Replaces the value by a static string.|-|
-|prompt|Asks the user for input when executing the templating process.|text: string|
-|shell|Invokes a certain shell command and renders STDOUT as replacing string into the variable. Due to the fact that this option can run arbitrary shell commands, it is disabled by default. Pass the `--shell-trust` flag to the CLI in order to activate this feature.|-|
-|select|Gives the user the option to select _one_ item from the provided array of items.|text: string, options: []string|
-|check|Gives the user the option to select _n_ items from the provided array of items.|text: string, options: []string|
 
 <!-- cargo-sync-readme start -->
 

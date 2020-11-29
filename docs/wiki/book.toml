@@ -3,7 +3,7 @@ authors = ["Heiko Alexander Weber"]
 language = "en"
 multilingual = false
 src = "src"
-title = "Architecture Decision Records"
+title = "complate wiki"
 
 [output.html]
 mathjax-support = true
