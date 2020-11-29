@@ -94,9 +94,14 @@ Please find an example for the configuration file here:
 ```
 version: 0.6
 templates:
-    default:
+    one:
         content:
-            file: ./.complate/templates/template-a.tpl
+            file: ./.complate/templates/arbitraty-template-file.tpl
+        values:
+            a.summary:
+                static: "random summary"
+    two:
+        content:
             inline: |-
                 {{ a.summary }} | {{ e.version }}
                 Components: [{{ f.components }}]
