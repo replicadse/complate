@@ -13,6 +13,7 @@
 Many projects and teams are standardizing their commit messages in a certain way. This is somewhat error prone and people just tend to mess things up. Spaces, spelling errors or linebreaks are common issues that lead to inconsistency. It can also have more effects than just consistency in the format. If you use [github-tag-action by anothrnick](https://github.com/anothrNick/github-tag-action) in GitHub Workflows, the commit message can have direct influence on your version number that is generated on build.
 
 ## Installation via `cargo`
+
 Find this project on [crates.io](https://crates.io/crates/complate).
 Install or update (update needs the `--force` flag) the software by executing:
 ```
