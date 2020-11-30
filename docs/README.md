@@ -84,7 +84,7 @@ Either one of the `backend+` features (or both) MUST be enabled for `complate` t
 
 |Name|Short|Long|Description|Remark|Status|
 |-- |-- |-- |-- |-- |--|
-|Config|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|When setting this argument to pipe (`-`), the config is parsed from the STDIN descriptor to the print command.|stable for file path, experimental for STDIN descriptor|
+|Config|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|When setting this argument to pipe (`-`), the config is parsed from the STDIN descriptor to the print command.|stable for file path, experimental for STDIN descriptor. Pipe is only supported for `UI` backend|
 |Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`||stable|
 |Template|-t|--template|Skip the template selection by defining the used template from the configuration via this argument||stable|
 |Backend|-b|--backend|Defines the backend for the user interaction.||`CLI` is stable. `UI` is experimental (feature = "backend+ui").
