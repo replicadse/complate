@@ -192,7 +192,7 @@ mod cli {
         }
 
         async fn check(&self, prompt: &str, options: &[String]) -> Result<String> {
-            let indices = dialoguer::Checkboxes::new()
+            let indices = dialoguer::MultiSelect::new()
                 .with_prompt(prompt)
                 .items(options)
                 .interact()

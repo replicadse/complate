@@ -1,4 +1,4 @@
-use std::io::Result;
+use std::io::{stdin, Read, Result};
 
 pub struct CallArgs {
     pub privileges: Privilege,
@@ -10,15 +10,18 @@ impl CallArgs {
     pub async fn validate(&self) -> Result<()> {
         match self.privileges {
             Privilege::Normal => match &self.command {
-                Command::Print(args) => match args.backend {
-                    #[cfg(feature = "backend+cli")]
-                    Backend::CLI => Ok(()),
-                    #[cfg(feature = "backend+ui")]
-                    Backend::UI => Err(std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        "can not use backend+ui without experimental features being activated",
-                    )),
-                },
+                Command::Print(args) => {
+                    match args.backend {
+                        #[cfg(feature = "backend+ui")]
+                        Backend::UI => return Err(std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            "can not use backend+ui without experimental features being activated",
+                        )),
+                        #[cfg(feature = "backend+cli")]
+                        Backend::CLI => {}
+                    };
+                    Ok(())
+                }
                 _ => Ok(()),
             },
             Privilege::Experimental => Ok(()),
@@ -80,6 +83,12 @@ impl ClapArgumentLoader {
                     .takes_value(false))
             .subcommand(clap::App::new("init"))
             .subcommand(clap::App::new("print")
+                .arg(clap::Arg::with_name("-")
+                    .short("-")
+                    .help("Pipe indicates to read the config from STDIN")
+                    .multiple(false)
+                    .required(false)
+                    .takes_value(false))
                 .arg(clap::Arg::with_name("config")
                     .short("c")
                     .long("config")
@@ -125,8 +134,29 @@ impl ClapArgumentLoader {
 
         match command.subcommand_matches("print") {
             Some(x) => {
-                let config_file = x.value_of("config").unwrap().to_owned();
-                let config = std::fs::read_to_string(config_file)?;
+                let config = if x.is_present("-") {
+                    match privileges {
+                        Privilege::Normal => {
+                            return Err(std::io::Error::new(
+                                std::io::ErrorKind::Other,
+                                "can not use pipe argument without experimental features being activated",
+                            ));
+                        }
+                        Privilege::Experimental => {}
+                    }
+                    let mut buffer = String::new();
+                    let stdin = stdin();
+                    stdin.lock().read_to_string(&mut buffer)?;
+                    buffer
+                } else if x.is_present("config") {
+                    let config_file = x.value_of("config").unwrap().to_owned();
+                    std::fs::read_to_string(config_file)?
+                } else {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        "configuration not specified",
+                    ));
+                };
 
                 let shell_trust = match x.value_of("shell-trust") {
                     Some(x) => match x {
