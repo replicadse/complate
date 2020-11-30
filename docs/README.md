@@ -90,9 +90,9 @@ Either one of the `backend+` features (or both) MUST be enabled for `complate` t
 |Backend|-b|--backend|Defines the backend for the user interaction.||`CLI` is stable. `UI` is experimental (feature = "backend+ui").
 
 **Examples:**
-* complate print
-* complate print -f .complate/alternative.yml
-* cat .complate/alternative.yml | complate -e print -c- -bui -t0.default
+* `complate print`
+* `complate print -f .complate/alternative.yml`
+* `cat .complate/alternative.yml | complate -e print -c- -bui -t0.default`
 
 ### Configuration file
 
