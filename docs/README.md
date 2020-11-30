@@ -64,7 +64,7 @@ All features that are marked as `experimental` are _not_ considered a public API
 
 #### `backend+`
 
-Either one of the `backend+` flags (or both) MUST be enabled for `complate` to work (it won't compile otherwise).
+Either one of the `backend+` features (or both) MUST be enabled for `complate` to work (it won't compile otherwise).
 
 ### Application level arguments
 
@@ -84,15 +84,19 @@ Either one of the `backend+` flags (or both) MUST be enabled for `complate` to w
 
 |Name|Short|Long|Description|Remark|Status|
 |-- |-- |-- |-- |-- |--|
-|Config via STDIN pipe|-||The indicator that the config get's passed to the program via STDIN pipe.|Can not be used in conjunction with the `config` argument. Only works with UI backend right now (see: mitsuhiko/dialoguer#93).|experimental|
-|Config via file path|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|Can not be used in conjunction with the `pipe` argument.|stable|
+|Config|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|When setting this argument to pipe (`-`), the config is parsed from the STDIN descriptor to the print command.|stable for file path, experimental for STDIN descriptor|
 |Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`||stable|
 |Backend|-b|--backend|Defines the backend for the user interaction.||`CLI` is stable. `UI` is experimental (feature = "backend+ui").
 
+**Examples:**
+* complate print
+* complate print -f .complate/alternative.yml
+* cat .complate/alternative.yml | complate -e print -c- -bui
+
 ### Configuration file
 
-Please find an example for the configuration file in the wiki.
-This project also uses complate. The templates that can be found in `./complate/config.yml`.
+Please find an example amd the documentation for the configuration format in the wiki.\
+The templates for this project that can be found in `./complate/config.yml`.
 
 <!-- cargo-sync-readme start -->
 

@@ -83,12 +83,6 @@ impl ClapArgumentLoader {
                     .takes_value(false))
             .subcommand(clap::App::new("init"))
             .subcommand(clap::App::new("print")
-                .arg(clap::Arg::with_name("-")
-                    .short("-")
-                    .help("Pipe indicates to read the config from STDIN")
-                    .multiple(false)
-                    .required(false)
-                    .takes_value(false))
                 .arg(clap::Arg::with_name("config")
                     .short("c")
                     .long("config")
@@ -134,23 +128,25 @@ impl ClapArgumentLoader {
 
         match command.subcommand_matches("print") {
             Some(x) => {
-                let config = if x.is_present("-") {
-                    match privileges {
-                        Privilege::Normal => {
-                            return Err(std::io::Error::new(
-                                std::io::ErrorKind::Other,
-                                "can not use pipe argument without experimental features being activated",
-                            ));
+                let config = if x.is_present("config") {
+                    let config_param = x.value_of("config").unwrap();
+                    if config_param == "-" {
+                        match privileges {
+                            Privilege::Normal => {
+                                return Err(std::io::Error::new(
+                                    std::io::ErrorKind::Other,
+                                    "can not use pipe argument without experimental features being activated",
+                                ));
+                            }
+                            Privilege::Experimental => {}
                         }
-                        Privilege::Experimental => {}
+                        let mut buffer = String::new();
+                        let stdin = stdin();
+                        stdin.lock().read_to_string(&mut buffer)?;
+                        buffer
+                    } else {
+                        std::fs::read_to_string(config_param.to_owned())?
                     }
-                    let mut buffer = String::new();
-                    let stdin = stdin();
-                    stdin.lock().read_to_string(&mut buffer)?;
-                    buffer
-                } else if x.is_present("config") {
-                    let config_file = x.value_of("config").unwrap().to_owned();
-                    std::fs::read_to_string(config_file)?
                 } else {
                     return Err(std::io::Error::new(
                         std::io::ErrorKind::Other,
