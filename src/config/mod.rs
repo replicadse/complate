@@ -1,6 +1,7 @@
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct Config {
     pub version: String,
+    #[serde(default)]
     pub templates: std::collections::BTreeMap<String, Template>,
 }
 
@@ -8,6 +9,7 @@ pub struct Config {
 #[serde(rename_all = "snake_case")]
 pub struct Template {
     pub content: Content,
+    #[serde(default)]
     pub values: std::collections::BTreeMap<String, VariableDefinition>,
 }
 

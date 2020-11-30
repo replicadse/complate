@@ -1,6 +1,6 @@
 version: 0.6
 templates:
-    default:
+    0.default:
         content:
             inline: |-
                 {{ a.summary }}
@@ -23,3 +23,7 @@ templates:
                         - docs
                         - ci
                         - misc
+    1.skrrrrrr:
+        content:
+            inline: |-
+                skrrrr
