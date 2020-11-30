@@ -41,6 +41,7 @@ pub enum Command {
 
 pub struct PrintArguments {
     pub configuration: String,
+    pub template: Option<String>,
     pub shell_trust: ShellTrust,
     pub backend: Backend,
 }
@@ -89,6 +90,14 @@ impl ClapArgumentLoader {
                     .value_name("FILE")
                     .help("The configuration file to use.")
                     .default_value("./.complate/config.yml")
+                    .multiple(false)
+                    .required(false)
+                    .takes_value(true))
+                .arg(clap::Arg::with_name("template")
+                    .short("t")
+                    .long("template")
+                    .value_name("TEMPLATE")
+                    .help("Specify the template to use from the config and skip it's selection.")
                     .multiple(false)
                     .required(false)
                     .takes_value(true))
@@ -154,6 +163,12 @@ impl ClapArgumentLoader {
                     ));
                 };
 
+                let template = if x.is_present("template") {
+                    Some(x.value_of("template").unwrap().to_owned())
+                } else {
+                    None
+                };
+
                 let shell_trust = match x.value_of("shell-trust") {
                     Some(x) => match x {
                         "none" => ShellTrust::None,
@@ -188,6 +203,7 @@ impl ClapArgumentLoader {
                     privileges,
                     command: Command::Print(PrintArguments {
                         configuration: config,
+                        template,
                         shell_trust,
                         backend,
                     }),

@@ -72,7 +72,10 @@ pub async fn populate_variables(
 pub async fn select_and_render(invoke_options: crate::args::PrintArguments) -> Result<String> {
     let cfg: Config = serde_yaml::from_str(&invoke_options.configuration).unwrap();
 
-    let template = select_template(&cfg, &invoke_options.backend).await?;
+    let template = match invoke_options.template {
+        Some(x) => cfg.templates.get(&x).unwrap(),
+        None => select_template(&cfg, &invoke_options.backend).await?
+    };
     let template_str = match &template.content {
         Content::Inline(x) => x.to_owned(),
         Content::File(x) => std::fs::read_to_string(x)?,
