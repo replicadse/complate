@@ -1,5 +1,5 @@
 use crate::args::{Backend, ShellTrust};
-use crate::config::{Config, Content, Template, VariableDefinition};
+use crate::config::{Config, Content, Option, Template, VariableDefinition};
 use async_trait::async_trait;
 use std::collections::BTreeMap;
 use std::io::{Error, ErrorKind, Result};
@@ -46,7 +46,14 @@ pub async fn render(template: &str, values: &BTreeMap<String, String>) -> Result
 
 #[allow(clippy::needless_lifetimes)]
 pub async fn select_template<'a>(config: &'a Config, backend: &Backend) -> Result<&'a Template> {
-    let keys: Vec<String> = config.templates.keys().map(|t| t.to_owned()).collect();
+    let keys: Vec<Option> = config
+        .templates
+        .keys()
+        .map(|t| Option {
+            display: t.to_owned(),
+            value: t.to_owned(),
+        })
+        .collect();
 
     let be = backend.to_input()?;
     let selection = be.select("", keys.as_slice()).await?;
@@ -98,8 +105,8 @@ pub trait Resolve {
 pub trait UserInput: Send + Sync {
     async fn prompt(&self, text: &str) -> Result<String>;
     async fn shell(&self, command: &str, shell_trust: &ShellTrust) -> Result<String>;
-    async fn select(&self, prompt: &str, options: &[String]) -> Result<String>;
-    async fn check(&self, prompt: &str, options: &[String]) -> Result<String>;
+    async fn select(&self, prompt: &str, options: &[Option]) -> Result<String>;
+    async fn check(&self, prompt: &str, options: &[Option]) -> Result<String>;
 }
 
 impl Backend {
@@ -135,7 +142,8 @@ async fn shell(command: &str, shell_trust: &ShellTrust, backend: &Backend) -> Re
         ShellTrust::None => return Err(Error::new(ErrorKind::Other, "no shell trust")),
         ShellTrust::Prompt => {
             let be = backend.to_input()?;
-            let sel = be.select(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command), &["yes".to_owned(), "no".to_owned()]).await;
+            let sel = be.select(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command), 
+                &[Option {display: "yes".to_owned(), value: "yes".to_owned()}, Option {display: "no".to_owned(), value: "no".to_owned()}]).await;
             if sel.unwrap_or_default() == "yes" {
             } else {
                 return Err(Error::new(
@@ -184,20 +192,28 @@ mod cli {
             super::shell(command, shell_trust, &super::Backend::CLI).await
         }
 
-        async fn select(&self, prompt: &str, options: &[String]) -> Result<String> {
+        async fn select(&self, prompt: &str, options: &[super::Option]) -> Result<String> {
+            let items = options
+                .iter()
+                .map(|x| x.display.to_owned())
+                .collect::<Vec<String>>();
             let idx = dialoguer::Select::new()
                 .with_prompt(prompt)
-                .items(options)
+                .items(&items)
                 .default(0)
                 .paged(false)
                 .interact()?;
-            Ok(options[idx].to_owned())
+            Ok(options[idx].value.to_owned())
         }
 
-        async fn check(&self, prompt: &str, options: &[String]) -> Result<String> {
+        async fn check(&self, prompt: &str, options: &[super::Option]) -> Result<String> {
+            let items = options
+                .iter()
+                .map(|x| x.display.to_owned())
+                .collect::<Vec<String>>();
             let indices = dialoguer::MultiSelect::new()
                 .with_prompt(prompt)
-                .items(options)
+                .items(&items)
                 .interact()
                 .unwrap();
 
@@ -206,7 +222,7 @@ mod cli {
                 _ => {
                     let mut d = String::new();
                     for i in indices {
-                        d.push_str(&options[i]);
+                        d.push_str(&options[i].value);
                         d.push_str(", ");
                     }
                     d.truncate(d.len() - 2);
@@ -223,7 +239,7 @@ mod ui {
     use async_trait::async_trait;
     use cursive::traits::*;
     use fui::views::Multiselect;
-    use std::collections::HashSet;
+    use std::collections::{HashMap, HashSet};
     use std::io::{Error, ErrorKind, Result};
 
     pub struct UIBackend {}
@@ -264,13 +280,14 @@ mod ui {
             super::shell(command, shell_trust, &super::Backend::UI).await
         }
 
-        async fn select(&self, prompt: &str, options: &[String]) -> Result<String> {
+        async fn select(&self, prompt: &str, options: &[super::Option]) -> Result<String> {
             let mut siv = cursive::Cursive::default();
             siv.add_global_callback(cursive::event::Event::CtrlChar('c'), |s| {
                 s.quit();
             });
             let v = std::rc::Rc::new(std::cell::Cell::new(None));
             let vx = v.clone();
+            let items = options.iter().map(|x| x.display.to_owned());
 
             let mut select = cursive::views::SelectView::<String>::new()
                 .h_align(cursive::align::HAlign::Left)
@@ -279,7 +296,7 @@ mod ui {
                     vx.set(Some(x.to_owned()));
                     s.quit();
                 });
-            select.add_all_str(options);
+            select.add_all_str(items);
 
             siv.add_layer(
                 cursive::views::Dialog::around(select.scrollable().fixed_size((20, 10)))
@@ -291,7 +308,7 @@ mod ui {
                 .ok_or_else(|| Error::new(ErrorKind::Other, "user abort"))
         }
 
-        async fn check(&self, _: &str, options: &[String]) -> Result<String> {
+        async fn check(&self, _: &str, options: &[super::Option]) -> Result<String> {
             let mut siv = cursive::Cursive::default();
             let ok_pressed = std::sync::Arc::new(std::cell::Cell::new(false));
             let ok_pressed_siv = ok_pressed.clone();
@@ -299,7 +316,16 @@ mod ui {
             let items_view = items.clone();
             let items_view2 = items.clone();
 
-            let view = Multiselect::new(ArrOptions::new(options))
+            let option_display = options
+                .iter()
+                .map(|x| x.display.to_owned())
+                .collect::<Vec<String>>();
+            let mut option_map = HashMap::new();
+            for opt in options.iter() {
+                option_map.insert(&opt.display, &opt.value);
+            }
+
+            let view = Multiselect::new(ArrOptions::new(&option_display))
                 .on_select(move |_, v| {
                     items_view.try_write().unwrap().insert(v);
                 })
@@ -320,7 +346,7 @@ mod ui {
             let it = items.try_read().unwrap();
             Ok(it
                 .iter()
-                .map(|x| x.to_string())
+                .map(|x| option_map.get(x.as_ref()).unwrap().to_string())
                 .collect::<Vec<String>>()
                 .join(", "))
         }

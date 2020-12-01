@@ -8,7 +8,7 @@ The `complate` configuration schema written in YAML. It includes a version numbe
 ## Structure by example
 
 ```
-version: 0.6
+version: 0.7
 templates:
     one:
         content:
@@ -38,18 +38,26 @@ templates:
                 select:
                     text: Select the version level that shall be incremented
                     options:
-                        - "#patch"
-                        - "#minor"
-                        - "#major"
+                        - display: "#patch"
+                          value: "#patch"
+                        - display: "#minor"
+                          value: "#minor"
+                        - display: "#major"
+                          value: "#major"
             f.components:
                 check:
                     text: Select the components that are affected
                     options:
-                        - security
-                        - command::print
-                        - backend+cli
-                        - backend+ui
-                        - misc
+                        - display: security
+                          value: security
+                        - display: command::print
+                          value: command::print
+                        - display: backend+cli
+                          value: backend+cli
+                        - display: backend+ui
+                          value: backend+ui
+                        - display: misc
+                          value: misc
 
 ```
 
@@ -67,7 +75,7 @@ You can resolve the value for each variable individual. Following options are av
 |prompt|Asks the user for text input (can be empty)|The prompt||
 |shell|Invokes a shell command to resolve the variable (read from STDOUT)|None|See `shell security`|
 |select|Asks the user to select one item from a list|`text`: string (context), `options`: list (available options to select from)||
-|check|Asks the user to select 0..n item(s) from a list (multiselect)|`text`: string (context), `options`: list (the available options to select from)||
+|check|Asks the user to select 0..n item(s) from a list (multiselect)|`text`: string (context), `options`: list of options {display: str, value: str} (the available options to select from)||
 
 #### Shell security
 

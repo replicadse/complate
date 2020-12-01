@@ -1,4 +1,4 @@
-version: 0.6
+version: 0.7
 templates:
     0.default:
         content:
@@ -15,14 +15,22 @@ templates:
                 check:
                     text: Select the components that are affected
                     options:
-                        - security
-                        - command:init
-                        - command:print
-                        - backend+cli
-                        - backend+ui
-                        - docs
-                        - ci
-                        - misc
+                        - display: security
+                          value: security
+                        - display: command:init
+                          value: command:init
+                        - display: command:print
+                          value: command:print
+                        - display: backend+cli
+                          value: backend+cli
+                        - display: backend+ui
+                          value: backend+ui
+                        - display: docs
+                          value: docs
+                        - display: ci
+                          value: ci
+                        - display: misc
+                          value: misc
     1.skrrrrrr:
         content:
             inline: |-
