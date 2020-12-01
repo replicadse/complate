@@ -9,42 +9,50 @@ pub mod config;
 pub mod render;
 
 async fn default_config() -> String {
-    r###"version: 0.6
+    r###"version: 0.7
 templates:
     default:
         content:
             inline: |-
-                {{ a.summary }} | {{ e.version }}
-                Components: [{{ f.components }}]
-                Author: {{ b.author.name }} | {{ c.author.account }}
-                
-                Files:
-                {{ d.git.staged.files }}
+                {{ a }}
+                {{ b }}
+                {{ c }}
+                {{ d }}
         values:
-            a.summary:
-                prompt: "Enter the summary"
-            b.author.name:
-                shell: "git config user.name | tr -d '\n'"
-            c.author.account:
+            a:
+                prompt: "A"
+            b:
                 shell: "whoami | tr -d '\n'"
-            d.git.staged.files:
-                shell: "git diff --name-status --cached"
-            e.version:
+            c:
                 select:
                     text: Select the version level that shall be incremented
                     options:
-                        - "#patch"
-                        - "#minor"
-                        - "#major"
-            f.components:
+                        - display: "#patch"
+                          value: "#patch"
+                        - display: "#minor"
+                          value: "#minor"
+                        - display: "#major"
+                          value: "#major"
+            d:
                 check:
                     text: Select the components that are affected
                     options:
-                        - security
-                        - command::print
-                        - backend+cli
-                        - backend+ui
-                        - misc
+                        - display: security
+                          value: security
+                        - display: command:init
+                          value: command:init
+                        - display: command:print
+                          value: command:print
+                        - display: backend+cli
+                          value: backend+cli
+                        - display: backend+ui
+                          value: backend+ui
+                        - display: docs
+                          value: docs
+                        - display: ci
+                          value: ci
+                        - display: misc
+                          value: misc
     
 "###
     .to_owned()
