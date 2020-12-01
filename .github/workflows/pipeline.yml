@@ -34,7 +34,6 @@ jobs:
       run: cargo build ${{ matrix.features }}
 
   website:
-    needs: tag
     name: website
     runs-on: ubuntu-latest
     steps:
