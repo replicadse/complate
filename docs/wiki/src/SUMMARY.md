@@ -1,8 +1,13 @@
 # Summary
 
-- [Documentation](SUMMARY.md)
-  - [Configuration schema](./config.md)
-- [Architecture Decision Records](SUMMARY.md)
+- [Home](home.md)
+  - [Introduction](./documentation/intro/intro.md)
+  - [How to install](./documentation/intro/installation.md)
+- [Documentation](./documentation/tech/commands.md)
+  - [Command reference](./documentation/tech/commands.md)
+  - [Configuration schema](./documentation/tech/config.md)
+- [Security](./SECURITY.md)
+- [Architecture Decision Records](./adrs/1.md)
   - [ADR 1: Usage of ADRs](./adrs/1.md)
   - [ADR 2: Usage of key words](./adrs/2.md)
   - [ADR 3: Versioning](./adrs/3.md)

@@ -4,8 +4,8 @@
 
 | Version  | Supported          |
 | -------- | ------------------ |
-| >= 6.0.0 | :white_check_mark: |
-| <  6.0.0 | :x:                |
+| >= 6.0.0 | ✅ |
+| <  6.0.0 | ❌ |
 
 ## Vulnerability disclosure policy
 

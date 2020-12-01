@@ -32,3 +32,23 @@ jobs:
       run: cargo test ${{ matrix.features }}
     - name: build program
       run: cargo build ${{ matrix.features }}
+
+  website:
+    needs: tag
+    name: website
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        with: 
+          submodules: true
+      - name: install
+        run: sudo apt-get install build-essential && cargo install mdbook
+      - name: build
+        working-directory: docs/wiki
+        run: mdbook build
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/wiki/book
+          publish_branch: wiki
