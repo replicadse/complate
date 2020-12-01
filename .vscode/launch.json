@@ -20,7 +20,7 @@
                 }
             },
             "args": [
-                "print",
+                "render",
                 "--shell-trust", "prompt",
             ],
             "cwd": "${workspaceFolder}"

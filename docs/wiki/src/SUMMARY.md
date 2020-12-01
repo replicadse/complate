@@ -8,5 +8,5 @@
   - [ADR 3: Versioning](./adrs/3.md)
   - [ADR 4: Experimental flag](./adrs/4.md)
   - [ADR 5: Usage of feature flags](./adrs/5.md)
-  - [ADR 6: Print command supporting STDIN pipe](./adrs/6.md)
+  - [ADR 6: Render command supporting STDIN pipe](./adrs/6.md)
   - [ADR 7: Usage of shell scripts instead of Makefiles](./adrs/7.md)

@@ -41,8 +41,8 @@ templates:
                           value: security
                         - display: command:init
                           value: command:init
-                        - display: command:print
-                          value: command:print
+                        - display: command:render
+                          value: command:render
                         - display: backend+cli
                           value: backend+cli
                         - display: backend+ui
@@ -68,7 +68,7 @@ async fn async_main() -> Result<()> {
             std::fs::write("./.complate/config.yml", default_config().await)?;
             Ok(())
         }
-        crate::args::Command::Print(x) => {
+        crate::args::Command::Render(x) => {
             let res = crate::render::select_and_render(x).await?;
             std::io::stdout().write_all(res.as_bytes())?;
             Ok(())

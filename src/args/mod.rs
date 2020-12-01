@@ -10,7 +10,7 @@ impl CallArgs {
     pub async fn validate(&self) -> Result<()> {
         match self.privileges {
             Privilege::Normal => match &self.command {
-                Command::Print(args) => {
+                Command::Render(args) => {
                     match args.backend {
                         #[cfg(feature = "backend+ui")]
                         Backend::UI => return Err(std::io::Error::new(
@@ -37,10 +37,10 @@ pub enum Privilege {
 
 pub enum Command {
     Init,
-    Print(PrintArguments),
+    Render(RenderArguments),
 }
 
-pub struct PrintArguments {
+pub struct RenderArguments {
     pub configuration: String,
     pub template: Option<String>,
     pub shell_trust: ShellTrust,
@@ -84,7 +84,7 @@ impl ClapArgumentLoader {
                     .required(false)
                     .takes_value(false))
             .subcommand(clap::App::new("init"))
-            .subcommand(clap::App::new("print")
+            .subcommand(clap::App::new("render")
                 .arg(clap::Arg::with_name("config")
                     .short("c")
                     .long("config")
@@ -136,7 +136,7 @@ impl ClapArgumentLoader {
             });
         }
 
-        match command.subcommand_matches("print") {
+        match command.subcommand_matches("render") {
             Some(x) => {
                 let config = if x.is_present("config") {
                     let config_param = x.value_of("config").unwrap();
@@ -202,7 +202,7 @@ impl ClapArgumentLoader {
 
                 Ok(CallArgs {
                     privileges,
-                    command: Command::Print(PrintArguments {
+                    command: Command::Render(RenderArguments {
                         configuration: config,
                         template,
                         shell_trust,

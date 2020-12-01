@@ -50,8 +50,8 @@ templates:
                     options:
                         - display: security
                           value: security
-                        - display: command::print
-                          value: command::print
+                        - display: command::render
+                          value: command::render
                         - display: backend+cli
                           value: backend+cli
                         - display: backend+ui
@@ -79,4 +79,4 @@ You can resolve the value for each variable individual. Following options are av
 
 #### Shell security
 
-Since the `shell` value provider is able to run arbitrary shell commands, it is only allowed if and only if the `SHELL_TRUST` argument is explicitly set. See the `print` command reference for possible values for this setting. If *not* set, the provider will throw an unrecoverable error and the program will abort.
+Since the `shell` value provider is able to run arbitrary shell commands, it is only allowed if and only if the `SHELL_TRUST` argument is explicitly set. See the `render` command reference for possible values for this setting. If *not* set, the provider will throw an unrecoverable error and the program will abort.

@@ -76,7 +76,7 @@ pub async fn populate_variables(
     Ok(values)
 }
 
-pub async fn select_and_render(invoke_options: crate::args::PrintArguments) -> Result<String> {
+pub async fn select_and_render(invoke_options: crate::args::RenderArguments) -> Result<String> {
     let cfg: Config = serde_yaml::from_str(&invoke_options.configuration).unwrap();
 
     let template = match invoke_options.template {

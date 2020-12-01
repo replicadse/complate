@@ -19,8 +19,8 @@ templates:
                           value: security
                         - display: command:init
                           value: command:init
-                        - display: command:print
-                          value: command:print
+                        - display: command:render
+                          value: command:render
                         - display: backend+cli
                           value: backend+cli
                         - display: backend+ui

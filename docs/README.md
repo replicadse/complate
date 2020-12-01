@@ -43,7 +43,7 @@ Repository root
 ```
 
 This way, the `complate` program is redistributed via the GIT repository. If that's not what you want, simply keep the binary in your machine. As long as the configuration file version number fits your installed program major version you're good to go.
-Expecting the recommended folder structure, you should be able to simply run `./.complate/complate print | git commit -F -` in order to create a new standardized commit.
+Expecting the recommended folder structure, you should be able to simply run `./.complate/complate render | git commit -F -` in order to create a new standardized commit.
 
 ## General overview
 
@@ -79,21 +79,21 @@ Either one of the `backend+` features (or both) MUST be enabled for `complate` t
 |-- |-- |-- |
 |help|Prints the help to `STDOUT`.|stable|
 |init|Initializes the default configuration in `./.complate/config.yml`|stable|
-|print|Prompts for the template, prompts for variable values and prints the data to `STDOUT`|stable|
+|render|Prompts for the template, prompts for variable values and renders the data to `STDOUT`|stable|
 
-### `print` command flags
+### `render` command flags
 
 |Name|Short|Long|Description|Remark|Status|
 |-- |-- |-- |-- |-- |--|
-|Config|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|When setting this argument to pipe (`-`), the config is parsed from the STDIN descriptor to the print command.|stable for file path, experimental for STDIN descriptor. Pipe is only supported for `UI` backend|
+|Config|-c|--config|The path to the configuration file that shall be used. This path can be relative or absolute. The default path is `./complate/config.yml`.|When setting this argument to pipe (`-`), the config is parsed from the STDIN descriptor to the render command.|stable for file path, experimental for STDIN descriptor. Pipe is only supported for `UI` backend|
 |Shell trust||--shell-trust|Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are `none` (default), `prompt` and `ultimate`||stable|
 |Template|-t|--template|Skip the template selection by defining the used template from the configuration via this argument||stable|
 |Backend|-b|--backend|Defines the backend for the user interaction.||`CLI` is stable. `UI` is experimental (feature = "backend+ui").
 
 **Examples:**
-* `complate print`
-* `complate print -f .complate/alternative.yml`
-* `cat .complate/alternative.yml | complate -e print -c- -bui -t0.default`
+* `complate render`
+* `complate render -f .complate/alternative.yml`
+* `cat .complate/alternative.yml | complate -e render -c- -bui -t0.default`
 
 ### Configuration file
 
