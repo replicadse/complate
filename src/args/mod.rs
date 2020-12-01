@@ -20,6 +20,7 @@ impl CallArgs {
                         #[cfg(feature = "backend+cli")]
                         Backend::CLI => {}
                     };
+                    #[allow(unreachable_code)]
                     Ok(())
                 }
                 _ => Ok(()),
