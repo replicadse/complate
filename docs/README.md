@@ -26,12 +26,11 @@ The idea for the concrete use case of standardizing GIT commit messages is to ha
 
 ## Usage
 
-In order to use `complate`, the recommended way is to place the program including the configuration files and templates into the repository itself. Consider the following structure:
+In order to use `complate`, the recommended way is install the tool via `cargo` and place the configuration files and templates into the repository itself. Consider the following structure:
 ```
 Repository root
 ├── .git
 ├── .complate
-│   ├── complate
 │   ├── config.yml
 │   └── templates
 │       └── template-a.tpl
@@ -42,8 +41,8 @@ Repository root
 └── ...
 ```
 
-This way, the `complate` program is redistributed via the GIT repository. If that's not what you want, simply keep the binary in your machine. As long as the configuration file version number fits your installed program major version you're good to go.
-Expecting the recommended folder structure, you should be able to simply run `./.complate/complate render | git commit -F -` in order to create a new standardized commit.
+As long as the configuration file version number fits your installed program major version you're good to go.
+Expecting the recommended folder structure (and assuming that the program is in your `PATH` environment variable), you should be able to simply run `complate render | git commit -F -` in order to create a new standardized commit.
 
 ## General overview
 
