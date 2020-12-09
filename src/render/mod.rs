@@ -1,5 +1,5 @@
 use crate::args::{Backend, ShellTrust};
-use crate::config::{Config, Content, Option, Template, VariableDefinition};
+use crate::config::{Config, Content, Option, OptionValue, Template, VariableDefinition};
 use async_trait::async_trait;
 use std::collections::BTreeMap;
 use std::io::{Error, ErrorKind, Result};
@@ -45,18 +45,25 @@ pub async fn render(template: &str, values: &BTreeMap<String, String>) -> Result
 }
 
 #[allow(clippy::needless_lifetimes)]
-pub async fn select_template<'a>(config: &'a Config, backend: &Backend) -> Result<&'a Template> {
-    let keys: Vec<Option> = config
-        .templates
-        .keys()
-        .map(|t| Option {
-            display: t.to_owned(),
-            value: t.to_owned(),
-        })
-        .collect();
+pub async fn select_template<'a>(
+    config: &'a Config,
+    backend: &Backend,
+    shell_trust: &ShellTrust,
+) -> Result<&'a Template> {
+    let templates = config.templates.keys().cloned().collect::<Vec<String>>();
+    let mut template_map = BTreeMap::new();
+    for t in templates {
+        template_map.insert(
+            t.to_owned(),
+            Option {
+                display: t.to_owned(),
+                value: OptionValue::Static(t.to_owned()),
+            },
+        );
+    }
 
-    let be = backend.to_input()?;
-    let selection = be.select("", keys.as_slice()).await?;
+    let be = backend.to_input(shell_trust)?;
+    let selection = be.select("", &template_map).await?;
 
     match config.templates.get(&selection) {
         Some(x) => Ok(x),
@@ -81,7 +88,7 @@ pub async fn select_and_render(invoke_options: crate::args::RenderArguments) -> 
 
     let template = match invoke_options.template {
         Some(x) => cfg.templates.get(&x).unwrap(),
-        None => select_template(&cfg, &invoke_options.backend).await?,
+        None => select_template(&cfg, &invoke_options.backend, &invoke_options.shell_trust).await?,
     };
     let template_str = match &template.content {
         Content::Inline(x) => x.to_owned(),
@@ -105,17 +112,17 @@ pub trait Resolve {
 pub trait UserInput: Send + Sync {
     async fn prompt(&self, text: &str) -> Result<String>;
     async fn shell(&self, command: &str, shell_trust: &ShellTrust) -> Result<String>;
-    async fn select(&self, prompt: &str, options: &[Option]) -> Result<String>;
-    async fn check(&self, prompt: &str, options: &[Option]) -> Result<String>;
+    async fn select(&self, prompt: &str, options: &BTreeMap<String, Option>) -> Result<String>;
+    async fn check(&self, prompt: &str, options: &BTreeMap<String, Option>) -> Result<String>;
 }
 
 impl Backend {
-    pub fn to_input(&self) -> Result<Box<dyn UserInput>> {
+    pub fn to_input<'a>(&self, shell_trust: &'a ShellTrust) -> Result<Box<dyn UserInput + 'a>> {
         Ok(match self {
             #[cfg(feature = "backend+cli")]
-            Backend::CLI => Box::new(cli::CLIBackend::new()) as Box<dyn UserInput>,
+            Backend::CLI => Box::new(cli::CLIBackend::new(shell_trust)) as Box<dyn UserInput>,
             #[cfg(feature = "backend+ui")]
-            Backend::UI => Box::new(ui::UIBackend::new()) as Box<dyn UserInput>,
+            Backend::UI => Box::new(ui::UIBackend::new(shell_trust)) as Box<dyn UserInput>,
         })
     }
 }
@@ -123,7 +130,7 @@ impl Backend {
 #[async_trait]
 impl Resolve for VariableDefinition {
     async fn execute(&self, shell_trust: &ShellTrust, backend: &Backend) -> Result<String> {
-        let backend_impl = backend.to_input()?;
+        let backend_impl = backend.to_input(shell_trust)?;
 
         match self {
             VariableDefinition::Static(v) => Ok(v.to_owned()),
@@ -141,9 +148,24 @@ async fn shell(command: &str, shell_trust: &ShellTrust, backend: &Backend) -> Re
     match shell_trust {
         ShellTrust::None => return Err(Error::new(ErrorKind::Other, "no shell trust")),
         ShellTrust::Prompt => {
-            let be = backend.to_input()?;
-            let sel = be.select(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command), 
-                &[Option {display: "yes".to_owned(), value: "yes".to_owned()}, Option {display: "no".to_owned(), value: "no".to_owned()}]).await;
+            let be = backend.to_input(shell_trust)?;
+            let mut yesno = BTreeMap::new();
+            yesno.insert(
+                "0".to_owned(),
+                Option {
+                    display: "yes".to_owned(),
+                    value: OptionValue::Static("yes".to_owned()),
+                },
+            );
+            yesno.insert(
+                "1".to_owned(),
+                Option {
+                    display: "no".to_owned(),
+                    value: OptionValue::Static("no".to_owned()),
+                },
+            );
+
+            let sel = be.select(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command), &yesno).await;
             if sel.unwrap_or_default() == "yes" {
             } else {
                 return Err(Error::new(
@@ -171,16 +193,18 @@ mod cli {
     use async_trait::async_trait;
     use std::io::Result;
 
-    pub struct CLIBackend {}
+    pub struct CLIBackend<'a> {
+        shell_trust: &'a super::ShellTrust,
+    }
 
-    impl CLIBackend {
-        pub fn new() -> Self {
-            Self {}
+    impl<'a> CLIBackend<'a> {
+        pub fn new(shell_trust: &'a super::ShellTrust) -> Self {
+            Self { shell_trust }
         }
     }
 
     #[async_trait]
-    impl UserInput for CLIBackend {
+    impl<'a> UserInput for CLIBackend<'a> {
         async fn prompt(&self, text: &str) -> Result<String> {
             dialoguer::Input::new()
                 .allow_empty(true)
@@ -192,28 +216,43 @@ mod cli {
             super::shell(command, shell_trust, &super::Backend::CLI).await
         }
 
-        async fn select(&self, prompt: &str, options: &[super::Option]) -> Result<String> {
-            let items = options
-                .iter()
+        async fn select(
+            &self,
+            prompt: &str,
+            options: &std::collections::BTreeMap<String, super::Option>,
+        ) -> Result<String> {
+            let keys = options.keys().cloned().collect::<Vec<String>>();
+            let display_vals = options
+                .values()
                 .map(|x| x.display.to_owned())
                 .collect::<Vec<String>>();
-            let idx = dialoguer::Select::new()
+
+            let result_idx = dialoguer::Select::new()
                 .with_prompt(prompt)
-                .items(&items)
+                .items(&display_vals)
                 .default(0)
                 .paged(false)
                 .interact()?;
-            Ok(options[idx].value.to_owned())
+            match &options[&keys[result_idx]].value {
+                super::OptionValue::Static(x) => Ok(x.to_owned()),
+                super::OptionValue::Shell(cmd) => self.shell(cmd, &self.shell_trust).await,
+            }
         }
 
-        async fn check(&self, prompt: &str, options: &[super::Option]) -> Result<String> {
-            let items = options
-                .iter()
+        async fn check(
+            &self,
+            prompt: &str,
+            options: &std::collections::BTreeMap<String, super::Option>,
+        ) -> Result<String> {
+            let keys = options.keys().cloned().collect::<Vec<String>>();
+            let display_vals = options
+                .values()
                 .map(|x| x.display.to_owned())
                 .collect::<Vec<String>>();
+
             let indices = dialoguer::MultiSelect::new()
                 .with_prompt(prompt)
-                .items(&items)
+                .items(&display_vals)
                 .interact()
                 .unwrap();
 
@@ -222,7 +261,13 @@ mod cli {
                 _ => {
                     let mut d = String::new();
                     for i in indices {
-                        d.push_str(&options[i].value);
+                        let v = match &options[&keys[i]].value {
+                            super::OptionValue::Static(x) => x.to_owned(),
+                            super::OptionValue::Shell(cmd) => {
+                                self.shell(&cmd, &self.shell_trust).await?
+                            }
+                        };
+                        d.push_str(&v);
                         d.push_str(", ");
                     }
                     d.truncate(d.len() - 2);
@@ -239,19 +284,22 @@ mod ui {
     use async_trait::async_trait;
     use cursive::traits::*;
     use fui::views::Multiselect;
-    use std::collections::{HashMap, HashSet};
+    use std::collections::HashSet;
     use std::io::{Error, ErrorKind, Result};
+    use std::ops::Deref;
 
-    pub struct UIBackend {}
+    pub struct UIBackend<'a> {
+        shell_trust: &'a super::ShellTrust,
+    }
 
-    impl UIBackend {
-        pub fn new() -> Self {
-            Self {}
+    impl<'a> UIBackend<'a> {
+        pub fn new(shell_trust: &'a super::ShellTrust) -> Self {
+            Self { shell_trust }
         }
     }
 
     #[async_trait]
-    impl UserInput for UIBackend {
+    impl<'a> UserInput for UIBackend<'a> {
         async fn prompt(&self, text: &str) -> Result<String> {
             let mut siv = cursive::Cursive::default();
             siv.add_global_callback(cursive::event::Event::CtrlChar('c'), |s| {
@@ -280,75 +328,125 @@ mod ui {
             super::shell(command, shell_trust, &super::Backend::UI).await
         }
 
-        async fn select(&self, prompt: &str, options: &[super::Option]) -> Result<String> {
-            let mut siv = cursive::Cursive::default();
-            siv.add_global_callback(cursive::event::Event::CtrlChar('c'), |s| {
-                s.quit();
-            });
-            let v = std::rc::Rc::new(std::cell::Cell::new(None));
-            let vx = v.clone();
-            let items = options.iter().map(|x| x.display.to_owned());
+        async fn select(
+            &self,
+            prompt: &str,
+            options: &std::collections::BTreeMap<String, super::Option>,
+        ) -> Result<String> {
+            let keys = options.keys().cloned().collect::<Vec<String>>();
+            let mut index_display = 0usize;
+            let display_vals = options
+                .values()
+                .map(|x| {
+                    let mut v = String::from("(");
+                    v.push_str(&index_display.to_string());
+                    index_display += 1;
+                    v.push_str(") ");
+                    v.push_str(&x.display.to_owned());
+                    v
+                })
+                .collect::<Vec<String>>();
 
-            let mut select = cursive::views::SelectView::<String>::new()
-                .h_align(cursive::align::HAlign::Left)
-                .autojump()
-                .on_submit(move |s, x: &str| {
-                    vx.set(Some(x.to_owned()));
+            let sel = std::cell::Cell::new(String::new());
+            {
+                let v = std::rc::Rc::new(std::cell::Cell::new(None));
+                let vx = v.clone();
+                let mut siv = cursive::Cursive::default();
+                siv.add_global_callback(cursive::event::Event::CtrlChar('c'), |s| {
                     s.quit();
                 });
-            select.add_all_str(items);
+                let mut select = cursive::views::SelectView::<String>::new()
+                    .h_align(cursive::align::HAlign::Left)
+                    .autojump()
+                    .on_submit(move |s, x: &str| {
+                        vx.set(Some(x.to_owned()));
+                        s.quit();
+                    });
+                select.add_all_str(&display_vals);
+                siv.add_layer(
+                    cursive::views::Dialog::around(select.scrollable().fixed_size((20, 10)))
+                        .title(prompt),
+                );
+                siv.run();
+                sel.set(v.take().unwrap());
+            }
 
-            siv.add_layer(
-                cursive::views::Dialog::around(select.scrollable().fixed_size((20, 10)))
-                    .title(prompt),
-            );
-
-            siv.run();
-            v.take()
-                .ok_or_else(|| Error::new(ErrorKind::Other, "user abort"))
+            let sel_value = sel.take();
+            let selection =
+                &options[&keys[display_vals.iter().position(|x| *x == sel_value).unwrap()]];
+            match &selection.value {
+                super::OptionValue::Static(x) => Ok(x.to_owned()),
+                super::OptionValue::Shell(cmd) => self.shell(cmd, &self.shell_trust).await,
+            }
         }
 
-        async fn check(&self, _: &str, options: &[super::Option]) -> Result<String> {
-            let mut siv = cursive::Cursive::default();
-            let ok_pressed = std::sync::Arc::new(std::cell::Cell::new(false));
-            let ok_pressed_siv = ok_pressed.clone();
-            let items = std::sync::Arc::new(std::sync::RwLock::new(HashSet::new()));
-            let items_view = items.clone();
-            let items_view2 = items.clone();
+        async fn check(
+            &self,
+            _: &str,
+            options: &std::collections::BTreeMap<String, super::Option>,
+        ) -> Result<String> {
+            let mut opts = Vec::new();
+            {
+                let ok_pressed = std::sync::Arc::new(std::cell::Cell::new(false));
+                let ok_pressed_siv = ok_pressed.clone();
+                let items = std::sync::Arc::new(std::sync::RwLock::new(HashSet::<
+                    std::string::String,
+                >::new()));
+                let items_view = items.clone();
+                let items_view2 = items.clone();
 
-            let option_display = options
-                .iter()
-                .map(|x| x.display.to_owned())
-                .collect::<Vec<String>>();
-            let mut option_map = HashMap::new();
-            for opt in options.iter() {
-                option_map.insert(&opt.display, &opt.value);
-            }
+                let keys = options.keys().cloned().collect::<Vec<String>>();
+                let mut index_display = 0usize;
+                let display_vals = options
+                    .values()
+                    .map(|x| {
+                        let mut v = String::from("(");
+                        v.push_str(&index_display.to_string());
+                        index_display += 1;
+                        v.push_str(") ");
+                        v.push_str(&x.display.to_owned());
+                        v
+                    })
+                    .collect::<Vec<String>>();
 
-            let view = Multiselect::new(ArrOptions::new(&option_display))
-                .on_select(move |_, v| {
-                    items_view.try_write().unwrap().insert(v);
-                })
-                .on_deselect(move |_, v| {
-                    items_view2.try_write().unwrap().remove(&v);
+                let mut siv = cursive::Cursive::default();
+                siv.add_global_callback(cursive::event::Event::CtrlChar('c'), |s| {
+                    s.quit();
                 });
-            let dlg = cursive::views::Dialog::around(view).button("Ok", move |s| {
-                ok_pressed_siv.set(true);
-                s.quit();
-            });
 
-            siv.add_layer(dlg);
+                let view = Multiselect::new(ArrOptions::new(&display_vals))
+                    .on_select(move |_, v| {
+                        items_view.try_write().unwrap().insert(v.deref().to_owned());
+                    })
+                    .on_deselect(move |_, v| {
+                        items_view2.try_write().unwrap().remove(v.deref());
+                    });
+                let dlg = cursive::views::Dialog::around(view).button("Ok", move |s| {
+                    ok_pressed_siv.set(true);
+                    s.quit();
+                });
+                siv.add_layer(dlg);
+                siv.run();
 
-            siv.run();
-            if !ok_pressed.take() {
-                return Err(Error::new(ErrorKind::Other, "user abort"));
+                if !ok_pressed.take() {
+                    return Err(Error::new(ErrorKind::Other, "user abort"));
+                }
+                for x in items.try_read().unwrap().iter() {
+                    let pos = display_vals.iter().position(|v| x == v).unwrap();
+                    let selection = &options[&keys[pos]];
+                    opts.push(&selection.value);
+                }
             }
-            let it = items.try_read().unwrap();
-            Ok(it
-                .iter()
-                .map(|x| option_map.get(x.as_ref()).unwrap().to_string())
-                .collect::<Vec<String>>()
-                .join(", "))
+            let mut data = Vec::new();
+            for opt in opts {
+                data.push(match opt {
+                    super::OptionValue::Static(x) => x.to_owned(),
+                    super::OptionValue::Shell(cmd) => {
+                        self.shell(&cmd, &self.shell_trust).await.unwrap()
+                    }
+                });
+            }
+            Ok(data.join(", "))
         }
     }
 

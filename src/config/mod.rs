@@ -22,9 +22,16 @@ pub enum Content {
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
+pub enum OptionValue {
+    Static(String),
+    Shell(String),
+}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub struct Option {
     pub display: String,
-    pub value: String,
+    pub value: OptionValue,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -33,8 +40,14 @@ pub enum VariableDefinition {
     Static(String),
     Prompt(String),
     Shell(String),
-    Select { text: String, options: Vec<Option> },
-    Check { text: String, options: Vec<Option> },
+    Select {
+        text: String,
+        options: std::collections::BTreeMap<String, Option>,
+    },
+    Check {
+        text: String,
+        options: std::collections::BTreeMap<String, Option>,
+    },
 }
 
 impl Config {

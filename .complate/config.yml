@@ -6,6 +6,7 @@ templates:
                 {{ a.summary }}
                 Remarks: {{ b.remarks }}
                 Components: {{ c.components }}
+                Yes/No: {{ d.select }}
         values:
             a.summary:
                 prompt: "Summary"
@@ -15,22 +16,26 @@ templates:
                 check:
                     text: Select the components that are affected
                     options:
-                        - display: security
-                          value: security
-                        - display: command:init
-                          value: command:init
-                        - display: command:render
-                          value: command:render
-                        - display: backend+cli
-                          value: backend+cli
-                        - display: backend+ui
-                          value: backend+ui
-                        - display: docs
-                          value: docs
-                        - display: ci
-                          value: ci
-                        - display: misc
-                          value: misc
+                        security:
+                          display: security
+                          value:
+                            static: security
+                        myself:
+                          display: myself
+                          value:
+                            shell: whoami
+            d.select:
+              select:
+                text: "???"
+                options:
+                  yes:
+                    display: yes
+                    value:
+                      static: yes
+                  no:
+                    display: no
+                    value:
+                      shell: printf "no, no way!"
     1.skrrrrrr:
         content:
             inline: |-
