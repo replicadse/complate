@@ -9,51 +9,53 @@ pub mod config;
 pub mod render;
 
 async fn default_config() -> String {
-    r###"version: 0.7
-templates:
-    default:
-        content:
-            inline: |-
-                {{ a }}
-                {{ b }}
-                {{ c }}
-                {{ d }}
-        values:
-            a:
-                prompt: "A"
-            b:
-                shell: "whoami | tr -d '\n'"
-            c:
-                select:
-                    text: Select the version level that shall be incremented
-                    options:
-                        - display: "#patch"
-                          value: "#patch"
-                        - display: "#minor"
-                          value: "#minor"
-                        - display: "#major"
-                          value: "#major"
-            d:
-                check:
-                    text: Select the components that are affected
-                    options:
-                        - display: security
-                          value: security
-                        - display: command:init
-                          value: command:init
-                        - display: command:render
-                          value: command:render
-                        - display: backend+cli
-                          value: backend+cli
-                        - display: backend+ui
-                          value: backend+ui
-                        - display: docs
-                          value: docs
-                        - display: ci
-                          value: ci
-                        - display: misc
-                          value: misc
-    
+    r###"version: 0.8
+    templates:
+        one:
+            content:
+                file: ./.complate/templates/arbitraty-template-file.tpl
+            values:
+                a.summary:
+                    static: "random summary"
+        two:
+            content:
+                inline: |-
+                    {{ a.alpha }}
+                    {{ b.bravo }}
+                    {{ c.charlie }}
+                    {{ d.delta }}
+            values:
+                a.alpha:
+                  prompt: "alpha"
+                b.bravo:
+                  shell: "printf bravo"
+                c.charlie:
+                  static: "charlie"
+                d.delta:
+                    select:
+                        text: Select the version level that shall be incremented
+                        options:
+                          alpha:
+                            display: alpha
+                            value:
+                              static: alpha
+                          bravo:
+                            display: bravo
+                            value:
+                              shell: printf bravo
+                e.echo:
+                    check:
+                        text: Select the components that are affected
+                        options:
+                          alpha:
+                            display: alpha
+                            value:
+                              static: alpha
+                          bravo:
+                            display: bravo
+                            value:
+                              shell: printf bravo
+
 "###
     .to_owned()
 }

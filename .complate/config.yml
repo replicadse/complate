@@ -1,42 +1,47 @@
-version: 0.7
+version: 0.8
 templates:
-    0.default:
+    one:
         content:
-            inline: |-
-                {{ a.summary }}
-                Remarks: {{ b.remarks }}
-                Components: {{ c.components }}
-                Yes/No: {{ d.select }}
+            file: ./.complate/templates/arbitraty-template-file.tpl
         values:
             a.summary:
-                prompt: "Summary"
-            b.remarks:
-                prompt: "Remarks"
-            c.components:
+                static: "random summary"
+    two:
+        content:
+            inline: |-
+                {{ a.alpha }}
+                {{ b.bravo }}
+                {{ c.charlie }}
+                {{ d.delta }}
+        values:
+            a.alpha:
+              prompt: "alpha"
+            b.bravo:
+              shell: "printf bravo"
+            c.charlie:
+              static: "charlie"
+            d.delta:
+                select:
+                    text: Select the version level that shall be incremented
+                    options:
+                      alpha:
+                        display: alpha
+                        value:
+                          static: alpha
+                      bravo:
+                        display: bravo
+                        value:
+                          shell: printf bravo
+            e.echo:
                 check:
                     text: Select the components that are affected
                     options:
-                        security:
-                          display: security
-                          value:
-                            static: security
-                        myself:
-                          display: myself
-                          value:
-                            shell: whoami
-            d.select:
-              select:
-                text: "???"
-                options:
-                  yes:
-                    display: yes
-                    value:
-                      static: yes
-                  no:
-                    display: no
-                    value:
-                      shell: printf "no, no way!"
-    1.skrrrrrr:
-        content:
-            inline: |-
-                skrrrr
+                      alpha:
+                        display: alpha
+                        value:
+                          static: alpha
+                      bravo:
+                        display: bravo
+                        value:
+                          shell: printf bravo
+                      

@@ -8,7 +8,7 @@ The `complate` configuration schema written in YAML. It includes a version numbe
 ## Structure by example
 
 ```
-version: 0.7
+version: 0.8
 templates:
     one:
         content:
@@ -19,45 +19,41 @@ templates:
     two:
         content:
             inline: |-
-                {{ a.summary }} | {{ e.version }}
-                Components: [{{ f.components }}]
-                Author: {{ b.author.name }} | {{ c.author.account }}
-
-                Files:
-                {{ d.git.staged.files }}
+                {{ a.alpha }}
+                {{ b.bravo }}
+                {{ c.charlie }}
+                {{ d.delta }}
         values:
-            a.summary:
-                prompt: "Enter the summary"
-            b.author.name:
-                shell: "git config user.name | tr -d '\n'"
-            c.author.account:
-                shell: "whoami | tr -d '\n'"
-            d.git.staged.files:
-                shell: "git diff --name-status --cached"
-            e.version:
+            a.alpha:
+              prompt: "alpha"
+            b.bravo:
+              shell: "printf bravo"
+            c.charlie:
+              static: "charlie"
+            d.delta:
                 select:
                     text: Select the version level that shall be incremented
                     options:
-                        - display: "#patch"
-                          value: "#patch"
-                        - display: "#minor"
-                          value: "#minor"
-                        - display: "#major"
-                          value: "#major"
-            f.components:
+                      alpha:
+                        display: alpha
+                        value:
+                          static: alpha
+                      bravo:
+                        display: bravo
+                        value:
+                          shell: printf bravo
+            e.echo:
                 check:
                     text: Select the components that are affected
                     options:
-                        - display: security
-                          value: security
-                        - display: command::render
-                          value: command::render
-                        - display: backend+cli
-                          value: backend+cli
-                        - display: backend+ui
-                          value: backend+ui
-                        - display: misc
-                          value: misc
+                      alpha:
+                        display: alpha
+                        value:
+                          static: alpha
+                      bravo:
+                        display: bravo
+                        value:
+                          shell: printf bravo
 
 ```
 
