@@ -286,7 +286,7 @@ The templates for this project that can be found in <code>./complate/config.yml<
 <p>The <code>complate</code> configuration schema written in YAML. It includes a version number that needs to be equal to the major version of the installed <code>complate</code> instance.<br />
 <em>Bootstrap</em> the configuration file in <code>./.complate/config.yml</code> by using the <code>complate init</code> command.</p>
 <h2><a class="header" href="#structure-by-example" id="structure-by-example">Structure by example</a></h2>
-<pre><code>version: 0.7
+<pre><code>version: 0.8
 templates:
     one:
         content:
@@ -297,45 +297,41 @@ templates:
     two:
         content:
             inline: |-
-                {{ a.summary }} | {{ e.version }}
-                Components: [{{ f.components }}]
-                Author: {{ b.author.name }} | {{ c.author.account }}
-
-                Files:
-                {{ d.git.staged.files }}
+                {{ a.alpha }}
+                {{ b.bravo }}
+                {{ c.charlie }}
+                {{ d.delta }}
         values:
-            a.summary:
-                prompt: &quot;Enter the summary&quot;
-            b.author.name:
-                shell: &quot;git config user.name | tr -d '\n'&quot;
-            c.author.account:
-                shell: &quot;whoami | tr -d '\n'&quot;
-            d.git.staged.files:
-                shell: &quot;git diff --name-status --cached&quot;
-            e.version:
+            a.alpha:
+              prompt: &quot;alpha&quot;
+            b.bravo:
+              shell: &quot;printf bravo&quot;
+            c.charlie:
+              static: &quot;charlie&quot;
+            d.delta:
                 select:
                     text: Select the version level that shall be incremented
                     options:
-                        - display: &quot;#patch&quot;
-                          value: &quot;#patch&quot;
-                        - display: &quot;#minor&quot;
-                          value: &quot;#minor&quot;
-                        - display: &quot;#major&quot;
-                          value: &quot;#major&quot;
-            f.components:
+                      alpha:
+                        display: alpha
+                        value:
+                          static: alpha
+                      bravo:
+                        display: bravo
+                        value:
+                          shell: printf bravo
+            e.echo:
                 check:
                     text: Select the components that are affected
                     options:
-                        - display: security
-                          value: security
-                        - display: command::render
-                          value: command::render
-                        - display: backend+cli
-                          value: backend+cli
-                        - display: backend+ui
-                          value: backend+ui
-                        - display: misc
-                          value: misc
+                      alpha:
+                        display: alpha
+                        value:
+                          static: alpha
+                      bravo:
+                        display: bravo
+                        value:
+                          shell: printf bravo
 
 </code></pre>
 <p>The first tag has the current version of the configuration schema. It needs to be equal to the major version number of the cli program. Since <code>complate</code> is still sub-one, the versioning is not yet stable and therefore, the major <em>and</em> minor version need to be equal to the ones of the cli program.<br />
