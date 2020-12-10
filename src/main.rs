@@ -24,6 +24,7 @@ async fn default_config() -> String {
                     {{ b.bravo }}
                     {{ c.charlie }}
                     {{ d.delta }}
+                    {{ e.echo }}
             values:
                 a.alpha:
                   prompt: "alpha"

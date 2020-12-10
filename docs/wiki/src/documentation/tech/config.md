@@ -23,6 +23,7 @@ templates:
                 {{ b.bravo }}
                 {{ c.charlie }}
                 {{ d.delta }}
+                {{ e.echo }}
         values:
             a.alpha:
               prompt: "alpha"
