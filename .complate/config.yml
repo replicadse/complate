@@ -36,6 +36,7 @@ templates:
             e.echo:
                 check:
                     text: Select the components that are affected
+                    separator: "\n"
                     options:
                       alpha:
                         display: alpha

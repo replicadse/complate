@@ -46,6 +46,7 @@ pub enum VariableDefinition {
     },
     Check {
         text: String,
+        separator: String,
         options: std::collections::BTreeMap<String, Option>,
     },
 }

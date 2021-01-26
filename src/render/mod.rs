@@ -113,7 +113,7 @@ pub trait UserInput: Send + Sync {
     async fn prompt(&self, text: &str) -> Result<String>;
     async fn shell(&self, command: &str, shell_trust: &ShellTrust) -> Result<String>;
     async fn select(&self, prompt: &str, options: &BTreeMap<String, Option>) -> Result<String>;
-    async fn check(&self, prompt: &str, options: &BTreeMap<String, Option>) -> Result<String>;
+    async fn check(&self, prompt: &str, separator: &str, options: &BTreeMap<String, Option>) -> Result<String>;
 }
 
 impl Backend {
@@ -139,7 +139,7 @@ impl Resolve for VariableDefinition {
             VariableDefinition::Select { text, options } => {
                 backend_impl.select(text, options).await
             }
-            VariableDefinition::Check { text, options } => backend_impl.check(text, options).await,
+            VariableDefinition::Check { text, separator, options } => backend_impl.check(text, separator, options).await,
         }
     }
 }
@@ -242,6 +242,7 @@ mod cli {
         async fn check(
             &self,
             prompt: &str,
+            separator: &str,
             options: &std::collections::BTreeMap<String, super::Option>,
         ) -> Result<String> {
             let keys = options.keys().cloned().collect::<Vec<String>>();
@@ -268,7 +269,7 @@ mod cli {
                             }
                         };
                         d.push_str(&v);
-                        d.push_str(", ");
+                        d.push_str(separator);
                     }
                     d.truncate(d.len() - 2);
                     Ok(d)
@@ -383,6 +384,7 @@ mod ui {
         async fn check(
             &self,
             _: &str,
+            separator: &str,
             options: &std::collections::BTreeMap<String, super::Option>,
         ) -> Result<String> {
             let mut opts = Vec::new();
@@ -446,7 +448,7 @@ mod ui {
                     }
                 });
             }
-            Ok(data.join(", "))
+            Ok(data.join(separator))
         }
     }
 
