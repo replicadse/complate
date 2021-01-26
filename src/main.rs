@@ -47,6 +47,7 @@ async fn default_config() -> String {
                 e.echo:
                     check:
                         text: Select the components that are affected
+                        separator: ", "
                         options:
                           alpha:
                             display: alpha
