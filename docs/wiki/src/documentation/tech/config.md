@@ -8,7 +8,7 @@ The `complate` configuration schema written in YAML. It includes a version numbe
 ## Structure by example
 
 ```
-version: 0.8
+version: 0.9
 templates:
     one:
         content:
@@ -46,6 +46,7 @@ templates:
             e.echo:
                 check:
                     text: Select the components that are affected
+                    separator: ", "
                     options:
                       alpha:
                         display: alpha

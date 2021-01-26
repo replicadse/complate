@@ -9,7 +9,7 @@ pub mod config;
 pub mod render;
 
 async fn default_config() -> String {
-    r###"version: 0.8
+    r###"version: 0.9
     templates:
         one:
             content:
