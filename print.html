@@ -286,7 +286,7 @@ The templates for this project that can be found in <code>./complate/config.yml<
 <p>The <code>complate</code> configuration schema written in YAML. It includes a version number that needs to be equal to the major version of the installed <code>complate</code> instance.<br />
 <em>Bootstrap</em> the configuration file in <code>./.complate/config.yml</code> by using the <code>complate init</code> command.</p>
 <h2><a class="header" href="#structure-by-example" id="structure-by-example">Structure by example</a></h2>
-<pre><code>version: 0.8
+<pre><code>version: 0.9
 templates:
     one:
         content:
@@ -324,6 +324,7 @@ templates:
             e.echo:
                 check:
                     text: Select the components that are affected
+                    separator: &quot;, &quot;
                     options:
                       alpha:
                         display: alpha
