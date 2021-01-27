@@ -1,0 +1,12 @@
+version: '3.3'
+
+services:
+  mdbook:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - "../:/app/content:ro"
+    ports:
+      - 3000:80

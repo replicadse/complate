@@ -7,3 +7,4 @@ title = "complate wiki"
 
 [output.html]
 mathjax-support = true
+fold.enable=true
