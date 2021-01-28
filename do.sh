@@ -6,9 +6,12 @@ case $1 in
         ;;
 
     init)
+        # install hooks
         rm -rf .git/hooks
         ln -s ../scripts/git-hooks .git/hooks
         chmod -R +x ./scripts/*
+        # install tools
+        cargo install cargo-sync-readme
         ;;
     
     docs)
