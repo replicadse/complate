@@ -44,7 +44,7 @@ jobs:
         with: 
           submodules: true
       - name: install
-        run: sudo apt-get install build-essential && cargo install mdbook
+        run: sudo apt-get install build-essential && cargo install mdbook --version=0.4.6
       - name: build
         working-directory: docs/wiki
         run: mdbook build
