@@ -32,6 +32,9 @@ jobs:
       run: cargo test ${{ matrix.features }}
     - name: build program
       run: cargo build ${{ matrix.features }}
+    - name: run cli tests
+      working-directory: test
+      run: sh test-cli.sh
 
   website:
     name: website

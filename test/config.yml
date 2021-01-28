@@ -1,0 +1,9 @@
+version: 0.9
+templates:
+    test:
+        content:
+            inline: |-
+              {{ alpha }}
+        values:
+            alpha:
+                shell: "printf \"alpha\""

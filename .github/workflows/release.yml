@@ -24,22 +24,25 @@ jobs:
           features: --features "backend+ui" --no-default-features
     steps:
     - uses: actions/checkout@v1
-    - name: Install tools
+    - name: install tools
       run: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
-    - name: Check formatting
+    - name: check formatting
       run: cargo fmt --all -- --check
-    - name: Check README.md synchronization
+    - name: check README.md synchronization
       run: |
         cargo install --force cargo-sync-readme
         cargo sync-readme -c
-    - name: Scan code
+    - name: scan code
       run: |
         rustup component add clippy
         cargo clippy --all-targets ${{ matrix.features }} -- -D warnings
-    - name: Execute tests
+    - name: execute tests
       run: cargo test ${{ matrix.features }}
-    - name: Build program
+    - name: build program
       run: cargo build ${{ matrix.features }}
+    - name: run cli tests
+      working-directory: test
+      run: sh test-cli.sh
 
   tag:
     if: github.ref == 'refs/heads/master'
@@ -61,7 +64,7 @@ jobs:
         draft: false
         prerelease: false
     - run: printf ${{ steps.create_release.outputs.upload_url }} > ${{ env.RELEASE_FILE }}
-    - name: Upload release data
+    - name: upload release data
       uses: actions/upload-artifact@v1.0.0
       with:
         name: RELEASE
@@ -73,12 +76,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Get version
+    - name: get version
       id: get_version
       run: echo ::set-output name=VERSION::$(git tag --points-at HEAD --sort -version:refname | head -1)
-    - name: Install tools
+    - name: install tools
       run: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
-    - name: Publish
+    - name: publish
       id: publish
       run: |
         chmod +x ./do.sh && 
@@ -88,7 +91,7 @@ jobs:
 
   publish:
     needs: tag
-    name: Publish for ${{ matrix.os }}
+    name: publish for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -101,14 +104,14 @@ jobs:
           install: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
     steps:
     - uses: actions/checkout@v1
-    - name: Get version
+    - name: get version
       id: get_version
       run: echo ::set-output name=VERSION::$(git tag --points-at HEAD --sort -version:refname | head -1)
-    - name: Download release id
+    - name: download release id
       uses: actions/download-artifact@v1.0.0
       with:
         name: RELEASE
-    - name: Get release data
+    - name: get release data
       id: get_release_data
       run: echo ::set-output name=upload_url::$(cat RELEASE/${{ env.RELEASE_FILE }})
     - name: install tools
