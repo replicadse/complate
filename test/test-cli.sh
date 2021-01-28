@@ -10,12 +10,12 @@ ev() {
 }
 
 echo "Testing with no shell trust"
-cmd="../target/debug/complate render -c=./config.yml -t=test"
+cmd="../target/debug/complate -e render -c=./config.yml -t=test"
 $cmd
 ev 1 $?
 
 echo "Testing with ultimate shell-trust"
-cmd="../target/debug/complate render -c=./config.yml -t=test --shell-trust=ultimate"
+cmd="../target/debug/complate -e render -c=./config.yml -t=test --shell-trust=ultimate"
 $cmd
 ev 0 $?
 echo ""
