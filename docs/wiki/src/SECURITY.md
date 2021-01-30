@@ -4,11 +4,11 @@
 
 | Version  | Supported          |
 | -------- | ------------------ |
-| >= 6.0.0 | ✅ |
-| <  6.0.0 | ❌ |
+| >= 9.0.0 | ✅ |
+| <  9.0.0 | ❌ |
 
 ## Vulnerability disclosure policy
-
+IF a version is supported and will receive updates is ONLY determined on the state of this document on the main repositories master branch.\
 Report to: [haw@voidpointergroup.com](mailto:haw@voidpointergroup.com)\
 Make sure to encrypt your message! [*Click me for PGP public key*.](https://raw.githubusercontent.com/replicadse/replicadse/master/haw%40voidpointergroup.com.pgp)\
 **Please respect the responsible disclosure principles.**\
