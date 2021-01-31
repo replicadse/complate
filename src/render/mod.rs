@@ -293,7 +293,7 @@ mod ui {
     use super::UserInput;
     use async_trait::async_trait;
     use cursive::traits::*;
-    use fui::views::Multiselect;
+    use cursive::views::Dialog;
     use std::collections::HashSet;
     use std::io::{Error, ErrorKind, Result};
     use std::ops::Deref;
@@ -311,23 +311,17 @@ mod ui {
     #[async_trait]
     impl<'a> UserInput for UIBackend<'a> {
         async fn prompt(&self, text: &str) -> Result<String> {
-            let mut siv = cursive::Cursive::default();
-            siv.add_global_callback(cursive::event::Event::CtrlChar('c'), |s| {
-                s.quit();
-            });
             let v = std::rc::Rc::new(std::cell::Cell::new(None));
             let vx = v.clone();
 
-            siv.add_layer(
-                cursive::views::Dialog::new().title(text).content(
-                    cursive::views::EditView::new()
-                        .on_submit(move |s, x| {
-                            vx.set(Some(x.to_string()));
-                            s.quit();
-                        })
-                        .fixed_width(40),
-                ),
-            );
+            let mut siv = cursive::default();
+            let form = fui::form::FormView::new()
+                .field(fui::fields::Text::new(text))
+                .on_submit(move |_, x| {
+                    vx.set(Some(x.to_string()));
+                });
+
+            siv.add_layer(Dialog::around(form));
             siv.run();
 
             v.take()
@@ -361,7 +355,7 @@ mod ui {
             {
                 let v = std::rc::Rc::new(std::cell::Cell::new(None));
                 let vx = v.clone();
-                let mut siv = cursive::Cursive::default();
+                let mut siv = cursive::default();
                 siv.add_global_callback(cursive::event::Event::CtrlChar('c'), |s| {
                     s.quit();
                 });
@@ -420,12 +414,12 @@ mod ui {
                     })
                     .collect::<Vec<String>>();
 
-                let mut siv = cursive::Cursive::default();
+                let mut siv = cursive::default();
                 siv.add_global_callback(cursive::event::Event::CtrlChar('c'), |s| {
                     s.quit();
                 });
 
-                let view = Multiselect::new(ArrOptions::new(&display_vals))
+                let view = fui::views::Multiselect::new(ArrOptions::new(&display_vals))
                     .on_select(move |_, v| {
                         items_view.try_write().unwrap().insert(v.deref().to_owned());
                     })
