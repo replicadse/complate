@@ -317,11 +317,12 @@ mod ui {
             let mut siv = cursive::default();
             let form = fui::form::FormView::new()
                 .field(fui::fields::Text::new(text))
-                .on_submit(move |_, x| {
+                .on_submit(move |s, x| {
                     vx.set(Some(x.to_string()));
+                    s.quit()
                 });
 
-            siv.add_layer(Dialog::around(form));
+            siv.add_layer(Dialog::around(form).full_screen());
             siv.run();
 
             v.take()

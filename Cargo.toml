@@ -28,8 +28,8 @@ clap = "2.33.0"
 handlebars = "3.0.1"
 
 dialoguer = { version = "0.7.1", optional = true }
-cursive = { version = "0.16", optional = true, default-features = false }
-fui = { git = "https://github.com/xliiv/fui", branch = "master", optional = true }
+cursive = { version = "0.16", optional = true }
+fui = { git = "https://github.com/xliiv/fui", rev = "11eda9b5f790308b0b671662c579a7d29d2909b0", optional = true }
 
 bytes = "1.0.1"
 futures = "0.3.1"
