@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>ADR 3: Versioning - complate wiki</title>
+        <title>Command reference - complate wiki</title>
         
         
 
@@ -98,7 +98,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="../home.html"><strong aria-hidden="true">1.</strong> Home</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../documentation/intro/intro.html"><strong aria-hidden="true">1.1.</strong> Introduction</a></li><li class="chapter-item "><a href="../documentation/intro/installation.html"><strong aria-hidden="true">1.2.</strong> How to install</a></li></ol></li><li class="chapter-item "><a href="../documentation/tech/commands.html"><strong aria-hidden="true">2.</strong> Documentation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../documentation/tech/commands.html"><strong aria-hidden="true">2.1.</strong> Command reference</a></li><li class="chapter-item "><a href="../documentation/tech/config.html"><strong aria-hidden="true">2.2.</strong> Configuration schema</a></li></ol></li><li class="chapter-item "><a href="../SECURITY.html"><strong aria-hidden="true">3.</strong> Security</a></li><li class="chapter-item expanded "><a href="../adrs/1.html"><strong aria-hidden="true">4.</strong> Architecture Decision Records</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../adrs/1.html"><strong aria-hidden="true">4.1.</strong> ADR 1: Usage of ADRs</a></li><li class="chapter-item "><a href="../adrs/2.html"><strong aria-hidden="true">4.2.</strong> ADR 2: Usage of key words</a></li><li class="chapter-item expanded "><a href="../adrs/3.html" class="active"><strong aria-hidden="true">4.3.</strong> ADR 3: Versioning</a></li><li class="chapter-item "><a href="../adrs/4.html"><strong aria-hidden="true">4.4.</strong> ADR 4: Experimental flag</a></li><li class="chapter-item "><a href="../adrs/5.html"><strong aria-hidden="true">4.5.</strong> ADR 5: Usage of feature flags</a></li><li class="chapter-item "><a href="../adrs/6.html"><strong aria-hidden="true">4.6.</strong> ADR 6: Render command supporting STDIN pipe</a></li><li class="chapter-item "><a href="../adrs/7.html"><strong aria-hidden="true">4.7.</strong> ADR 7: Usage of shell scripts instead of Makefiles</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction/root.html"><strong aria-hidden="true">1.</strong> Introduction</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../introduction/installation.html"><strong aria-hidden="true">1.1.</strong> How to install</a></li><li class="chapter-item "><a href="../introduction/security.html"><strong aria-hidden="true">1.2.</strong> Security</a></li><li class="chapter-item expanded "><a href="../introduction/command-reference.html" class="active"><strong aria-hidden="true">1.3.</strong> Command reference</a></li><li class="chapter-item "><a href="../introduction/configuration.html"><strong aria-hidden="true">1.4.</strong> Configuration schema</a></li></ol></li><li class="chapter-item "><a href="../adrs/root.html"><strong aria-hidden="true">2.</strong> ADRs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../adrs/1-usage-of-adrs.html"><strong aria-hidden="true">2.1.</strong> 1-usage-of-adrs</a></li><li class="chapter-item "><a href="../adrs/2-usage-of-keywords.html"><strong aria-hidden="true">2.2.</strong> 2-usage-of-keywords</a></li><li class="chapter-item "><a href="../adrs/3-versioning.html"><strong aria-hidden="true">2.3.</strong> 3-versioning</a></li><li class="chapter-item "><a href="../adrs/4-experimental-flag.html"><strong aria-hidden="true">2.4.</strong> 4-experimental-flag</a></li><li class="chapter-item "><a href="../adrs/5-usage-of-feature-flags.html"><strong aria-hidden="true">2.5.</strong> 5-usage-of-feature-flags</a></li><li class="chapter-item "><a href="../adrs/6-render-command-supporting-stdin-pipe.html"><strong aria-hidden="true">2.6.</strong> 6-render-command-supporting-stdin-pipe</a></li><li class="chapter-item "><a href="../adrs/7-usage-of-shell-scripts-instead-of-makefiles.html"><strong aria-hidden="true">2.7.</strong> 7-usage-of-shell-scripts-instead-of-makefiles</a></li></ol></li><li class="chapter-item "><a href="../rfcs/root.html"><strong aria-hidden="true">3.</strong> RFCs</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -166,28 +166,55 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#adr-3-versioning" id="adr-3-versioning">ADR 3: Versioning</a></h1>
-<p>State: Active</p>
-<h2><a class="header" href="#summary" id="summary">Summary</a></h2>
-<p>This project makes use of <a href="https://semver.org">the semver v2 versioning scheme</a> for all parts of the official public API. The public stable API is a subset of all available features (see <a href="./4.html">ADR 4</a>).</p>
-<h2><a class="header" href="#authors" id="authors">Authors</a></h2>
+                        <h1><a class="header" href="#command-reference" id="command-reference">Command reference</a></h1>
+<h2><a class="header" href="#disclaimer" id="disclaimer">Disclaimer</a></h2>
+<p>All features that are marked as <code>experimental</code> are <em>not</em> considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see <a href="https://semver.org">semver v2</a>). Use these features on your own risk!</p>
+<h2><a class="header" href="#features" id="features">Features</a></h2>
+<table><thead><tr><th>Name</th><th>Description</th><th>Default</th></tr></thead><tbody>
+<tr><td>backend+cli</td><td>The CLI backend which maps to the original dialoguer implementation.</td><td>Yes</td></tr>
+<tr><td>backend+ui</td><td>The UI backend which maps to the new cursive/fui implementation.</td><td>No</td></tr>
+</tbody></table>
+<h3><a class="header" href="#backend" id="backend"><code>backend+</code></a></h3>
+<p>Either one of the <code>backend+</code> features (or both) MUST be enabled for <code>complate</code> to work (it won't compile otherwise).</p>
+<h2><a class="header" href="#application-level-arguments" id="application-level-arguments">Application level arguments</a></h2>
+<table><thead><tr><th>Name</th><th>Short</th><th>Long</th><th>Description</th></tr></thead><tbody>
+<tr><td>Experimental</td><td>-e</td><td>--experimental</td><td>Activates experimental features that are not stable yet. All features that are marked as experimental are ignored when keeping backwards compatibility inside one major version.</td></tr>
+</tbody></table>
+<h2><a class="header" href="#commands" id="commands">Commands</a></h2>
+<table><thead><tr><th>Command</th><th>Description</th><th>Status</th></tr></thead><tbody>
+<tr><td>help</td><td>Prints the help to <code>STDOUT</code>.</td><td>stable</td></tr>
+<tr><td>init</td><td>Initializes the default configuration in <code>./.complate/config.yml</code></td><td>stable</td></tr>
+<tr><td>render</td><td>Prompts for the template, prompts for variable values and renders the data to <code>STDOUT</code></td><td>stable</td></tr>
+</tbody></table>
+<h2><a class="header" href="#render-command-flags" id="render-command-flags"><code>render</code> command flags</a></h2>
+<table><thead><tr><th>Name</th><th>Short</th><th>Long</th><th>Description</th><th>Remark</th><th>Status</th></tr></thead><tbody>
+<tr><td>Config</td><td>-c</td><td>--config</td><td>The path to the configuration file that shall be used. This path can be relative or absolute. The default path is <code>./complate/config.yml</code>.</td><td>When setting this argument to pipe (<code>-</code>), the config is parsed from the STDIN descriptor to the render command.</td><td>stable for file path, experimental for STDIN descriptor. Pipe is only supported for <code>UI</code> backend</td></tr>
+<tr><td>Shell trust</td><td></td><td>--shell-trust</td><td>Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are <code>none</code> (default), <code>prompt</code> and <code>ultimate</code></td><td></td><td>stable</td></tr>
+<tr><td>Template</td><td>-t</td><td>--template</td><td>Skip the template selection by defining the used template from the configuration via this argument</td><td></td><td>stable</td></tr>
+<tr><td>Backend</td><td>-b</td><td>--backend</td><td>Defines the backend for the user interaction.</td><td></td><td><code>CLI</code> is stable. <code>UI</code> is experimental (feature = &quot;backend+ui&quot;).</td></tr>
+</tbody></table>
+<p><strong>Examples:</strong></p>
 <ul>
-<li>Heiko Alexander Weber<br />
-<a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
+<li><code>complate render</code></li>
+<li><code>complate render -f .complate/alternative.yml</code></li>
+<li><code>cat .complate/alternative.yml | complate -e render -c- -bui -t0.default</code></li>
 </ul>
+<h2><a class="header" href="#configuration-file" id="configuration-file">Configuration file</a></h2>
+<p>Please find an example amd the documentation for the configuration format in the wiki.<br />
+The templates for this project that can be found in <code>./complate/config.yml</code>.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="../adrs/2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../introduction/security.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="../adrs/4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../introduction/configuration.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -199,13 +226,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="../adrs/2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../introduction/security.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="../adrs/4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../introduction/configuration.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

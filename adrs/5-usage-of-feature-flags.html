@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>ADR 4: Experimental flag - complate wiki</title>
+        <title>5-usage-of-feature-flags - complate wiki</title>
         
         
 
@@ -98,7 +98,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="../home.html"><strong aria-hidden="true">1.</strong> Home</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../documentation/intro/intro.html"><strong aria-hidden="true">1.1.</strong> Introduction</a></li><li class="chapter-item "><a href="../documentation/intro/installation.html"><strong aria-hidden="true">1.2.</strong> How to install</a></li></ol></li><li class="chapter-item "><a href="../documentation/tech/commands.html"><strong aria-hidden="true">2.</strong> Documentation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../documentation/tech/commands.html"><strong aria-hidden="true">2.1.</strong> Command reference</a></li><li class="chapter-item "><a href="../documentation/tech/config.html"><strong aria-hidden="true">2.2.</strong> Configuration schema</a></li></ol></li><li class="chapter-item "><a href="../SECURITY.html"><strong aria-hidden="true">3.</strong> Security</a></li><li class="chapter-item expanded "><a href="../adrs/1.html"><strong aria-hidden="true">4.</strong> Architecture Decision Records</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../adrs/1.html"><strong aria-hidden="true">4.1.</strong> ADR 1: Usage of ADRs</a></li><li class="chapter-item "><a href="../adrs/2.html"><strong aria-hidden="true">4.2.</strong> ADR 2: Usage of key words</a></li><li class="chapter-item "><a href="../adrs/3.html"><strong aria-hidden="true">4.3.</strong> ADR 3: Versioning</a></li><li class="chapter-item expanded "><a href="../adrs/4.html" class="active"><strong aria-hidden="true">4.4.</strong> ADR 4: Experimental flag</a></li><li class="chapter-item "><a href="../adrs/5.html"><strong aria-hidden="true">4.5.</strong> ADR 5: Usage of feature flags</a></li><li class="chapter-item "><a href="../adrs/6.html"><strong aria-hidden="true">4.6.</strong> ADR 6: Render command supporting STDIN pipe</a></li><li class="chapter-item "><a href="../adrs/7.html"><strong aria-hidden="true">4.7.</strong> ADR 7: Usage of shell scripts instead of Makefiles</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item "><a href="../introduction/root.html"><strong aria-hidden="true">1.</strong> Introduction</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../introduction/installation.html"><strong aria-hidden="true">1.1.</strong> How to install</a></li><li class="chapter-item "><a href="../introduction/security.html"><strong aria-hidden="true">1.2.</strong> Security</a></li><li class="chapter-item "><a href="../introduction/command-reference.html"><strong aria-hidden="true">1.3.</strong> Command reference</a></li><li class="chapter-item "><a href="../introduction/configuration.html"><strong aria-hidden="true">1.4.</strong> Configuration schema</a></li></ol></li><li class="chapter-item expanded "><a href="../adrs/root.html"><strong aria-hidden="true">2.</strong> ADRs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../adrs/1-usage-of-adrs.html"><strong aria-hidden="true">2.1.</strong> 1-usage-of-adrs</a></li><li class="chapter-item "><a href="../adrs/2-usage-of-keywords.html"><strong aria-hidden="true">2.2.</strong> 2-usage-of-keywords</a></li><li class="chapter-item "><a href="../adrs/3-versioning.html"><strong aria-hidden="true">2.3.</strong> 3-versioning</a></li><li class="chapter-item "><a href="../adrs/4-experimental-flag.html"><strong aria-hidden="true">2.4.</strong> 4-experimental-flag</a></li><li class="chapter-item expanded "><a href="../adrs/5-usage-of-feature-flags.html" class="active"><strong aria-hidden="true">2.5.</strong> 5-usage-of-feature-flags</a></li><li class="chapter-item "><a href="../adrs/6-render-command-supporting-stdin-pipe.html"><strong aria-hidden="true">2.6.</strong> 6-render-command-supporting-stdin-pipe</a></li><li class="chapter-item "><a href="../adrs/7-usage-of-shell-scripts-instead-of-makefiles.html"><strong aria-hidden="true">2.7.</strong> 7-usage-of-shell-scripts-instead-of-makefiles</a></li></ol></li><li class="chapter-item "><a href="../rfcs/root.html"><strong aria-hidden="true">3.</strong> RFCs</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -166,11 +166,10 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#adr-4-experimental-flag" id="adr-4-experimental-flag">ADR 4: Experimental flag</a></h1>
-<p>State: Active</p>
+                        <h1><a class="header" href="#adr-5-usage-of-feature-flags" id="adr-5-usage-of-feature-flags">ADR 5: Usage of feature flags</a></h1>
 <h2><a class="header" href="#summary" id="summary">Summary</a></h2>
-<p>There is a application level argument (flag) <code>experimental</code> (<code>-e</code> | <code>--experimental</code>) that indicates that experimental features can now be accessed. This flag explicitly marks features that are NOT part of the official public API and therefore NOT considered when applying the versioning scheme (see <a href="./3.html">ADR 3</a>).<br />
-This flag is designed to be used with and therefore CAN be used with <a href="./5.html">feature flags</a>.</p>
+<p>This project makes use of cargo feature flags. Feature flags count as part of the public API and are therefore to be considered when applying the version rules IF NOT marked as experimental (see <a href="./4.html">ADR 4</a>).<br />
+All feature flags MUST be documented in an appropriate manner in the README.md file.</p>
 <h2><a class="header" href="#authors" id="authors">Authors</a></h2>
 <ul>
 <li>Heiko Alexander Weber<br />
@@ -182,13 +181,13 @@ This flag is designed to be used with and therefore CAN be used with <a href="./
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="../adrs/3.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../adrs/4-experimental-flag.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="../adrs/5.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../adrs/6-render-command-supporting-stdin-pipe.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -200,13 +199,13 @@ This flag is designed to be used with and therefore CAN be used with <a href="./
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="../adrs/3.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../adrs/4-experimental-flag.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="../adrs/5.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../adrs/6-render-command-supporting-stdin-pipe.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>ADR 2: Usage of key words - complate wiki</title>
+        <title>Configuration schema - complate wiki</title>
         
         
 
@@ -98,7 +98,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="../home.html"><strong aria-hidden="true">1.</strong> Home</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../documentation/intro/intro.html"><strong aria-hidden="true">1.1.</strong> Introduction</a></li><li class="chapter-item "><a href="../documentation/intro/installation.html"><strong aria-hidden="true">1.2.</strong> How to install</a></li></ol></li><li class="chapter-item "><a href="../documentation/tech/commands.html"><strong aria-hidden="true">2.</strong> Documentation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../documentation/tech/commands.html"><strong aria-hidden="true">2.1.</strong> Command reference</a></li><li class="chapter-item "><a href="../documentation/tech/config.html"><strong aria-hidden="true">2.2.</strong> Configuration schema</a></li></ol></li><li class="chapter-item "><a href="../SECURITY.html"><strong aria-hidden="true">3.</strong> Security</a></li><li class="chapter-item expanded "><a href="../adrs/1.html"><strong aria-hidden="true">4.</strong> Architecture Decision Records</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../adrs/1.html"><strong aria-hidden="true">4.1.</strong> ADR 1: Usage of ADRs</a></li><li class="chapter-item expanded "><a href="../adrs/2.html" class="active"><strong aria-hidden="true">4.2.</strong> ADR 2: Usage of key words</a></li><li class="chapter-item "><a href="../adrs/3.html"><strong aria-hidden="true">4.3.</strong> ADR 3: Versioning</a></li><li class="chapter-item "><a href="../adrs/4.html"><strong aria-hidden="true">4.4.</strong> ADR 4: Experimental flag</a></li><li class="chapter-item "><a href="../adrs/5.html"><strong aria-hidden="true">4.5.</strong> ADR 5: Usage of feature flags</a></li><li class="chapter-item "><a href="../adrs/6.html"><strong aria-hidden="true">4.6.</strong> ADR 6: Render command supporting STDIN pipe</a></li><li class="chapter-item "><a href="../adrs/7.html"><strong aria-hidden="true">4.7.</strong> ADR 7: Usage of shell scripts instead of Makefiles</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction/root.html"><strong aria-hidden="true">1.</strong> Introduction</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../introduction/installation.html"><strong aria-hidden="true">1.1.</strong> How to install</a></li><li class="chapter-item "><a href="../introduction/security.html"><strong aria-hidden="true">1.2.</strong> Security</a></li><li class="chapter-item "><a href="../introduction/command-reference.html"><strong aria-hidden="true">1.3.</strong> Command reference</a></li><li class="chapter-item expanded "><a href="../introduction/configuration.html" class="active"><strong aria-hidden="true">1.4.</strong> Configuration schema</a></li></ol></li><li class="chapter-item "><a href="../adrs/root.html"><strong aria-hidden="true">2.</strong> ADRs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../adrs/1-usage-of-adrs.html"><strong aria-hidden="true">2.1.</strong> 1-usage-of-adrs</a></li><li class="chapter-item "><a href="../adrs/2-usage-of-keywords.html"><strong aria-hidden="true">2.2.</strong> 2-usage-of-keywords</a></li><li class="chapter-item "><a href="../adrs/3-versioning.html"><strong aria-hidden="true">2.3.</strong> 3-versioning</a></li><li class="chapter-item "><a href="../adrs/4-experimental-flag.html"><strong aria-hidden="true">2.4.</strong> 4-experimental-flag</a></li><li class="chapter-item "><a href="../adrs/5-usage-of-feature-flags.html"><strong aria-hidden="true">2.5.</strong> 5-usage-of-feature-flags</a></li><li class="chapter-item "><a href="../adrs/6-render-command-supporting-stdin-pipe.html"><strong aria-hidden="true">2.6.</strong> 6-render-command-supporting-stdin-pipe</a></li><li class="chapter-item "><a href="../adrs/7-usage-of-shell-scripts-instead-of-makefiles.html"><strong aria-hidden="true">2.7.</strong> 7-usage-of-shell-scripts-instead-of-makefiles</a></li></ol></li><li class="chapter-item "><a href="../rfcs/root.html"><strong aria-hidden="true">3.</strong> RFCs</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -166,28 +166,88 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#adr-2-usage-of-key-words" id="adr-2-usage-of-key-words">ADR 2: Usage of key words</a></h1>
-<p>State: Active</p>
-<h2><a class="header" href="#summary" id="summary">Summary</a></h2>
-<p>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document and in all documents in it's subtree as well as all documents that are directly related to this document are to be interpreted as described in <a href="https://tools.ietf.org/html/bcp14">BCP 14</a>, <a href="https://tools.ietf.org/html/rfc2119">RFC2119</a> and <a href="https://tools.ietf.org/html/rfc8174">RFC8174</a> when, and only when, they appear in all capitals, as shown here.</p>
-<h2><a class="header" href="#authors" id="authors">Authors</a></h2>
-<ul>
-<li>Heiko Alexander Weber<br />
-<a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
-</ul>
+                        <h1><a class="header" href="#configuration" id="configuration">Configuration</a></h1>
+<h2><a class="header" href="#introduction" id="introduction">Introduction</a></h2>
+<p>The <code>complate</code> configuration schema written in YAML. It includes a version number that needs to be equal to the major version of the installed <code>complate</code> instance.<br />
+<em>Bootstrap</em> the configuration file in <code>./.complate/config.yml</code> by using the <code>complate init</code> command.</p>
+<h2><a class="header" href="#structure-by-example" id="structure-by-example">Structure by example</a></h2>
+<pre><code>version: 0.9
+templates:
+    one:
+        content:
+            file: ./.complate/templates/arbitraty-template-file.tpl
+        values:
+            a.summary:
+                static: &quot;random summary&quot;
+    two:
+        content:
+            inline: |-
+                {{ a.alpha }}
+                {{ b.bravo }}
+                {{ c.charlie }}
+                {{ d.delta }}
+                {{ e.echo }}
+        values:
+            a.alpha:
+              prompt: &quot;alpha&quot;
+            b.bravo:
+              shell: &quot;printf bravo&quot;
+            c.charlie:
+              static: &quot;charlie&quot;
+            d.delta:
+                select:
+                    text: Select the version level that shall be incremented
+                    options:
+                      alpha:
+                        display: alpha
+                        value:
+                          static: alpha
+                      bravo:
+                        display: bravo
+                        value:
+                          shell: printf bravo
+            e.echo:
+                check:
+                    text: Select the components that are affected
+                    separator: &quot;, &quot;
+                    options:
+                      alpha:
+                        display: alpha
+                        value:
+                          static: alpha
+                      bravo:
+                        display: bravo
+                        value:
+                          shell: printf bravo
+
+</code></pre>
+<p>The first tag has the current version of the configuration schema. It needs to be equal to the major version number of the cli program. Since <code>complate</code> is still sub-one, the versioning is not yet stable and therefore, the major <em>and</em> minor version need to be equal to the ones of the cli program.<br />
+But now the important part, the templates. <code>complate</code> supports two types of loading templates. One is a file reference (relative or absolute), the other one is specifying the template inline in the configuration. This should be rather self explanatory by the example above.</p>
+<h3><a class="header" href="#template-variables-and-values" id="template-variables-and-values">Template variables and values</a></h3>
+<p>The variables inside the template content are defined in the handlebars syntax (&quot;<code>{{ xyz }}</code>&quot;). These variables need a corresponding declaration on how to resolve the value for it under the <code>values</code> section of the template.<br />
+You can resolve the value for each variable individual. Following options are available:</p>
+<table><thead><tr><th>Key</th><th>Behaviour</th><th>Input</th><th>Remark</th></tr></thead><tbody>
+<tr><td>static</td><td>Simply replaces the variable with a static value</td><td>None</td><td></td></tr>
+<tr><td>prompt</td><td>Asks the user for text input (can be empty)</td><td>The prompt</td><td></td></tr>
+<tr><td>shell</td><td>Invokes a shell command to resolve the variable (read from STDOUT)</td><td>None</td><td>See <code>shell security</code></td></tr>
+<tr><td>select</td><td>Asks the user to select one item from a list</td><td><code>text</code>: string (context), <code>options</code>: list (available options to select from)</td><td></td></tr>
+<tr><td>check</td><td>Asks the user to select 0..n item(s) from a list (multiselect)</td><td><code>text</code>: string (context), <code>options</code>: list of options {display: str, value: str} (the available options to select from)</td><td></td></tr>
+</tbody></table>
+<h4><a class="header" href="#shell-security" id="shell-security">Shell security</a></h4>
+<p>Since the <code>shell</code> value provider is able to run arbitrary shell commands, it is only allowed if and only if the <code>SHELL_TRUST</code> argument is explicitly set. See the <code>render</code> command reference for possible values for this setting. If <em>not</em> set, the provider will throw an unrecoverable error and the program will abort.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="../adrs/1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../introduction/command-reference.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="../adrs/3.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../adrs/root.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -199,13 +259,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="../adrs/1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../introduction/command-reference.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="../adrs/3.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../adrs/root.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

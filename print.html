@@ -100,7 +100,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item "><a href="home.html"><strong aria-hidden="true">1.</strong> Home</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="documentation/intro/intro.html"><strong aria-hidden="true">1.1.</strong> Introduction</a></li><li class="chapter-item "><a href="documentation/intro/installation.html"><strong aria-hidden="true">1.2.</strong> How to install</a></li></ol></li><li class="chapter-item "><a href="documentation/tech/commands.html"><strong aria-hidden="true">2.</strong> Documentation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="documentation/tech/commands.html"><strong aria-hidden="true">2.1.</strong> Command reference</a></li><li class="chapter-item "><a href="documentation/tech/config.html"><strong aria-hidden="true">2.2.</strong> Configuration schema</a></li></ol></li><li class="chapter-item "><a href="SECURITY.html"><strong aria-hidden="true">3.</strong> Security</a></li><li class="chapter-item "><a href="adrs/1.html"><strong aria-hidden="true">4.</strong> Architecture Decision Records</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="adrs/1.html"><strong aria-hidden="true">4.1.</strong> ADR 1: Usage of ADRs</a></li><li class="chapter-item "><a href="adrs/2.html"><strong aria-hidden="true">4.2.</strong> ADR 2: Usage of key words</a></li><li class="chapter-item "><a href="adrs/3.html"><strong aria-hidden="true">4.3.</strong> ADR 3: Versioning</a></li><li class="chapter-item "><a href="adrs/4.html"><strong aria-hidden="true">4.4.</strong> ADR 4: Experimental flag</a></li><li class="chapter-item "><a href="adrs/5.html"><strong aria-hidden="true">4.5.</strong> ADR 5: Usage of feature flags</a></li><li class="chapter-item "><a href="adrs/6.html"><strong aria-hidden="true">4.6.</strong> ADR 6: Render command supporting STDIN pipe</a></li><li class="chapter-item "><a href="adrs/7.html"><strong aria-hidden="true">4.7.</strong> ADR 7: Usage of shell scripts instead of Makefiles</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item "><a href="introduction/root.html"><strong aria-hidden="true">1.</strong> Introduction</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="introduction/installation.html"><strong aria-hidden="true">1.1.</strong> How to install</a></li><li class="chapter-item "><a href="introduction/security.html"><strong aria-hidden="true">1.2.</strong> Security</a></li><li class="chapter-item "><a href="introduction/command-reference.html"><strong aria-hidden="true">1.3.</strong> Command reference</a></li><li class="chapter-item "><a href="introduction/configuration.html"><strong aria-hidden="true">1.4.</strong> Configuration schema</a></li></ol></li><li class="chapter-item "><a href="adrs/root.html"><strong aria-hidden="true">2.</strong> ADRs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="adrs/1-usage-of-adrs.html"><strong aria-hidden="true">2.1.</strong> 1-usage-of-adrs</a></li><li class="chapter-item "><a href="adrs/2-usage-of-keywords.html"><strong aria-hidden="true">2.2.</strong> 2-usage-of-keywords</a></li><li class="chapter-item "><a href="adrs/3-versioning.html"><strong aria-hidden="true">2.3.</strong> 3-versioning</a></li><li class="chapter-item "><a href="adrs/4-experimental-flag.html"><strong aria-hidden="true">2.4.</strong> 4-experimental-flag</a></li><li class="chapter-item "><a href="adrs/5-usage-of-feature-flags.html"><strong aria-hidden="true">2.5.</strong> 5-usage-of-feature-flags</a></li><li class="chapter-item "><a href="adrs/6-render-command-supporting-stdin-pipe.html"><strong aria-hidden="true">2.6.</strong> 6-render-command-supporting-stdin-pipe</a></li><li class="chapter-item "><a href="adrs/7-usage-of-shell-scripts-instead-of-makefiles.html"><strong aria-hidden="true">2.7.</strong> 7-usage-of-shell-scripts-instead-of-makefiles</a></li></ol></li><li class="chapter-item "><a href="rfcs/root.html"><strong aria-hidden="true">3.</strong> RFCs</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -168,8 +168,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#complate-wiki" id="complate-wiki">complate wiki</a></h1>
-<p><a href="https://crates.io/crates/complate"><img src="https://img.shields.io/crates/v/complate.svg" alt="crates.io" /></a>
+                        <p><a href="https://crates.io/crates/complate"><img src="https://img.shields.io/crates/v/complate.svg" alt="crates.io" /></a>
 <a href="https://crates.io/crates/complate"><img src="https://img.shields.io/crates/d/complate?label=crates.io%20downloads" alt="crates.io" /></a>
 <a href="https://github.com/replicadse/complate/actions?query=workflow%3Apipeline"><img src="https://github.com/replicadse/complate/workflows/pipeline/badge.svg" alt="pipeline" /></a>
 <a href="https://deps.rs/repo/github/replicadse/complate"><img src="https://deps.rs/repo/github/replicadse/complate/status.svg" alt="dependency status" /></a><br />
@@ -210,6 +209,19 @@ Install the software by executing:</p>
 <p>In order to update the version, simply run that command with the <code>--force</code> flag.</p>
 <pre><code>cargo install complate --force
 </code></pre>
+<h1><a class="header" href="#security-policy" id="security-policy">Security Policy</a></h1>
+<h2><a class="header" href="#supported-versions" id="supported-versions">Supported Versions</a></h2>
+<table><thead><tr><th>Version</th><th>Supported</th></tr></thead><tbody>
+<tr><td>&gt;= 9.0.0</td><td>✅</td></tr>
+<tr><td>&lt;  9.0.0</td><td>❌</td></tr>
+</tbody></table>
+<h2><a class="header" href="#vulnerability-disclosure-policy" id="vulnerability-disclosure-policy">Vulnerability disclosure policy</a></h2>
+<p>IF a version is supported and will receive updates is ONLY determined on the state of this document on the main repo's master branch.<br />
+Report to: <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a><br />
+Make sure to encrypt your message! <a href="https://raw.githubusercontent.com/replicadse/replicadse/master/haw%40voidpointergroup.com.pgp"><em>Click me for PGP public key</em>.</a><br />
+<strong>Please respect the responsible disclosure principles.</strong><br />
+Do <strong>not</strong> simply post a vulnerability publicly as issue. These will be deleted.<br />
+<strong>All</strong> vulnerabilities will be posted and made public at some point <em>after</em> the fix has been propagated. The exact time depends on the type of vulnerability and it's potential consequences.</p>
 <h1><a class="header" href="#command-reference" id="command-reference">Command reference</a></h1>
 <h2><a class="header" href="#disclaimer" id="disclaimer">Disclaimer</a></h2>
 <p>All features that are marked as <code>experimental</code> are <em>not</em> considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see <a href="https://semver.org">semver v2</a>). Use these features on your own risk!</p>
@@ -244,42 +256,6 @@ Install the software by executing:</p>
 <li><code>cat .complate/alternative.yml | complate -e render -c- -bui -t0.default</code></li>
 </ul>
 <h2><a class="header" href="#configuration-file" id="configuration-file">Configuration file</a></h2>
-<p>Please find an example amd the documentation for the configuration format in the wiki.<br />
-The templates for this project that can be found in <code>./complate/config.yml</code>.</p>
-<h1><a class="header" href="#command-reference-1" id="command-reference-1">Command reference</a></h1>
-<h2><a class="header" href="#disclaimer-1" id="disclaimer-1">Disclaimer</a></h2>
-<p>All features that are marked as <code>experimental</code> are <em>not</em> considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see <a href="https://semver.org">semver v2</a>). Use these features on your own risk!</p>
-<h2><a class="header" href="#features-1" id="features-1">Features</a></h2>
-<table><thead><tr><th>Name</th><th>Description</th><th>Default</th></tr></thead><tbody>
-<tr><td>backend+cli</td><td>The CLI backend which maps to the original dialoguer implementation.</td><td>Yes</td></tr>
-<tr><td>backend+ui</td><td>The UI backend which maps to the new cursive/fui implementation.</td><td>No</td></tr>
-</tbody></table>
-<h3><a class="header" href="#backend-1" id="backend-1"><code>backend+</code></a></h3>
-<p>Either one of the <code>backend+</code> features (or both) MUST be enabled for <code>complate</code> to work (it won't compile otherwise).</p>
-<h2><a class="header" href="#application-level-arguments-1" id="application-level-arguments-1">Application level arguments</a></h2>
-<table><thead><tr><th>Name</th><th>Short</th><th>Long</th><th>Description</th></tr></thead><tbody>
-<tr><td>Experimental</td><td>-e</td><td>--experimental</td><td>Activates experimental features that are not stable yet. All features that are marked as experimental are ignored when keeping backwards compatibility inside one major version.</td></tr>
-</tbody></table>
-<h2><a class="header" href="#commands-1" id="commands-1">Commands</a></h2>
-<table><thead><tr><th>Command</th><th>Description</th><th>Status</th></tr></thead><tbody>
-<tr><td>help</td><td>Prints the help to <code>STDOUT</code>.</td><td>stable</td></tr>
-<tr><td>init</td><td>Initializes the default configuration in <code>./.complate/config.yml</code></td><td>stable</td></tr>
-<tr><td>render</td><td>Prompts for the template, prompts for variable values and renders the data to <code>STDOUT</code></td><td>stable</td></tr>
-</tbody></table>
-<h2><a class="header" href="#render-command-flags-1" id="render-command-flags-1"><code>render</code> command flags</a></h2>
-<table><thead><tr><th>Name</th><th>Short</th><th>Long</th><th>Description</th><th>Remark</th><th>Status</th></tr></thead><tbody>
-<tr><td>Config</td><td>-c</td><td>--config</td><td>The path to the configuration file that shall be used. This path can be relative or absolute. The default path is <code>./complate/config.yml</code>.</td><td>When setting this argument to pipe (<code>-</code>), the config is parsed from the STDIN descriptor to the render command.</td><td>stable for file path, experimental for STDIN descriptor. Pipe is only supported for <code>UI</code> backend</td></tr>
-<tr><td>Shell trust</td><td></td><td>--shell-trust</td><td>Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are <code>none</code> (default), <code>prompt</code> and <code>ultimate</code></td><td></td><td>stable</td></tr>
-<tr><td>Template</td><td>-t</td><td>--template</td><td>Skip the template selection by defining the used template from the configuration via this argument</td><td></td><td>stable</td></tr>
-<tr><td>Backend</td><td>-b</td><td>--backend</td><td>Defines the backend for the user interaction.</td><td></td><td><code>CLI</code> is stable. <code>UI</code> is experimental (feature = &quot;backend+ui&quot;).</td></tr>
-</tbody></table>
-<p><strong>Examples:</strong></p>
-<ul>
-<li><code>complate render</code></li>
-<li><code>complate render -f .complate/alternative.yml</code></li>
-<li><code>cat .complate/alternative.yml | complate -e render -c- -bui -t0.default</code></li>
-</ul>
-<h2><a class="header" href="#configuration-file-1" id="configuration-file-1">Configuration file</a></h2>
 <p>Please find an example amd the documentation for the configuration format in the wiki.<br />
 The templates for this project that can be found in <code>./complate/config.yml</code>.</p>
 <h1><a class="header" href="#configuration" id="configuration">Configuration</a></h1>
@@ -351,21 +327,9 @@ You can resolve the value for each variable individual. Following options are av
 </tbody></table>
 <h4><a class="header" href="#shell-security" id="shell-security">Shell security</a></h4>
 <p>Since the <code>shell</code> value provider is able to run arbitrary shell commands, it is only allowed if and only if the <code>SHELL_TRUST</code> argument is explicitly set. See the <code>render</code> command reference for possible values for this setting. If <em>not</em> set, the provider will throw an unrecoverable error and the program will abort.</p>
-<h1><a class="header" href="#security-policy" id="security-policy">Security Policy</a></h1>
-<h2><a class="header" href="#supported-versions" id="supported-versions">Supported Versions</a></h2>
-<table><thead><tr><th>Version</th><th>Supported</th></tr></thead><tbody>
-<tr><td>&gt;= 9.0.0</td><td>✅</td></tr>
-<tr><td>&lt;  9.0.0</td><td>❌</td></tr>
-</tbody></table>
-<h2><a class="header" href="#vulnerability-disclosure-policy" id="vulnerability-disclosure-policy">Vulnerability disclosure policy</a></h2>
-<p>IF a version is supported and will receive updates is ONLY determined on the state of this document on the main repo's master branch.<br />
-Report to: <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a><br />
-Make sure to encrypt your message! <a href="https://raw.githubusercontent.com/replicadse/replicadse/master/haw%40voidpointergroup.com.pgp"><em>Click me for PGP public key</em>.</a><br />
-<strong>Please respect the responsible disclosure principles.</strong><br />
-Do <strong>not</strong> simply post a vulnerability publicly as issue. These will be deleted.<br />
-<strong>All</strong> vulnerabilities will be posted and made public at some point <em>after</em> the fix has been propagated. The exact time depends on the type of vulnerability and it's potential consequences.</p>
+<h1><a class="header" href="#architecture-decision-records" id="architecture-decision-records">Architecture Decision Records</a></h1>
+<p>are designed to keep track of decisions that affect the development process and the product.</p>
 <h1><a class="header" href="#adr-1-usage-of-adrs" id="adr-1-usage-of-adrs">ADR 1: Usage of ADRs</a></h1>
-<p>State: Active</p>
 <h2><a class="header" href="#summary" id="summary">Summary</a></h2>
 <p>This project uses ADRs. ADRs are documented in this repository and format. In doubt, the documents in this repository and documentation are to be considered as the single source of truth.<br />
 ADRs MUST be formatted in a way that is compatible with the <a href="https://crates.io/crates/mdbook"><code>mdbook tool</code></a>.</p>
@@ -374,74 +338,60 @@ ADRs MUST be formatted in a way that is compatible with the <a href="https://cra
 <li>Heiko Alexander Weber<br />
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
-<h1><a class="header" href="#adr-1-usage-of-adrs-1" id="adr-1-usage-of-adrs-1">ADR 1: Usage of ADRs</a></h1>
-<p>State: Active</p>
+<h1><a class="header" href="#adr-2-usage-of-key-words" id="adr-2-usage-of-key-words">ADR 2: Usage of key words</a></h1>
 <h2><a class="header" href="#summary-1" id="summary-1">Summary</a></h2>
-<p>This project uses ADRs. ADRs are documented in this repository and format. In doubt, the documents in this repository and documentation are to be considered as the single source of truth.<br />
-ADRs MUST be formatted in a way that is compatible with the <a href="https://crates.io/crates/mdbook"><code>mdbook tool</code></a>.</p>
+<p>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document and in all documents in it's subtree as well as all documents that are directly related to this document are to be interpreted as described in <a href="https://tools.ietf.org/html/bcp14">BCP 14</a>, <a href="https://tools.ietf.org/html/rfc2119">RFC2119</a> and <a href="https://tools.ietf.org/html/rfc8174">RFC8174</a> when, and only when, they appear in all capitals, as shown here.</p>
 <h2><a class="header" href="#authors-1" id="authors-1">Authors</a></h2>
 <ul>
 <li>Heiko Alexander Weber<br />
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
-<h1><a class="header" href="#adr-2-usage-of-key-words" id="adr-2-usage-of-key-words">ADR 2: Usage of key words</a></h1>
-<p>State: Active</p>
+<h1><a class="header" href="#adr-3-versioning" id="adr-3-versioning">ADR 3: Versioning</a></h1>
 <h2><a class="header" href="#summary-2" id="summary-2">Summary</a></h2>
-<p>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document and in all documents in it's subtree as well as all documents that are directly related to this document are to be interpreted as described in <a href="https://tools.ietf.org/html/bcp14">BCP 14</a>, <a href="https://tools.ietf.org/html/rfc2119">RFC2119</a> and <a href="https://tools.ietf.org/html/rfc8174">RFC8174</a> when, and only when, they appear in all capitals, as shown here.</p>
+<p>This project makes use of <a href="https://semver.org">the semver v2 versioning scheme</a> for all parts of the official public API. The public stable API is a subset of all available features (see <a href="adrs/./4.html">ADR 4</a>).</p>
 <h2><a class="header" href="#authors-2" id="authors-2">Authors</a></h2>
 <ul>
 <li>Heiko Alexander Weber<br />
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
-<h1><a class="header" href="#adr-3-versioning" id="adr-3-versioning">ADR 3: Versioning</a></h1>
-<p>State: Active</p>
+<h1><a class="header" href="#adr-4-experimental-flag" id="adr-4-experimental-flag">ADR 4: Experimental flag</a></h1>
 <h2><a class="header" href="#summary-3" id="summary-3">Summary</a></h2>
-<p>This project makes use of <a href="https://semver.org">the semver v2 versioning scheme</a> for all parts of the official public API. The public stable API is a subset of all available features (see <a href="adrs/./4.html">ADR 4</a>).</p>
+<p>There is a application level argument (flag) <code>experimental</code> (<code>-e</code> | <code>--experimental</code>) that indicates that experimental features can now be accessed. This flag explicitly marks features that are NOT part of the official public API and therefore NOT considered when applying the versioning scheme (see <a href="adrs/./3.html">ADR 3</a>).<br />
+This flag is designed to be used with and therefore CAN be used with <a href="adrs/./5.html">feature flags</a>.</p>
 <h2><a class="header" href="#authors-3" id="authors-3">Authors</a></h2>
 <ul>
 <li>Heiko Alexander Weber<br />
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
-<h1><a class="header" href="#adr-4-experimental-flag" id="adr-4-experimental-flag">ADR 4: Experimental flag</a></h1>
-<p>State: Active</p>
+<h1><a class="header" href="#adr-5-usage-of-feature-flags" id="adr-5-usage-of-feature-flags">ADR 5: Usage of feature flags</a></h1>
 <h2><a class="header" href="#summary-4" id="summary-4">Summary</a></h2>
-<p>There is a application level argument (flag) <code>experimental</code> (<code>-e</code> | <code>--experimental</code>) that indicates that experimental features can now be accessed. This flag explicitly marks features that are NOT part of the official public API and therefore NOT considered when applying the versioning scheme (see <a href="adrs/./3.html">ADR 3</a>).<br />
-This flag is designed to be used with and therefore CAN be used with <a href="adrs/./5.html">feature flags</a>.</p>
+<p>This project makes use of cargo feature flags. Feature flags count as part of the public API and are therefore to be considered when applying the version rules IF NOT marked as experimental (see <a href="adrs/./4.html">ADR 4</a>).<br />
+All feature flags MUST be documented in an appropriate manner in the README.md file.</p>
 <h2><a class="header" href="#authors-4" id="authors-4">Authors</a></h2>
 <ul>
 <li>Heiko Alexander Weber<br />
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
-<h1><a class="header" href="#adr-5-usage-of-feature-flags" id="adr-5-usage-of-feature-flags">ADR 5: Usage of feature flags</a></h1>
-<p>State: Active</p>
+<h1><a class="header" href="#adr-6-render-command-supporting-stdin-pipe" id="adr-6-render-command-supporting-stdin-pipe">ADR 6: Render command supporting STDIN pipe</a></h1>
 <h2><a class="header" href="#summary-5" id="summary-5">Summary</a></h2>
-<p>This project makes use of cargo feature flags. Feature flags count as part of the public API and are therefore to be considered when applying the version rules IF NOT marked as experimental (see <a href="adrs/./4.html">ADR 4</a>).<br />
-All feature flags MUST be documented in an appropriate manner in the README.md file.</p>
+<p>The render command MUST support piping the configuration into it via STDIN as alternative to the file based approach.<br />
+The indicator for the pipe being used MUST be the <code>-</code> character as value for the <code>configuration</code> argument to the command.</p>
 <h2><a class="header" href="#authors-5" id="authors-5">Authors</a></h2>
 <ul>
 <li>Heiko Alexander Weber<br />
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
-<h1><a class="header" href="#adr-6-render-command-supporting-stdin-pipe" id="adr-6-render-command-supporting-stdin-pipe">ADR 6: Render command supporting STDIN pipe</a></h1>
-<p>State: Active</p>
+<h1><a class="header" href="#adr-7-usage-of-shell-scripts-instead-of-makefiles" id="adr-7-usage-of-shell-scripts-instead-of-makefiles">ADR 7: Usage of shell scripts instead of Makefiles</a></h1>
 <h2><a class="header" href="#summary-6" id="summary-6">Summary</a></h2>
-<p>The render command MUST support piping the configuration into it via STDIN as alternative to the file based approach.<br />
-The indicator for the pipe being used MUST be the <code>-</code> character as value for the <code>configuration</code> argument to the command.</p>
+<p>Originally, this project had a Makefile in order to do the build steps and such. Since Makefile still is kind of an alien syntax and has some disadvantages against standard plain shell scripts (bash scripts), I decided to replace the Makefile with a shell script (<code>./do.sh</code>).<br />
+This script now contains the important commands like generating coverage reports and initializing the repository.</p>
 <h2><a class="header" href="#authors-6" id="authors-6">Authors</a></h2>
 <ul>
 <li>Heiko Alexander Weber<br />
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
-<h1><a class="header" href="#adr-7-usage-of-shell-scripts-instead-of-makefiles" id="adr-7-usage-of-shell-scripts-instead-of-makefiles">ADR 7: Usage of shell scripts instead of Makefiles</a></h1>
-<p>State: Active</p>
-<h2><a class="header" href="#summary-7" id="summary-7">Summary</a></h2>
-<p>Originally, this project had a Makefile in order to do the build steps and such. Since Makefile still is kind of an alien syntax and has some disadvantages against standard plain shell scripts (bash scripts), I decided to replace the Makefile with a shell script (<code>./do.sh</code>).<br />
-This script now contains the important commands like generating coverage reports and initializing the repository.</p>
-<h2><a class="header" href="#authors-7" id="authors-7">Authors</a></h2>
-<ul>
-<li>Heiko Alexander Weber<br />
-<a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
-</ul>
+<h1><a class="header" href="#request-for-comment" id="request-for-comment">Request For Comment</a></h1>
+<p>are pending proposed solutions for problems that still need to be discussed and rejected or accepted. When accepted, these become ADRs.</p>
 
                     </main>
 
