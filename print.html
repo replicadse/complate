@@ -365,6 +365,7 @@ Make sure to encrypt your message! <a href="https://raw.githubusercontent.com/re
 Do <strong>not</strong> simply post a vulnerability publicly as issue. These will be deleted.<br />
 <strong>All</strong> vulnerabilities will be posted and made public at some point <em>after</em> the fix has been propagated. The exact time depends on the type of vulnerability and it's potential consequences.</p>
 <h1><a class="header" href="#adr-1-usage-of-adrs" id="adr-1-usage-of-adrs">ADR 1: Usage of ADRs</a></h1>
+<p>State: Active</p>
 <h2><a class="header" href="#summary" id="summary">Summary</a></h2>
 <p>This project uses ADRs. ADRs are documented in this repository and format. In doubt, the documents in this repository and documentation are to be considered as the single source of truth.<br />
 ADRs MUST be formatted in a way that is compatible with the <a href="https://crates.io/crates/mdbook"><code>mdbook tool</code></a>.</p>
@@ -374,6 +375,7 @@ ADRs MUST be formatted in a way that is compatible with the <a href="https://cra
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
 <h1><a class="header" href="#adr-1-usage-of-adrs-1" id="adr-1-usage-of-adrs-1">ADR 1: Usage of ADRs</a></h1>
+<p>State: Active</p>
 <h2><a class="header" href="#summary-1" id="summary-1">Summary</a></h2>
 <p>This project uses ADRs. ADRs are documented in this repository and format. In doubt, the documents in this repository and documentation are to be considered as the single source of truth.<br />
 ADRs MUST be formatted in a way that is compatible with the <a href="https://crates.io/crates/mdbook"><code>mdbook tool</code></a>.</p>
@@ -383,6 +385,7 @@ ADRs MUST be formatted in a way that is compatible with the <a href="https://cra
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
 <h1><a class="header" href="#adr-2-usage-of-key-words" id="adr-2-usage-of-key-words">ADR 2: Usage of key words</a></h1>
+<p>State: Active</p>
 <h2><a class="header" href="#summary-2" id="summary-2">Summary</a></h2>
 <p>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document and in all documents in it's subtree as well as all documents that are directly related to this document are to be interpreted as described in <a href="https://tools.ietf.org/html/bcp14">BCP 14</a>, <a href="https://tools.ietf.org/html/rfc2119">RFC2119</a> and <a href="https://tools.ietf.org/html/rfc8174">RFC8174</a> when, and only when, they appear in all capitals, as shown here.</p>
 <h2><a class="header" href="#authors-2" id="authors-2">Authors</a></h2>
@@ -391,6 +394,7 @@ ADRs MUST be formatted in a way that is compatible with the <a href="https://cra
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
 <h1><a class="header" href="#adr-3-versioning" id="adr-3-versioning">ADR 3: Versioning</a></h1>
+<p>State: Active</p>
 <h2><a class="header" href="#summary-3" id="summary-3">Summary</a></h2>
 <p>This project makes use of <a href="https://semver.org">the semver v2 versioning scheme</a> for all parts of the official public API. The public stable API is a subset of all available features (see <a href="adrs/./4.html">ADR 4</a>).</p>
 <h2><a class="header" href="#authors-3" id="authors-3">Authors</a></h2>
@@ -399,6 +403,7 @@ ADRs MUST be formatted in a way that is compatible with the <a href="https://cra
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
 <h1><a class="header" href="#adr-4-experimental-flag" id="adr-4-experimental-flag">ADR 4: Experimental flag</a></h1>
+<p>State: Active</p>
 <h2><a class="header" href="#summary-4" id="summary-4">Summary</a></h2>
 <p>There is a application level argument (flag) <code>experimental</code> (<code>-e</code> | <code>--experimental</code>) that indicates that experimental features can now be accessed. This flag explicitly marks features that are NOT part of the official public API and therefore NOT considered when applying the versioning scheme (see <a href="adrs/./3.html">ADR 3</a>).<br />
 This flag is designed to be used with and therefore CAN be used with <a href="adrs/./5.html">feature flags</a>.</p>
@@ -408,6 +413,7 @@ This flag is designed to be used with and therefore CAN be used with <a href="ad
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
 <h1><a class="header" href="#adr-5-usage-of-feature-flags" id="adr-5-usage-of-feature-flags">ADR 5: Usage of feature flags</a></h1>
+<p>State: Active</p>
 <h2><a class="header" href="#summary-5" id="summary-5">Summary</a></h2>
 <p>This project makes use of cargo feature flags. Feature flags count as part of the public API and are therefore to be considered when applying the version rules IF NOT marked as experimental (see <a href="adrs/./4.html">ADR 4</a>).<br />
 All feature flags MUST be documented in an appropriate manner in the README.md file.</p>
@@ -417,6 +423,7 @@ All feature flags MUST be documented in an appropriate manner in the README.md f
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
 <h1><a class="header" href="#adr-6-render-command-supporting-stdin-pipe" id="adr-6-render-command-supporting-stdin-pipe">ADR 6: Render command supporting STDIN pipe</a></h1>
+<p>State: Active</p>
 <h2><a class="header" href="#summary-6" id="summary-6">Summary</a></h2>
 <p>The render command MUST support piping the configuration into it via STDIN as alternative to the file based approach.<br />
 The indicator for the pipe being used MUST be the <code>-</code> character as value for the <code>configuration</code> argument to the command.</p>
@@ -426,6 +433,7 @@ The indicator for the pipe being used MUST be the <code>-</code> character as va
 <a href="mailto:haw@voidpointergroup.com">haw@voidpointergroup.com</a></li>
 </ul>
 <h1><a class="header" href="#adr-7-usage-of-shell-scripts-instead-of-makefiles" id="adr-7-usage-of-shell-scripts-instead-of-makefiles">ADR 7: Usage of shell scripts instead of Makefiles</a></h1>
+<p>State: Active</p>
 <h2><a class="header" href="#summary-7" id="summary-7">Summary</a></h2>
 <p>Originally, this project had a Makefile in order to do the build steps and such. Since Makefile still is kind of an alien syntax and has some disadvantages against standard plain shell scripts (bash scripts), I decided to replace the Makefile with a shell script (<code>./do.sh</code>).<br />
 This script now contains the important commands like generating coverage reports and initializing the repository.</p>
