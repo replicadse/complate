@@ -1,3 +1,11 @@
+[![crates.io](https://img.shields.io/crates/v/complate.svg)](https://crates.io/crates/complate)
+[![crates.io](https://img.shields.io/crates/d/complate?label=crates.io%20downloads)](https://crates.io/crates/complate)
+[![pipeline](https://github.com/replicadse/complate/workflows/pipeline/badge.svg)](https://github.com/replicadse/complate/actions?query=workflow%3Apipeline)
+[![dependency status](https://deps.rs/repo/github/replicadse/complate/status.svg)](https://deps.rs/repo/github/replicadse/complate)\
+[![docs.rs](https://img.shields.io/badge/docs.rs-latest-blue)](https://docs.rs/crate/complate/latest)
+[![website](https://img.shields.io/badge/home-GitHub-blue)](https://github.com/replicadse/complate)
+[![website](https://img.shields.io/badge/website-GitHub-blue)](https://replicadse.github.io/complate)
+
 # Introduction and use case
 
 `complate` (a portmanteau of "commit" and "template") is a project that allows the user to generate strings in a guided way. The original use-case of this was the standardization of GIT commit messages.\

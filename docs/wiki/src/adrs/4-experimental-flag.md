@@ -1,7 +1,5 @@
 # ADR 4: Experimental flag
 
-State: Active
-
 ## Summary
 
 There is a application level argument (flag) `experimental` (`-e` | `--experimental`) that indicates that experimental features can now be accessed. This flag explicitly marks features that are NOT part of the official public API and therefore NOT considered when applying the versioning scheme (see [ADR 3](./3.md)).\

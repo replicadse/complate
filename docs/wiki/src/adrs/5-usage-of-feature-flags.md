@@ -1,7 +1,5 @@
 # ADR 5: Usage of feature flags
 
-State: Active
-
 ## Summary
 
 This project makes use of cargo feature flags. Feature flags count as part of the public API and are therefore to be considered when applying the version rules IF NOT marked as experimental (see [ADR 4](./4.md)).\
