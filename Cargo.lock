@@ -486,8 +486,9 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
 name = "fui"
-version = "1.0.1"
-source = "git+https://github.com/xliiv/fui?rev=11eda9b5f790308b0b671662c579a7d29d2909b0#11eda9b5f790308b0b671662c579a7d29d2909b0"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "30a9f4eb4db202cf6e31c6370c745fa0b1f74a819bf7eeee8114a48573829f59"
 dependencies = [
  "clap",
  "clipboard",
