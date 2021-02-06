@@ -85,8 +85,7 @@ impl<'a> UserInput for UIBackend<'a> {
         }
 
         let sel_value = sel.take();
-        let selection =
-            &options[&keys[display_vals.iter().position(|x| *x == sel_value).unwrap()]];
+        let selection = &options[&keys[display_vals.iter().position(|x| *x == sel_value).unwrap()]];
         match &selection.value {
             super::OptionValue::Static(x) => Ok(x.to_owned()),
             super::OptionValue::Shell(cmd) => self.shell(cmd, &self.shell_trust).await,
@@ -103,9 +102,8 @@ impl<'a> UserInput for UIBackend<'a> {
         {
             let ok_pressed = std::sync::Arc::new(std::cell::Cell::new(false));
             let ok_pressed_siv = ok_pressed.clone();
-            let items = std::sync::Arc::new(std::sync::RwLock::new(HashSet::<
-                std::string::String,
-            >::new()));
+            let items =
+                std::sync::Arc::new(std::sync::RwLock::new(HashSet::<std::string::String>::new()));
             let items_view = items.clone();
             let items_view2 = items.clone();
 
