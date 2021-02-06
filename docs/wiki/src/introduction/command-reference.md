@@ -40,7 +40,7 @@ Either one of the `backend+` features (or both) MUST be enabled for `complate` t
 
 **Examples:**
 * `complate render`
-* `complate render -f .complate/alternative.yml`
+* `complate render -c .complate/alternative.yml`
 * `cat .complate/alternative.yml | complate -e render -c- -bui -t0.default`
 
 ## Configuration file
