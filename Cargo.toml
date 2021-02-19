@@ -12,7 +12,7 @@ keywords = ["cli", "template", "replace", "standardizing"]
 categories = ["command-line-utilities"]
 
 [features]
-  default = ["backend+ui"]
+  default = ["backend+cli"]
   "backend+cli" = ["dialoguer"]
   "backend+ui" = ["cursive", "fui"]
 
