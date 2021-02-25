@@ -74,7 +74,7 @@ impl ClapArgumentLoader {
 
         let command = clap::App::new("complate")
             .version(env!("CARGO_PKG_VERSION"))
-            .about("A git commit buddy.")
+            .about("A rusty text templating application for CLIs.")
             .author("Weber, Heiko Alexander <haw@voidpointergroup.com>")
             .arg(clap::Arg::with_name("experimental")
                     .short("e")
