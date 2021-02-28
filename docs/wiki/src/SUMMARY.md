@@ -11,6 +11,5 @@
   - [3-versioning](./adrs/3-versioning.md)
   - [4-experimental-flag](./adrs/4-experimental-flag.md)
   - [5-usage-of-feature-flags](./adrs/5-usage-of-feature-flags.md)
-  - [6-render-command-supporting-stdin-pipe](./adrs/6-render-command-supporting-stdin-pipe.md)
   - [7-usage-of-shell-scripts-instead-of-makefiles](./adrs/7-usage-of-shell-scripts-instead-of-makefiles.md)
 - [RFCs](./rfcs/root.md)

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ev() {
     if [ $2 -eq $1 ]
@@ -13,12 +13,14 @@ echo "Testing with no shell trust"
 cmd="../target/debug/complate -e render -c=./config.yml -t=test"
 $cmd
 ev 1 $?
+echo "success"
 
 echo "Testing with ultimate shell-trust"
 cmd="../target/debug/complate -e render -c=./config.yml -t=test --shell-trust=ultimate"
 $cmd
 ev 0 $?
-echo ""
+echo
+echo "success"
 
 echo ""
 echo "All tests succeeded."

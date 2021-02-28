@@ -1,4 +1,4 @@
-use std::io::{stdin, Read, Result};
+use std::io::Result;
 
 pub struct CallArgs {
     pub privileges: Privilege,
@@ -142,23 +142,7 @@ impl ClapArgumentLoader {
             Some(x) => {
                 let config = if x.is_present("config") {
                     let config_param = x.value_of("config").unwrap();
-                    if config_param == "-" {
-                        match privileges {
-                            Privilege::Normal => {
-                                return Err(std::io::Error::new(
-                                    std::io::ErrorKind::Other,
-                                    "can not use pipe argument without experimental features being activated",
-                                ));
-                            }
-                            Privilege::Experimental => {}
-                        }
-                        let mut buffer = String::new();
-                        let stdin = stdin();
-                        stdin.lock().read_to_string(&mut buffer)?;
-                        buffer
-                    } else {
-                        std::fs::read_to_string(config_param.to_owned())?
-                    }
+                    std::fs::read_to_string(config_param.to_owned())?
                 } else {
                     return Err(std::io::Error::new(
                         std::io::ErrorKind::Other,
