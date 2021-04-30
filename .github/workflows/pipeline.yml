@@ -18,16 +18,10 @@ jobs:
     - uses: actions/checkout@v1
     - name: install tools
       run: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
-    - name: check formatting
-      run: cargo fmt --all -- --check
     - name: check README.md synchronization
       run: |
         cargo install --force cargo-sync-readme
         cargo sync-readme -c
-    - name: scan code
-      run: |
-        rustup component add clippy
-        cargo clippy --all-targets ${{ matrix.features }} -- -D warnings
     - name: execute unit tests
       run: cargo test ${{ matrix.features }}
     - name: build program
