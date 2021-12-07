@@ -185,7 +185,7 @@ Many projects and teams are standardizing their commit messages in a certain way
 <pre><code>Repository root
 ├── .git
 ├── .complate
-│   ├── config.yml
+│   ├── config.yaml
 │   └── templates
 │       └── template-a.tpl
 ├── src
@@ -228,29 +228,30 @@ Install the software by executing:</p>
 <h2><a class="header" href="#commands" id="commands">Commands</a></h2>
 <table><thead><tr><th>Command</th><th>Description</th><th>Status</th></tr></thead><tbody>
 <tr><td>help</td><td>Prints the help to <code>STDOUT</code>.</td><td>stable</td></tr>
-<tr><td>init</td><td>Initializes the default configuration in <code>./.complate/config.yml</code></td><td>stable</td></tr>
+<tr><td>init</td><td>Initializes the default configuration in <code>./.complate/config.yaml</code></td><td>stable</td></tr>
 <tr><td>render</td><td>Prompts for the template, prompts for variable values and renders the data to <code>STDOUT</code></td><td>stable</td></tr>
 </tbody></table>
 <h2><a class="header" href="#render-command-flags" id="render-command-flags"><code>render</code> command flags</a></h2>
 <table><thead><tr><th>Name</th><th>Short</th><th>Long</th><th>Description</th><th>Remark</th><th>Status</th></tr></thead><tbody>
-<tr><td>Config</td><td>-c</td><td>--config</td><td>The path to the configuration file that shall be used. This path can be relative or absolute. The default path is <code>./complate/config.yml</code>.</td><td>When setting this argument to pipe (<code>-</code>), the config is parsed from the STDIN descriptor to the render command.</td><td>stable for file path, experimental for STDIN descriptor. Pipe is only supported for <code>UI</code> backend</td></tr>
+<tr><td>Config</td><td>-c</td><td>--config</td><td>The path to the configuration file that shall be used. This path can be relative or absolute. The default path is <code>./complate/config.yaml</code>.</td><td>When setting this argument to pipe (<code>-</code>), the config is parsed from the STDIN descriptor to the render command.</td><td>stable for file path, experimental for STDIN descriptor. Pipe is only supported for <code>UI</code> backend</td></tr>
 <tr><td>Shell trust</td><td></td><td>--shell-trust</td><td>Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are <code>none</code> (default), <code>prompt</code> and <code>ultimate</code></td><td></td><td>stable</td></tr>
 <tr><td>Template</td><td>-t</td><td>--template</td><td>Skip the template selection by defining the used template from the configuration via this argument</td><td></td><td>stable</td></tr>
 <tr><td>Backend</td><td>-b</td><td>--backend</td><td>Defines the backend for the user interaction.</td><td></td><td><code>CLI</code> is stable. <code>UI</code> is experimental (feature = &quot;backend+ui&quot;).</td></tr>
+<tr><td>Value</td><td>-v</td><td>--value</td><td>Overrides a certain variable with a given string value. Specify the variable and value with an equals sign as separator</td><td>Multiple allowed. Example: <br/> <code>-v&quot;variable=some arbitrary value&quot;</code></td><td>experimental</td></tr>
 </tbody></table>
 <p><strong>Examples:</strong></p>
 <ul>
 <li><code>complate render</code></li>
 <li><code>complate render -c .complate/alternative.yml</code></li>
-<li><code>cat .complate/alternative.yml | complate -e render -c- -bui -t0.default</code></li>
+<li><code>complate -e render -c &lt;(cat .complate/alternative.yaml) -bui -t0.default</code></li>
 </ul>
 <h2><a class="header" href="#configuration-file" id="configuration-file">Configuration file</a></h2>
 <p>Please find an example amd the documentation for the configuration format in the wiki.<br />
-The templates for this project that can be found in <code>./complate/config.yml</code>.</p>
+The templates for this project that can be found in <code>./complate/config.yaml</code>.</p>
 <h1><a class="header" href="#configuration" id="configuration">Configuration</a></h1>
 <h2><a class="header" href="#introduction" id="introduction">Introduction</a></h2>
 <p>The <code>complate</code> configuration schema written in YAML. It includes a version number that needs to be equal to the major version of the installed <code>complate</code> instance.<br />
-<em>Bootstrap</em> the configuration file in <code>./.complate/config.yml</code> by using the <code>complate init</code> command.</p>
+<em>Bootstrap</em> the configuration file in <code>./.complate/config.yaml</code> by using the <code>complate init</code> command.</p>
 <h2><a class="header" href="#structure-by-example" id="structure-by-example">Structure by example</a></h2>
 <pre><code>version: 0.9
 templates:
