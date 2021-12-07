@@ -69,7 +69,7 @@ async fn async_main() -> Result<()> {
     match cmd.command {
         crate::args::Command::Init => {
             std::fs::create_dir_all("./.complate")?;
-            std::fs::write("./.complate/config.yml", default_config().await)?;
+            std::fs::write("./.complate/config.yaml", default_config().await)?;
             Ok(())
         }
         crate::args::Command::Render(x) => {

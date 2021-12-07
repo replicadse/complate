@@ -3,7 +3,7 @@
 ## Introduction
 
 The `complate` configuration schema written in YAML. It includes a version number that needs to be equal to the major version of the installed `complate` instance.\
-*Bootstrap* the configuration file in `./.complate/config.yml` by using the `complate init` command.
+*Bootstrap* the configuration file in `./.complate/config.yaml` by using the `complate init` command.
 
 ## Structure by example
 

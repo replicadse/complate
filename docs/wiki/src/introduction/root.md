@@ -22,7 +22,7 @@ In order to use `complate`, the recommended way is install the tool via `cargo` 
 Repository root
 ├── .git
 ├── .complate
-│   ├── config.yml
+│   ├── config.yaml
 │   └── templates
 │       └── template-a.tpl
 ├── src
