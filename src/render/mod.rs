@@ -35,9 +35,6 @@ pub async fn render(template: &str, values: &BTreeMap<String, String>) -> Result
         }
     }
 
-    let mut hb = handlebars::Handlebars::new();
-    hb.set_strict_mode(true);
-
     let mut values_json = serde_json::Value::Object(serde_json::Map::new());
     for val in values {
         let namespaces_vec: Vec<String> = val.0.split('.').map(|s| s.to_string()).collect();
@@ -45,6 +42,8 @@ pub async fn render(template: &str, values: &BTreeMap<String, String>) -> Result
         recursive_add(&mut namespaces, &mut values_json, val.1);
     }
 
+    let mut hb = handlebars::Handlebars::new();
+    hb.set_strict_mode(true);
     let rendered_template = hb.render_template(template, &values_json).unwrap();
     Ok(rendered_template)
 }
@@ -78,12 +77,17 @@ pub async fn select_template<'a>(
 
 pub async fn populate_variables(
     vars: &std::collections::BTreeMap<String, VariableDefinition>,
+    value_overrides: &std::collections::HashMap<String, String>,
     shell_trust: &ShellTrust,
     backend: &Backend,
 ) -> Result<BTreeMap<String, String>> {
     let mut values = BTreeMap::new();
     for var in vars {
-        values.insert(var.0.to_owned(), var.1.execute(shell_trust, backend).await?);
+        if let Some(v) = value_overrides.get(var.0) {
+            values.insert(var.0.to_owned(), v.to_owned());
+        } else {
+            values.insert(var.0.to_owned(), var.1.execute(shell_trust, backend).await?);
+        }
     }
     Ok(values)
 }
@@ -101,6 +105,7 @@ pub async fn select_and_render(invoke_options: crate::args::RenderArguments) -> 
     };
     let values = populate_variables(
         &template.values,
+        &invoke_options.value_overrides,
         &invoke_options.shell_trust,
         &invoke_options.backend,
     )

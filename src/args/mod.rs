@@ -20,6 +20,12 @@ impl CallArgs {
                         #[cfg(feature = "backend+cli")]
                         Backend::CLI => {}
                     };
+                    if args.value_overrides.len() > 0 {
+                        return Err(std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            "value overrides is an experimental feature and needs the respective flag to be active",
+                        ))
+                    }
                     #[allow(unreachable_code)]
                     Ok(())
                 }
@@ -43,6 +49,7 @@ pub enum Command {
 pub struct RenderArguments {
     pub configuration: String,
     pub template: Option<String>,
+    pub value_overrides: std::collections::HashMap<String, String>,
     pub shell_trust: ShellTrust,
     pub backend: Backend,
 }
@@ -122,6 +129,14 @@ impl ClapArgumentLoader {
                     .default_value(backend_values.first().unwrap())
                     .multiple(false)
                     .required(false)
+                    .takes_value(true))
+                .arg(clap::Arg::with_name("value")
+                    .short("v")
+                    .long("value")
+                    .value_name("VALUE")
+                    .help("Overrides a certain value definition with a string")
+                    .multiple(true)
+                    .required(false)
                     .takes_value(true)))
             .get_matches();
 
@@ -166,6 +181,14 @@ impl ClapArgumentLoader {
                     None => ShellTrust::None,
                 };
 
+                let mut value_overrides: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+                if let Some(values_overrides_arg) = x.values_of("value") {
+                    for vo in values_overrides_arg {
+                        let spl: Vec<&str> = vo.splitn(2, "=").collect();
+                        value_overrides.insert(spl[0].to_owned(), spl[1].to_owned());
+                    }
+                }
+
                 let backend = match x.value_of("backend") {
                     Some(x) => match x {
                         #[cfg(feature = "backend+cli")]
@@ -191,6 +214,7 @@ impl ClapArgumentLoader {
                     command: Command::Render(RenderArguments {
                         configuration: config,
                         template,
+                        value_overrides,
                         shell_trust,
                         backend,
                     }),

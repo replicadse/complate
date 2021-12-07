@@ -22,6 +22,13 @@ ev 0 $?
 echo
 echo "success"
 
+echo "Testing value overrides"
+cmd="../target/debug/complate -e render -c=./config.yml -t=test -v=alpha=bananarama"
+$cmd
+ev 0 $?
+echo
+echo "success"
+
 echo ""
 echo "All tests succeeded."
 echo ""

@@ -23,20 +23,20 @@ categories = ["command-line-utilities"]
     opt-level = 3
 
 [dependencies]
-async-trait = "0.1.24"
-clap = "2.33.0"
-handlebars = "3.0.1"
+async-trait = "^0.1"
+clap = "^2.34"
+handlebars = "^4.1"
 
-dialoguer = { version = "0.8.0", optional = true }
-cursive = { version = "0.16", optional = true }
-fui = { version = "2.0.0", optional = true }
+dialoguer = { version = "^0.8", optional = true }
+cursive = { version = "^0.16", optional = true }
+fui = { version = "^2.0", optional = true }
 
-bytes = "1.0.1"
-futures = "0.3.1"
-env_logger = "0.8.2"
-mime = "0.3.16"
+bytes = "^1.1.0"
+futures = "^0.3.0"
+env_logger = "^0.9.0"
+mime = "^0.3.0"
 
-serde = { version = "1.0.104", features = ["derive"] }
-serde_json = "1.0.45"
-serde_yaml = "0.8.11"
-json = "0.12.1"
+serde = { version = "^1.0", features = ["derive"] }
+serde_json = "^1.0"
+serde_yaml = "^0.8"
+json = "^0.12"
