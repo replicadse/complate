@@ -24,6 +24,10 @@ def task_ci_updateversion(c, version):
     c.run(f'''sed 's/version = "0.0.0"/version = "'{version}'"/g' Cargo.toml > Cargo.toml.tmp''')
     c.run('mv Cargo.toml.tmp Cargo.toml')
 
+@task(pre=[task_x_build])
+def task_test_unit(c):
+    c.run('cd test && ./test-cli.sh')
+
 ns = Collection()
 
 ns_x = Collection('x')
@@ -32,6 +36,10 @@ ns_x.add_task(task_x_build, 'build')
 ns_x.add_task(task_x_format, 'fmt')
 ns_x.add_task(task_x_scan, 'scan')
 ns.add_collection(ns_x, 'x')
+
+ns_test = Collection('test')
+ns_test.add_task(task_test_unit, 'unit')
+ns.add_collection(ns_test, 'test')
 
 ns_ci = Collection('ci')
 ns_ci.add_task(task_ci_updateversion, 'update-version')
