@@ -78,9 +78,8 @@ jobs:
     - name: publish
       id: publish
       run: |
-        chmod +x ./do.sh && 
-        bash ./do.sh update-version ${{ steps.get_version.outputs.VERSION }} && 
-        cargo login ${{ secrets.CRATES_IO_TOKEN }} && 
+        invoke ci.update-version --version=${{ steps.get_version.outputs.VERSION }}
+        cargo login ${{ secrets.CRATES_IO_TOKEN }}
         cargo publish --allow-dirty
 
   publish:
@@ -110,12 +109,11 @@ jobs:
       run: echo ::set-output name=upload_url::$(cat RELEASE/${{ env.RELEASE_FILE }})
     - name: install tools
       run: |
-        ${{ matrix.install }} && 
+        ${{ matrix.install }}
         rustup target install ${{ matrix.target }}
     - name: build-${{ matrix.target }}
       run: |
-        chmod +x ./do.sh && 
-        bash ./do.sh update-version ${{ steps.get_version.outputs.VERSION }} && 
+        invoke ci.update-version --version=${{ steps.get_version.outputs.VERSION }}
         cargo build --release --target ${{ matrix.target }}
     - name: zip
       run: cd ./target/${{ matrix.target }}/release && tar -zcvf ${{ matrix.target }}.tar.gz complate

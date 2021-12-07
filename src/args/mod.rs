@@ -119,7 +119,7 @@ impl ClapArgumentLoader {
                     .value_name("BACKEND")
                     .help("The execution backend (cli=native-terminal, ui=ui emulator in terminal).")
                     .possible_values(backend_values.as_slice())
-                    .default_value(backend_values.first().unwrap_or(&""))
+                    .default_value(backend_values.first().unwrap())
                     .multiple(false)
                     .required(false)
                     .takes_value(true)))
