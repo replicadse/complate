@@ -1,0 +1,19 @@
+---
+doctype: article
+title: Installation
+date: 2021-10-10
+draft: false
+weight: 3
+---
+:toc:
+
+== Installation
+
+=== The Rust way (via cargo)
+
+The `--force` flag is necessary for updating the version.
+
+[source]
+----
+cargo install complate --force
+----

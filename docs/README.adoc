@@ -1,0 +1,24 @@
+= senile
+
+[cols="1,1,1,1", grid=none, stripes=none]
+|===
+|image:https://img.shields.io/crates/v/senile.svg[link=https://crates.io/crates/senile]
+|image:https://img.shields.io/crates/d/senile?label=crates.io%20downloads[link=https://crates.io/crates/senile]
+|image:https://img.shields.io/crates/d/senile?label=crates.io%20downloads[link=https://crates.io/crates/senile]
+|image:https://img.shields.io/badge/AUR-package-blue[link=https://aur.archlinux.org/packages/senile]
+
+|image:https://img.shields.io/docker/pulls/replicadse/senile[link=https://hub.docker.com/repository/docker/replicadse/senile]
+|image:https://github.com/replicadse/senile/workflows/pipeline/badge.svg[link=https://github.com/replicadse/senile/actions?query=workflow%3Apipeline]
+|image:https://deps.rs/repo/github/replicadse/senile/status.svg[link=https://deps.rs/repo/github/replicadse/senile]
+|image:https://img.shields.io/badge/docs.rs:crate-latest-blue[link=https://docs.rs/crate/senile/latest]
+
+|image:https://img.shields.io/badge/docs.rs:docs-latest-blue[link=https://docs.rs/senile/latest/senile]
+|image:https://img.shields.io/badge/home-GitHub-blue[link=https://github.com/replicadse/senile]
+|image:https://img.shields.io/badge/website-GitHub-blue[link=https://replicadse.github.io/senile]
+|
+|===
+
+`senile` is a ToDo statement collection and aggregation program written in Rust. It's primary use case is the collection of open ToDo items within sourcecode, especially within a CI environment. +
+It's use shall counteract the habit of writing ToDo statements for eternity and forgetting about them until it's too late (like "ToDo: add security to API endpoint" as comment in the deployed production branch).
+
+See https://replicadse.github.io/senile[the wiki] for more information.

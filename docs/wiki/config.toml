@@ -1,0 +1,37 @@
+baseURL = 'https://replicadse.github.io/complate'
+languageCode = 'en-us'
+title = 'complate wiki'
+theme = 'hugo-book'
+paginate = 10
+
+[markup]
+  [markup.asciidocExt]
+    backend = 'html5'
+    failureLevel = 'fatal'
+    noHeaderOrFooter = true
+    preserveTOC = false
+    safeMode = 'unsafe'
+    sectionNumbers = false
+    trace = false
+    verbose = false
+    extensions = ["asciidoctor-kroki"]
+
+# (Optional) Set this to true if you use capital letters in file names
+disablePathToLower = true
+# (Optional) Set this to true to enable 'Last Modified by' date and git author
+#  information on 'doc' type pages.
+enableGitInfo = true
+# (Optional) Theme is intended for documentation use, therefore it doesn't render taxonomy.
+# You can remove related files with config below
+disableKinds = ['taxonomy', 'taxonomyTerm']
+
+[params]
+  BookTheme = 'auto'
+  BookToC = true
+#   BookMenuBundle = '/menu'
+  BookSection = 'docs'
+  BookRepo = 'https://github.com/replicadse/complate'
+  BookDateFormat = 'Jan 2, 2006'
+  BookSearch = true
+  BookPortableLinks = true
+  BookServiceWorker = true

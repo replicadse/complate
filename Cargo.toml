@@ -5,7 +5,6 @@ authors = ["Heiko Alexander Weber <haw@voidpointergroup.com>"]
 edition = "2018"
 license = "MIT"
 description = "Standardizing messages the right way."
-readme = "docs/README.md"
 homepage = "https://replicadse.github.io/complate/"
 repository = "https://github.com/replicadse/complate"
 keywords = ["cli", "template", "replace", "standardizing"]
