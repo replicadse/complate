@@ -1,0 +1,15 @@
+{
+  "name": "complate wiki",
+  "short_name": "complate wiki",
+  "start_url": "/complate/",
+  "scope": "/complate/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/complate/favicon.svg",
+      "sizes": "512x512"
+    }
+  ]
+}

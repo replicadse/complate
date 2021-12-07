@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Table of Contents Disclaimer Features backend&#43;   Application level arguments Commands render command flags Examples:   Configuration file   Disclaimer All features that are marked as experimental are not considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see [semver v2](https://semver.org)). Use these features on your own risk!
+   Features     Name Description Default     backend&#43;cli">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Command reference" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://replicadse.github.io/complate/docs/command-reference/" />
+<meta property="og:updated_time" content="2021-10-10T00:00:00+00:00" />
+<title>Command reference | complate wiki</title>
+<link rel="manifest" href="/complate/manifest.json">
+<link rel="icon" href="/complate/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/complate/book.min.d4dc77238886ba9b68049c5bf55f2cee407597ba579bac1c5c89e9faef0ed76c.css" integrity="sha256-1Nx3I4iGuptoBJxb9V8s7kB1l7pXm6wcXInp&#43;u8O12w=" crossorigin="anonymous">
+  <script defer src="/complate/flexsearch.min.js"></script>
+  <script defer src="/complate/en.search.min.1088d2e5d922f1b7ca87c3917f10b0a42c9e1d9884f4eea780b10ecf9d839c2b.js" integrity="sha256-EIjS5dki8bfKh8ORfxCwpCyeHZiE9O6ngLEOz52DnCs=" crossorigin="anonymous"></script>
+
+  <script defer src="/complate/sw.min.42d4cc120132edae999b9d8043fd513ab2a7d9124b4e9d41e615ad4f5f3684dc.js" integrity="sha256-QtTMEgEy7a6Zm52AQ/1ROrKn2RJLTp1B5hWtT182hNw=" crossorigin="anonymous"></script>
+<link rel="alternate" type="application/rss+xml" href="https://replicadse.github.io/complate/docs/command-reference/index.xml" title="complate wiki" />
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/complate/"><span>complate wiki</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="https://replicadse.github.io/complate/docs/status/" class="">Status</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="https://replicadse.github.io/complate/docs/installation/" class="">Installation</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>ADRs</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="https://replicadse.github.io/complate/docs/adrs/1-usage-of-adrs/" class="">1: Usage of ADRs</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="https://replicadse.github.io/complate/docs/adrs/2-usage-of-keywords/" class="">2: Usage of keywords</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="https://replicadse.github.io/complate/docs/adrs/3-versioning/" class="">3: Versioning</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="https://replicadse.github.io/complate/docs/adrs/4-experimental-flag/" class="">4: Experimental flag</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="https://replicadse.github.io/complate/docs/adrs/5-feature-flags/" class="">5: Feature flags</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="https://replicadse.github.io/complate/docs/command-reference/" class=" active">Command reference</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="https://replicadse.github.io/complate/docs/configuration/" class="">Configuration</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/complate/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Command reference</strong>
+
+  <label for="toc-control">
+    
+    <img src="/complate/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_disclaimer">Disclaimer</a></li>
+<li><a href="#_features">Features</a>
+<ul class="sectlevel2">
+<li><a href="#_backend"><code>backend+</code></a></li>
+</ul>
+</li>
+<li><a href="#_application_level_arguments">Application level arguments</a></li>
+<li><a href="#_commands">Commands</a></li>
+<li><a href="#_render_command_flags"><code>render</code> command flags</a>
+<ul class="sectlevel2">
+<li><a href="#_examples">Examples:</a></li>
+</ul>
+</li>
+<li><a href="#_configuration_file">Configuration file</a></li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="_disclaimer">Disclaimer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All features that are marked as <code>experimental</code> are <em>not</em> considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see [semver v2](<a href="https://semver.org)" class="bare">https://semver.org)</a>). Use these features on your own risk!</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_features">Features</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 60%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">backend+cli</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The CLI backend which maps to the original dialoguer implementation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">backend+ui</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The UI backend which maps to the new cursive/fui implementation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_backend"><code>backend+</code></h3>
+<div class="paragraph">
+<p>Either one of the <code>backend+</code> features (or both) MUST be enabled for <code>complate</code> to work (it won&#8217;t compile otherwise).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_application_level_arguments">Application level arguments</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 50.0002%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Short</th>
+<th class="tableblock halign-left valign-top">Long</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Experimental</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-e</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">--experimental</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Activates experimental features that are not stable yet. All features that are marked as experimental are ignored when keeping backwards compatibility inside one major version.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_commands">Commands</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 60%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Command</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">help</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prints the help to <code>STDOUT</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stable</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">init</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initializes the default configuration in <code>./.complate/config.yaml</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stable</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">render</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prompts for the template, prompts for variable values and renders the data to <code>STDOUT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_render_command_flags"><code>render</code> command flags</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Short</th>
+<th class="tableblock halign-left valign-top">Long</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Remark</th>
+<th class="tableblock halign-left valign-top">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-c</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">--config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The path to the configuration file that shall be used. This path can be relative or absolute. The default path is <code>./complate/config.yaml</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">When setting this argument to pipe (<code>-</code>), the config is parsed from the STDIN descriptor to the render command.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stable for file path, experimental for STDIN descriptor. Pipe is only supported for <code>UI</code> backend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shell trust</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">--shell-trust</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables the shell value provider for replacing template placeholders. Due to the potential security risk with this option, it is disabled by default. Possible values for this option are <code>none</code> (default), <code>prompt</code> and <code>ultimate</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Template</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-t</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">--template</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Skip the template selection by defining the used template from the configuration via this argument</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-b</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">--backend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines the backend for the user interaction.</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CLI</code> is stable. <code>UI</code> is experimental (feature = "backend+ui").</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-v</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">--value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Overrides a certain variable with a given string value. Specify the variable and value with an equals sign as separator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multiple allowed. Example: &lt;br/&gt; <code>-v"variable=some arbitrary value"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_examples">Examples:</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>complate render</code><br></p>
+</li>
+<li>
+<p><code>complate render -c .complate/alternative.yml</code><br></p>
+</li>
+<li>
+<p><code>complate -e render -c &lt;(cat .complate/alternative.yaml) -bui -t0.default</code><br></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration_file">Configuration file</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Please find an example amd the documentation for the configuration format in the wiki.<br>
+The templates for this project that can be found in <code>./complate/config.yaml</code>.</p>
+</div>
+</div>
+</div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function select(element){const selection=window.getSelection();const range=document.createRange();range.selectNodeContents(element);selection.removeAllRanges();selection.addRange(range);}
+document.querySelectorAll("pre code").forEach(code=>{code.addEventListener("click",function(event){select(code.parentElement);if(navigator.clipboard){navigator.clipboard.writeText(code.parentElement.textContent);}});});})();</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

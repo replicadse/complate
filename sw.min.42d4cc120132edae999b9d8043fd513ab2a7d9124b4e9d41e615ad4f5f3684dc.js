@@ -1,0 +1,1 @@
+if(navigator.serviceWorker){navigator.serviceWorker.register("/complate/sw.js",{scope:"/complate/"});}

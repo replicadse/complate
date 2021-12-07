@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Home on complate wiki</title>
+    <link>https://replicadse.github.io/complate/</link>
+    <description>Recent content in Home on complate wiki</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 10 Oct 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://replicadse.github.io/complate/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>1: Usage of ADRs</title>
+      <link>https://replicadse.github.io/complate/docs/adrs/1-usage-of-adrs/</link>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://replicadse.github.io/complate/docs/adrs/1-usage-of-adrs/</guid>
+      <description>Table of Contents 1: Usage of ADRs   1: Usage of ADRs This project uses ADRs. ADRs are documented in this repository and format. In doubt, the documents in this repository and documentation are to be considered as the single source of truth.
+   </description>
+    </item>
+    
+    <item>
+      <title>2: Usage of keywords</title>
+      <link>https://replicadse.github.io/complate/docs/adrs/2-usage-of-keywords/</link>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://replicadse.github.io/complate/docs/adrs/2-usage-of-keywords/</guid>
+      <description>Table of Contents 2: Usage of keywords   2: Usage of keywords The key words &#34;MUST&#34;, &#34;MUST NOT&#34;, &#34;REQUIRED&#34;, &#34;SHALL&#34;, &#34;SHALL NOT&#34;, &#34;SHOULD&#34;, &#34;SHOULD NOT&#34;, &#34;RECOMMENDED&#34;, &#34;NOT RECOMMENDED&#34;, &#34;MAY&#34;, and &#34;OPTIONAL&#34; in this document and in all documents in it&amp;#8217;s subtree as well as all documents that are directly related to this document are to be interpreted as described in BCP 14, RFC2119 and RFC8174 when, and only when, they appear in all capitals, as shown here.</description>
+    </item>
+    
+    <item>
+      <title>Status</title>
+      <link>https://replicadse.github.io/complate/docs/status/</link>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://replicadse.github.io/complate/docs/status/</guid>
+      <description>    
+ 
+ 
+ 
+   
+ 
+ 
+     </description>
+    </item>
+    
+    <item>
+      <title>3: Versioning</title>
+      <link>https://replicadse.github.io/complate/docs/adrs/3-versioning/</link>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://replicadse.github.io/complate/docs/adrs/3-versioning/</guid>
+      <description>Table of Contents 3: Versioning   3: Versioning This project makes use of the semver v2 versioning scheme for all parts of the official public API. The public stable API is a subset of all available features (see this page).
+   </description>
+    </item>
+    
+    <item>
+      <title>4: Experimental flag</title>
+      <link>https://replicadse.github.io/complate/docs/adrs/4-experimental-flag/</link>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://replicadse.github.io/complate/docs/adrs/4-experimental-flag/</guid>
+      <description>Table of Contents 4: Experimental flag   4: Experimental flag There is a application level argument (flag) experimental (-e | --experimental) that indicates that experimental features can now be accessed. This flag explicitly marks features that are NOT part of the official public API and therefore NOT considered when applying the versioning scheme (see ADR 3).
+This flag is designed to be used with and therefore CAN be used with feature Flags as specified in ADR 5.</description>
+    </item>
+    
+    <item>
+      <title>5: Feature flags</title>
+      <link>https://replicadse.github.io/complate/docs/adrs/5-feature-flags/</link>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://replicadse.github.io/complate/docs/adrs/5-feature-flags/</guid>
+      <description>Table of Contents 5: Feature flags   5: Feature flags This project makes use of cargo feature flags. Feature flags count as part of the public API and are therefore to be considered when applying the version rules IF NOT marked as experimental (see ADR 4).
+All feature flags MUST be documented in an appropriate manner in the documentation.
+   </description>
+    </item>
+    
+  </channel>
+</rss>

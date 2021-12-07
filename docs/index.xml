@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docs on complate wiki</title>
+    <link>https://replicadse.github.io/complate/docs/</link>
+    <description>Recent content in Docs on complate wiki</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 10 Oct 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://replicadse.github.io/complate/docs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Status</title>
+      <link>https://replicadse.github.io/complate/docs/status/</link>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://replicadse.github.io/complate/docs/status/</guid>
+      <description>    
+ 
+ 
+ 
+   
+ 
+ 
+     </description>
+    </item>
+    
+  </channel>
+</rss>

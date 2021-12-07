@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-	<meta name="generator" content="Hugo 0.68.3" />
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Table of Contents Home Introduction and use case Idea Usage General overview     Home     
+<meta name="description" content="    
  
  
  
    
  
  
-     Introduction and use case complate (a portmanteau of &#34;commit&#34; and &#34;template&#34;) is a project that allows the user to generate strings in a guided way. The original use-case of this was the standardization of GIT commit messages.">
+     ">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="Home" />
-<meta property="og:description" content="" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://replicadse.github.io/complate/" />
-<meta property="og:updated_time" content="2021-10-10T00:00:00+00:00" />
-<title>Home | complate wiki</title>
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Status" />
+<meta property="og:description" content="    
+ 
+ 
+ 
+   
+ 
+ 
+     " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://replicadse.github.io/complate/docs/status/" />
+<meta property="article:published_time" content="2021-10-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-10-10T00:00:00+00:00" />
+<title>Status | complate wiki</title>
 <link rel="manifest" href="/complate/manifest.json">
 <link rel="icon" href="/complate/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/complate/book.min.d4dc77238886ba9b68049c5bf55f2cee407597ba579bac1c5c89e9faef0ed76c.css" integrity="sha256-1Nx3I4iGuptoBJxb9V8s7kB1l7pXm6wcXInp&#43;u8O12w=" crossorigin="anonymous">
@@ -26,7 +33,6 @@
   <script defer src="/complate/en.search.min.1088d2e5d922f1b7ca87c3917f10b0a42c9e1d9884f4eea780b10ecf9d839c2b.js" integrity="sha256-EIjS5dki8bfKh8ORfxCwpCyeHZiE9O6ngLEOz52DnCs=" crossorigin="anonymous"></script>
 
   <script defer src="/complate/sw.min.42d4cc120132edae999b9d8043fd513ab2a7d9124b4e9d41e615ad4f5f3684dc.js" integrity="sha256-QtTMEgEy7a6Zm52AQ/1ROrKn2RJLTp1B5hWtT182hNw=" crossorigin="anonymous"></script>
-<link rel="alternate" type="application/rss+xml" href="https://replicadse.github.io/complate/index.xml" title="complate wiki" />
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -78,7 +84,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="https://replicadse.github.io/complate/docs/status/" class="">Status</a>
+    <a href="https://replicadse.github.io/complate/docs/status/" class=" active">Status</a>
   
 
         </li>
@@ -257,7 +263,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/complate/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>Home</strong>
+  <strong>Status</strong>
 
   <label for="toc-control">
     
@@ -282,23 +288,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><div id="toc" class="toc">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_home">Home</a>
-<ul class="sectlevel2">
-<li><a href="#_introduction_and_use_case">Introduction and use case</a></li>
-<li><a href="#_idea">Idea</a></li>
-<li><a href="#_usage">Usage</a></li>
-<li><a href="#_general_overview">General overview</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="sect1">
-<h2 id="_home">Home</h2>
-<div class="sectionbody">
-<table class="tableblock frame-all grid-none stretch">
+  <article class="markdown"><table class="tableblock frame-all grid-none stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -320,53 +310,6 @@ https://github.com/alex-shpak/hugo-book
 </tr>
 </tbody>
 </table>
-<div class="sect2">
-<h3 id="_introduction_and_use_case">Introduction and use case</h3>
-<div class="paragraph">
-<p><code>complate</code> (a portmanteau of "commit" and "template") is a project that allows the user to generate strings in a guided way. The original use-case of this was the standardization of GIT commit messages.<br>
-Many projects and teams are standardizing their commit messages in a certain way. This is somewhat error prone and people just tend to mess things up. Spaces, spelling errors or linebreaks are common issues that lead to inconsistency. It can also have more effects than just consistency in the format. If you use <a href="https://github.com/anothrNick/github-tag-action">the GitHub Action by anothrNick</a> in GitHub Workflows, the commit message can have direct influence on your version number that is generated on build.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_idea">Idea</h3>
-<div class="paragraph">
-<p>The idea for the concrete use case of standardizing GIT commit messages is to have a configuration file inside the repository which is read by the program. You are then able to select a template that you would like to use for your message. The configuration file declares the template (in handlebars syntax) as well as variables and how to replace them.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_usage">Usage</h3>
-<div class="paragraph">
-<p>In order to use <code>complate</code>, the recommended way is install the tool via <code>cargo</code> and place the configuration files and templates into the repository itself. Consider the following structure:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>Repository root
-├── .git
-├── .complate
-│   ├── config.yaml
-│   └── templates
-│       └── template-a.tpl
-├── src
-│   └── *
-├── docs
-    └── *
-└── ...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>As long as the configuration file version number fits your installed program major version you&#8217;re good to go.
-Expecting the recommended folder structure (and assuming that the program is in your <code>PATH</code> environment variable), you should be able to simply run <code>complate render | git commit -F -</code> in order to create a new standardized commit.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_general_overview">General overview</h3>
-<div class="paragraph">
-<p>The template itself can be declared as string inside the configuration file or as a reference to a file that contains the template. The template string can contain variables in handlebars syntax ( <code>{{ variable}}</code> ). All distinct variables must have a representation in the according section that then also defines on how to find the value for this variable.<br>
-Pro tip: Variables are prompted in alphabetical order. Prefix you variable with <code>a</code>, <code>b</code>, <code>c</code> and such to generate a custom order.</p>
-</div>
-</div>
-</div>
-</div>
 </article>
  
       
