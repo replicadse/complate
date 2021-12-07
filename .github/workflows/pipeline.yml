@@ -25,22 +25,3 @@ jobs:
     - name: run cli tests
       working-directory: test
       run: sh test-cli.sh
-
-  website:
-    name: website
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-        with: 
-          submodules: true
-      - name: install
-        run: sudo apt-get install build-essential && cargo install mdbook --version=0.4.6
-      - name: build
-        working-directory: docs/wiki
-        run: mdbook build
-      - name: deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/wiki/book
-          publish_branch: wiki
