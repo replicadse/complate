@@ -24,7 +24,7 @@ impl CallArgs {
                         return Err(std::io::Error::new(
                             std::io::ErrorKind::Other,
                             "value overrides is an experimental feature and needs the respective flag to be active",
-                        ))
+                        ));
                     }
                     #[allow(unreachable_code)]
                     Ok(())
@@ -82,7 +82,7 @@ impl ClapArgumentLoader {
         let command = clap::App::new("complate")
             .version(env!("CARGO_PKG_VERSION"))
             .about("A rusty text templating application for CLIs.")
-            .author("Weber, Heiko Alexander <haw@voidpointergroup.com>")
+            .author("Weber, Alexander <aw@voidpointergroup.com>")
             .arg(clap::Arg::with_name("experimental")
                     .short("e")
                     .long("experimental")
@@ -181,7 +181,8 @@ impl ClapArgumentLoader {
                     None => ShellTrust::None,
                 };
 
-                let mut value_overrides: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+                let mut value_overrides: std::collections::HashMap<String, String> =
+                    std::collections::HashMap::new();
                 if let Some(values_overrides_arg) = x.values_of("value") {
                     for vo in values_overrides_arg {
                         let spl: Vec<&str> = vo.splitn(2, "=").collect();
