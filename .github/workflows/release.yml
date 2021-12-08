@@ -70,7 +70,9 @@ jobs:
       id: get_version
       run: echo ::set-output name=VERSION::$(git tag --points-at HEAD --sort -version:refname | head -1)
     - name: install tools
-      run: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
+      run: |
+        sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
+        pip install invoke
     - name: publish
       id: publish
       run: |
@@ -107,6 +109,7 @@ jobs:
       run: |
         ${{ matrix.install }}
         rustup target install ${{ matrix.target }}
+        pip install invoke
     - name: build-${{ matrix.target }}
       run: |
         invoke ci.update-version --version=${{ steps.get_version.outputs.VERSION }}
