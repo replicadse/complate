@@ -68,3 +68,57 @@ impl Template {
         }
     }
 }
+
+pub async fn default_config() -> String {
+    r###"version: 0.10
+templates:
+    one:
+        content:
+            file: ./.complate/templates/arbitraty-template-file.tpl
+        values:
+            a.summary:
+                static: "random summary"
+    two:
+        content:
+            inline: |-
+                {{ a.alpha }}
+                {{ b.bravo }}
+                {{ c.charlie }}
+                {{ d.delta }}
+                {{ e.echo }}
+        values:
+            a.alpha:
+              prompt: "alpha"
+            b.bravo:
+              shell: "printf bravo"
+            c.charlie:
+              static: "charlie"
+            d.delta:
+                select:
+                    text: Select the version level that shall be incremented
+                    options:
+                      alpha:
+                        display: alpha
+                        value:
+                          static: alpha
+                      bravo:
+                        display: bravo
+                        value:
+                          shell: printf bravo
+            e.echo:
+                check:
+                    text: Select the components that are affected
+                    separator: ", "
+                    options:
+                      alpha:
+                        display: alpha
+                        value:
+                          static: alpha
+                      bravo:
+                        display: bravo
+                        value:
+                          shell: printf bravo
+
+"###
+    .to_owned()
+}

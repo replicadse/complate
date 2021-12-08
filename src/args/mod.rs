@@ -128,7 +128,7 @@ impl ClapArgumentLoader {
                     .short("v")
                     .long("value")
                     .value_name("VALUE")
-                    .help("Overrides a certain value definition with a string")
+                    .help("Overrides a certain value definition with a string.")
                     .multiple(true)
                     .required(false)
                     .takes_value(true)))

@@ -80,9 +80,9 @@ You can resolve the value for each variable individual. Following options are av
 
 |static|Simply replaces the variable with a static value |None|
 |prompt|Asks the user for text input (can be empty)|The prompt|
-|shell|Invokes a shell command to resolve the variable (read from STDOUT)|None|See `shell security`
+|shell|Invokes a shell command to resolve the variable (read from `STDOUT`)|None|See `shell security`
 |select|Asks the user to select one item from a list|`text`: string (context), `options`: list (available options to select from)|
-|check|Asks the user to select 0..n item(s) from a list (multiselect)|`text`: string (context), `options`: list of options {display: str, value: str} (the available options to select from)|
+|check|Asks the user to select `0..n` item(s) from a list (multiselect)|`text`: string (context), `options`: list of options {display: str, value: str} (the available options to select from)|
 |===
 
 #### Shell security

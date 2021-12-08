@@ -46,4 +46,3 @@ templates:
                         display: bravo
                         value:
                           shell: printf bravo
-

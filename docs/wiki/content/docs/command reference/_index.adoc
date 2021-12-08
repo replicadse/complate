@@ -9,7 +9,7 @@ weight: 4
 
 == Disclaimer
 
-All features that are marked as `experimental` are _not_ considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see [semver v2](https://semver.org)). Use these features on your own risk!
+All features that are marked as `experimental` are _not_ considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see https://semver.org[semver v2]). Use these features on your own risk!
 
 == Features
 
