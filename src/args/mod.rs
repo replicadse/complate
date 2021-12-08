@@ -1,4 +1,4 @@
-use std::io::Result;
+use std::result::Result;
 
 pub struct CallArgs {
     pub privileges: Privilege,
@@ -7,24 +7,18 @@ pub struct CallArgs {
 
 impl CallArgs {
     #[allow(clippy::single_match)]
-    pub async fn validate(&self) -> Result<()> {
+    pub async fn validate(&self) -> Result<(), Box<dyn std::error::Error>> {
         match self.privileges {
             Privilege::Normal => match &self.command {
                 Command::Render(args) => {
                     match args.backend {
                         #[cfg(feature = "backend+ui")]
-                        Backend::UI => return Err(std::io::Error::new(
-                            std::io::ErrorKind::Other,
-                            "can not use backend+ui without experimental features being activated",
-                        )),
+                        Backend::UI => return Err(Box::new(crate::error::NeedExperimentalFlag::default())),
                         #[cfg(feature = "backend+cli")]
                         Backend::CLI => {}
                     };
                     if args.value_overrides.len() > 0 {
-                        return Err(std::io::Error::new(
-                            std::io::ErrorKind::Other,
-                            "value overrides is an experimental feature and needs the respective flag to be active",
-                        ));
+                        return Err(Box::new(crate::error::NeedExperimentalFlag::default()));
                     }
                     #[allow(unreachable_code)]
                     Ok(())
@@ -70,7 +64,7 @@ pub enum Backend {
 pub struct ClapArgumentLoader {}
 
 impl ClapArgumentLoader {
-    pub async fn load_from_cli() -> std::io::Result<CallArgs> {
+    pub async fn load_from_cli() -> std::result::Result<CallArgs, Box<dyn std::error::Error>> {
         let mut backend_values = Vec::new();
         if cfg!(feature = "backend+cli") {
             backend_values.push("cli");
@@ -159,10 +153,7 @@ impl ClapArgumentLoader {
                     let config_param = x.value_of("config").unwrap();
                     std::fs::read_to_string(config_param.to_owned())?
                 } else {
-                    return Err(std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        "configuration not specified",
-                    ));
+                    return Err(Box::new(crate::error::Failed::new("configuration unspecified")));
                 };
 
                 let template = if x.is_present("template") {
@@ -197,10 +188,7 @@ impl ClapArgumentLoader {
                         #[cfg(feature = "backend+ui")]
                         "ui" => Backend::UI,
                         _ => {
-                            return Err(std::io::Error::new(
-                                std::io::ErrorKind::Other,
-                                "unknown backend configuration",
-                            ))
+                            return Err(Box::new(crate::error::Failed::new("no backend specified")))
                         }
                     },
                     #[cfg(feature = "backend+cli")]
@@ -221,10 +209,7 @@ impl ClapArgumentLoader {
                     }),
                 })
             }
-            None => Err(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                "could not resolve subcommand",
-            )),
+            None => Err(Box::new(crate::error::UnknownCommand::default())),
         }
     }
 }

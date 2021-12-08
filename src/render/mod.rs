@@ -2,14 +2,14 @@ use crate::args::{Backend, ShellTrust};
 use crate::config::{Config, Content, Option, OptionValue, Template, VariableDefinition};
 use async_trait::async_trait;
 use std::collections::BTreeMap;
-use std::io::{Error, ErrorKind, Result};
+use std::result::Result;
 
 #[cfg(feature = "backend+cli")]
 mod cli;
 #[cfg(feature = "backend+ui")]
 mod ui;
 
-pub async fn render(template: &str, values: &BTreeMap<String, String>) -> Result<String> {
+pub async fn render(template: &str, values: &BTreeMap<String, String>) -> Result<String, Box<dyn std::error::Error>> {
     fn recursive_add(
         namespace: &mut std::collections::VecDeque<String>,
         parent: &mut serde_json::Value,
@@ -53,7 +53,7 @@ pub async fn select_template<'a>(
     config: &'a Config,
     backend: &Backend,
     shell_trust: &ShellTrust,
-) -> Result<&'a Template> {
+) -> Result<&'a Template, Box<dyn std::error::Error>> {
     let templates = config.templates.keys().cloned().collect::<Vec<String>>();
     let mut template_map = BTreeMap::new();
     for t in templates {
@@ -71,7 +71,7 @@ pub async fn select_template<'a>(
 
     match config.templates.get(&selection) {
         Some(x) => Ok(x),
-        None => Err(std::io::Error::new(std::io::ErrorKind::Other, "failed")),
+        None => Err(Box::new(crate::error::Failed::default())),
     }
 }
 
@@ -80,7 +80,7 @@ pub async fn populate_variables(
     value_overrides: &std::collections::HashMap<String, String>,
     shell_trust: &ShellTrust,
     backend: &Backend,
-) -> Result<BTreeMap<String, String>> {
+) -> Result<BTreeMap<String, String>, Box<dyn std::error::Error>> {
     let mut values = BTreeMap::new();
     for var in vars {
         if let Some(v) = value_overrides.get(var.0) {
@@ -92,7 +92,7 @@ pub async fn populate_variables(
     Ok(values)
 }
 
-pub async fn select_and_render(invoke_options: crate::args::RenderArguments) -> Result<String> {
+pub async fn select_and_render(invoke_options: crate::args::RenderArguments) -> Result<String, Box<dyn std::error::Error>> {
     let cfg: Config = serde_yaml::from_str(&invoke_options.configuration).unwrap();
 
     let template = match invoke_options.template {
@@ -115,24 +115,24 @@ pub async fn select_and_render(invoke_options: crate::args::RenderArguments) -> 
 
 #[async_trait]
 pub trait Resolve {
-    async fn execute(&self, shell_trust: &ShellTrust, backend: &Backend) -> Result<String>;
+    async fn execute(&self, shell_trust: &ShellTrust, backend: &Backend) -> Result<String, Box<dyn std::error::Error>>;
 }
 
 #[async_trait]
 pub trait UserInput: Send + Sync {
-    async fn prompt(&self, text: &str) -> Result<String>;
-    async fn shell(&self, command: &str, shell_trust: &ShellTrust) -> Result<String>;
-    async fn select(&self, prompt: &str, options: &BTreeMap<String, Option>) -> Result<String>;
+    async fn prompt(&self, text: &str) -> Result<String, Box<dyn std::error::Error>>;
+    async fn shell(&self, command: &str, shell_trust: &ShellTrust) -> Result<String, Box<dyn std::error::Error>>;
+    async fn select(&self, prompt: &str, options: &BTreeMap<String, Option>) -> Result<String, Box<dyn std::error::Error>>;
     async fn check(
         &self,
         prompt: &str,
         separator: &str,
         options: &BTreeMap<String, Option>,
-    ) -> Result<String>;
+    ) -> Result<String, Box<dyn std::error::Error>>;
 }
 
 impl Backend {
-    pub fn to_input<'a>(&self, shell_trust: &'a ShellTrust) -> Result<Box<dyn UserInput + 'a>> {
+    pub fn to_input<'a>(&self, shell_trust: &'a ShellTrust) -> Result<Box<dyn UserInput + 'a>, Box<dyn std::error::Error>> {
         Ok(match self {
             #[cfg(feature = "backend+cli")]
             Backend::CLI => Box::new(cli::CLIBackend::new(shell_trust)) as Box<dyn UserInput>,
@@ -144,7 +144,7 @@ impl Backend {
 
 #[async_trait]
 impl Resolve for VariableDefinition {
-    async fn execute(&self, shell_trust: &ShellTrust, backend: &Backend) -> Result<String> {
+    async fn execute(&self, shell_trust: &ShellTrust, backend: &Backend) -> Result<String, Box<dyn std::error::Error>> {
         let backend_impl = backend.to_input(shell_trust)?;
 
         match self {
@@ -163,9 +163,9 @@ impl Resolve for VariableDefinition {
     }
 }
 
-async fn shell(command: &str, shell_trust: &ShellTrust, backend: &Backend) -> Result<String> {
+async fn shell(command: &str, shell_trust: &ShellTrust, backend: &Backend) -> Result<String, Box<dyn std::error::Error>> {
     match shell_trust {
-        ShellTrust::None => return Err(Error::new(ErrorKind::Other, "no shell trust")),
+        ShellTrust::None => return Err(Box::new(crate::error::NoShellTrust::default())),
         ShellTrust::Prompt => {
             let be = backend.to_input(shell_trust)?;
             let mut yesno = BTreeMap::new();
@@ -187,10 +187,7 @@ async fn shell(command: &str, shell_trust: &ShellTrust, backend: &Backend) -> Re
             let sel = be.select(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command), &yesno).await;
             if sel.unwrap_or_default() == "yes" {
             } else {
-                return Err(Error::new(
-                    ErrorKind::Other,
-                    "user declined command execution",
-                ));
+                return Err(Box::new(crate::error::UserAbort::default()));
             }
         }
         ShellTrust::Ultimate => {}
@@ -201,7 +198,7 @@ async fn shell(command: &str, shell_trust: &ShellTrust, backend: &Backend) -> Re
         .arg(command)
         .output()?;
     if output.status.code().unwrap() != 0 {
-        return Err(Error::new(ErrorKind::Other, "failed to run command"));
+        return Err(Box::new(crate::error::Failed::default()));
     }
     Ok(String::from_utf8(output.stdout).unwrap())
 }

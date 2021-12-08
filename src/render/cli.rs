@@ -1,6 +1,6 @@
 use super::UserInput;
 use async_trait::async_trait;
-use std::io::Result;
+use std::result::Result;
 
 pub struct CLIBackend<'a> {
     shell_trust: &'a super::ShellTrust,
@@ -14,14 +14,17 @@ impl<'a> CLIBackend<'a> {
 
 #[async_trait]
 impl<'a> UserInput for CLIBackend<'a> {
-    async fn prompt(&self, text: &str) -> Result<String> {
-        dialoguer::Input::new()
+    async fn prompt(&self, text: &str) -> Result<String, Box<dyn std::error::Error>> {
+        match dialoguer::Input::new()
             .allow_empty(true)
             .with_prompt(text)
-            .interact()
+            .interact() {
+                Ok(res) => Ok(res),
+                Err(_) => Err(Box::new(crate::error::Failed::default()))
+            }
     }
 
-    async fn shell(&self, command: &str, shell_trust: &super::ShellTrust) -> Result<String> {
+    async fn shell(&self, command: &str, shell_trust: &super::ShellTrust) -> Result<String, Box<dyn std::error::Error>> {
         super::shell(command, shell_trust, &super::Backend::CLI).await
     }
 
@@ -29,7 +32,7 @@ impl<'a> UserInput for CLIBackend<'a> {
         &self,
         prompt: &str,
         options: &std::collections::BTreeMap<String, super::Option>,
-    ) -> Result<String> {
+    ) -> Result<String, Box<dyn std::error::Error>> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let display_vals = options
             .values()
@@ -53,7 +56,7 @@ impl<'a> UserInput for CLIBackend<'a> {
         prompt: &str,
         separator: &str,
         options: &std::collections::BTreeMap<String, super::Option>,
-    ) -> Result<String> {
+    ) -> Result<String, Box<dyn std::error::Error>> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let display_vals = options
             .values()

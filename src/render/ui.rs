@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use cursive::traits::*;
 use cursive::views::Dialog;
 use std::collections::HashSet;
-use std::io::{Error, ErrorKind, Result};
+use std::result::Result;
 use std::ops::Deref;
 
 pub struct UIBackend<'a> {
@@ -18,26 +18,29 @@ impl<'a> UIBackend<'a> {
 
 #[async_trait]
 impl<'a> UserInput for UIBackend<'a> {
-    async fn prompt(&self, text: &str) -> Result<String> {
+    async fn prompt(&self, text: &str) -> Result<String, Box<dyn std::error::Error>> {
         let v = std::rc::Rc::new(std::cell::Cell::new(None));
         let vx = v.clone();
+        let key = std::rc::Rc::new(text.to_owned());
 
         let mut siv = cursive::default();
         let form = fui::form::FormView::new()
             .field(fui::fields::Text::new(text))
             .on_submit(move |s, x| {
-                vx.set(Some(x.to_string()));
+                vx.set(Some(x.get(key.deref()).unwrap().as_str().unwrap().to_owned()));
                 s.quit()
             });
 
         siv.add_layer(Dialog::around(form).full_screen());
         siv.run();
 
-        v.take()
-            .ok_or_else(|| Error::new(ErrorKind::Other, "user abort"))
+        match v.take() {
+            Some(x) => Ok(x),
+            None => Err(Box::new(crate::error::UserAbort::default()))
+        }
     }
 
-    async fn shell(&self, command: &str, shell_trust: &super::ShellTrust) -> Result<String> {
+    async fn shell(&self, command: &str, shell_trust: &super::ShellTrust) -> Result<String, Box<dyn std::error::Error>> {
         super::shell(command, shell_trust, &super::Backend::UI).await
     }
 
@@ -45,7 +48,7 @@ impl<'a> UserInput for UIBackend<'a> {
         &self,
         prompt: &str,
         options: &std::collections::BTreeMap<String, super::Option>,
-    ) -> Result<String> {
+    ) -> Result<String, Box<dyn std::error::Error>> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let mut index_display = 0usize;
         let display_vals = options
@@ -97,7 +100,7 @@ impl<'a> UserInput for UIBackend<'a> {
         _: &str,
         separator: &str,
         options: &std::collections::BTreeMap<String, super::Option>,
-    ) -> Result<String> {
+    ) -> Result<String, Box<dyn std::error::Error>> {
         let mut opts = Vec::new();
         {
             let ok_pressed = std::sync::Arc::new(std::cell::Cell::new(false));
@@ -141,7 +144,7 @@ impl<'a> UserInput for UIBackend<'a> {
             siv.run();
 
             if !ok_pressed.take() {
-                return Err(Error::new(ErrorKind::Other, "user abort"));
+                return Err(Box::new(crate::error::UserAbort::default()));
             }
             for x in items.try_read().unwrap().iter() {
                 let pos = display_vals.iter().position(|v| x == v).unwrap();
