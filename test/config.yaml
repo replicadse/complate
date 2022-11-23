@@ -3,7 +3,12 @@ templates:
     test:
         content:
             inline: |-
-              {{ alpha }}
+                {{ alpha }}
         values:
             alpha:
-                shell: "printf \"alpha\""
+                shell: 'printf "alpha"'
+    test2:
+        content:
+            inline: |-
+                {{ alpha }}
+        values: {}

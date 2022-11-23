@@ -29,6 +29,13 @@ ev 0 $?
 echo
 echo "success"
 
+echo "Testing non strict mode"
+cmd="../target/debug/complate -e render -c=./config.yaml -t=test2 --strict=false"
+$cmd
+ev 0 $?
+echo
+echo "success"
+
 echo ""
 echo "All tests succeeded."
 echo ""
