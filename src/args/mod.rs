@@ -13,7 +13,9 @@ impl CallArgs {
                 Command::Render(args) => {
                     match args.backend {
                         #[cfg(feature = "backend+ui")]
-                        Backend::UI => return Err(Box::new(crate::error::NeedExperimentalFlag::default())),
+                        Backend::UI => {
+                            return Err(Box::new(crate::error::NeedExperimentalFlag::default()))
+                        }
                         #[cfg(feature = "backend+cli")]
                         Backend::CLI => {}
                     };
@@ -45,6 +47,7 @@ pub struct RenderArguments {
     pub template: Option<String>,
     pub value_overrides: std::collections::HashMap<String, String>,
     pub shell_trust: ShellTrust,
+    pub strict: bool,
     pub backend: Backend,
 }
 
@@ -114,6 +117,16 @@ impl ClapArgumentLoader {
                     .required(false)
                     .default_value("none")
                     .takes_value(true))
+                .arg(clap::Arg::with_name("strict")
+                    .short("s")
+                    .long("strict")
+                    .value_name("STRICT")
+                    .help("Defines whether the templating is done in strict mode (fail on missing value for variable).")
+                    .possible_values(&["true", "false"])
+                    .default_value("true")
+                    .multiple(false)
+                    .required(false)
+                    .takes_value(true))
                 .arg(clap::Arg::with_name("backend")
                     .short("b")
                     .long("backend")
@@ -153,7 +166,9 @@ impl ClapArgumentLoader {
                     let config_param = x.value_of("config").unwrap();
                     std::fs::read_to_string(config_param.to_owned())?
                 } else {
-                    return Err(Box::new(crate::error::Failed::new("configuration unspecified")));
+                    return Err(Box::new(crate::error::Failed::new(
+                        "configuration unspecified",
+                    )));
                 };
 
                 let template = if x.is_present("template") {
@@ -170,6 +185,11 @@ impl ClapArgumentLoader {
                         _ => ShellTrust::None,
                     },
                     None => ShellTrust::None,
+                };
+
+                let strict = match x.value_of("strict") {
+                    Some(x) => x.parse::<bool>()?,
+                    None => true,
                 };
 
                 let mut value_overrides: std::collections::HashMap<String, String> =
@@ -205,6 +225,7 @@ impl ClapArgumentLoader {
                         template,
                         value_overrides,
                         shell_trust,
+                        strict,
                         backend,
                     }),
                 })
