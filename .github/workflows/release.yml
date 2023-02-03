@@ -113,7 +113,7 @@ jobs:
         run: |
           sed 's/version = "0.0.0"/version = "'${{ steps.get_version.outputs.VERSION }}'"/g' Cargo.toml > Cargo.toml.tmp
           mv Cargo.toml.tmp Cargo.toml
-          cargo build --release --target ${{ matrix.target }}
+          RUSTFLAGS='-C target-feature=+crt-static' cargo build --release --target ${{ matrix.target }}
       - name: zip
         run: cd ./target/${{ matrix.target }}/release && tar -zcvf ${{ matrix.target }}.tar.gz complate
       - name: upload asset
