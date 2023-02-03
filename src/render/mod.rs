@@ -2,6 +2,7 @@ use crate::args::{Backend, ShellTrust};
 use crate::config::{Config, Content, Option, OptionValue, Template, VariableDefinition};
 use async_trait::async_trait;
 use std::collections::BTreeMap;
+use std::env;
 use std::result::Result;
 
 #[cfg(feature = "backend+cli")]
@@ -175,6 +176,7 @@ impl Resolve for VariableDefinition {
         let backend_impl = backend.to_input(shell_trust)?;
 
         match self {
+            VariableDefinition::Env(v) => Ok(env::var(v)?),
             VariableDefinition::Static(v) => Ok(v.to_owned()),
             VariableDefinition::Prompt(v) => backend_impl.prompt(v).await,
             VariableDefinition::Shell(cmd) => backend_impl.shell(cmd, shell_trust).await,

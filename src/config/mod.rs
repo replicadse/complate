@@ -37,6 +37,7 @@ pub struct Option {
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum VariableDefinition {
+    Env(String),
     Static(String),
     Prompt(String),
     Shell(String),
@@ -72,12 +73,19 @@ impl Template {
 pub async fn default_config() -> String {
     r###"version: 0.10
 templates:
+    zero:
+        content:
+            inline: |-
+                {{ a.alpha }}
+        values:
+            a.alpha:
+                env: ALPHA
     one:
         content:
             file: ./.complate/templates/arbitraty-template-file.tpl
         values:
             a.summary:
-                static: "random summary"
+                env: "random summary"
     two:
         content:
             inline: |-
@@ -118,7 +126,8 @@ templates:
                         display: bravo
                         value:
                           shell: printf bravo
-
+            f.foxtrot:
+                env: "FOXTROT"
 "###
     .to_owned()
 }
