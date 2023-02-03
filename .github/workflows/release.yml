@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'version number'
+        description: "version number"
         required: true
 
 env:
@@ -16,23 +16,23 @@ jobs:
     strategy:
       matrix:
         include:
-        - name: "default"
-          features: ""
-        - name: "all"
-          features: --all-features
-        - name: "backend+ui"
-          features: --features "backend+ui" --no-default-features
+          - name: "default"
+            features: ""
+          - name: "all"
+            features: --all-features
+          - name: "backend+ui"
+            features: --features "backend+ui" --no-default-features
     steps:
-    - uses: actions/checkout@v1
-    - name: install tools
-      run: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
-    - name: execute tests
-      run: cargo test ${{ matrix.features }}
-    - name: build program
-      run: cargo build ${{ matrix.features }}
-    - name: run cli tests
-      working-directory: test
-      run: sh test-cli.sh
+      - uses: actions/checkout@v1
+      - name: install tools
+        run: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
+      - name: execute tests
+        run: cargo test ${{ matrix.features }}
+      - name: build program
+        run: cargo build ${{ matrix.features }}
+      - name: run cli tests
+        working-directory: test
+        run: sh test-cli.sh
 
   tag:
     if: github.ref == 'refs/heads/master'
@@ -40,45 +40,45 @@ jobs:
     name: tag and release
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: create release
-      id: create_release
-      uses: actions/create-release@latest
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.event.inputs.version }}
-        release_name: ${{ github.event.inputs.version }}
-        body: |
-          Release ${{ github.event.inputs.version }}.
-        draft: false
-        prerelease: false
-    - run: printf ${{ steps.create_release.outputs.upload_url }} > ${{ env.RELEASE_FILE }}
-    - name: upload release data
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: RELEASE
-        path: ${{ env.RELEASE_FILE }}
+      - uses: actions/checkout@v1
+      - name: create release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          release_name: ${{ github.event.inputs.version }}
+          body: |
+            Release ${{ github.event.inputs.version }}.
+          draft: false
+          prerelease: false
+      - run: printf ${{ steps.create_release.outputs.upload_url }} > ${{ env.RELEASE_FILE }}
+      - name: upload release data
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: RELEASE
+          path: ${{ env.RELEASE_FILE }}
 
   publish-cratesio:
     needs: tag
     name: crates.io
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: get version
-      id: get_version
-      run: echo ::set-output name=VERSION::$(git tag --points-at HEAD --sort -version:refname | head -1)
-    - name: install tools
-      run: |
-        sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
-        pip install invoke
-    - name: publish
-      id: publish
-      run: |
-        invoke ci.update-version --version=${{ steps.get_version.outputs.VERSION }}
-        cargo login ${{ secrets.CRATES_IO_TOKEN }}
-        cargo publish --allow-dirty
+      - uses: actions/checkout@v1
+      - name: get version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(git tag --points-at HEAD --sort -version:refname | head -1)
+      - name: install tools
+        run: |
+          sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
+      - name: publish
+        id: publish
+        run: |
+          sed 's/version = "0.0.0"/version = "'${{ steps.get_version.outputs.VERSION }}'"/g' Cargo.toml > Cargo.toml.tmp
+          mv Cargo.toml.tmp Cargo.toml
+          cargo login ${{ secrets.CRATES_IO_TOKEN }}
+          cargo publish --allow-dirty
 
   publish:
     needs: tag
@@ -87,40 +87,40 @@ jobs:
     strategy:
       matrix:
         include:
-        - os: macos-latest
-          target: x86_64-apple-darwin
-          install: printf ok
-        - os: ubuntu-latest
-          target: x86_64-unknown-linux-gnu
-          install: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            install: printf ok
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            install: sudo apt-get install build-essential libncurses5-dev libncursesw5-dev
     steps:
-    - uses: actions/checkout@v1
-    - name: get version
-      id: get_version
-      run: echo ::set-output name=VERSION::$(git tag --points-at HEAD --sort -version:refname | head -1)
-    - name: download release id
-      uses: actions/download-artifact@v1.0.0
-      with:
-        name: RELEASE
-    - name: get release data
-      id: get_release_data
-      run: echo ::set-output name=upload_url::$(cat RELEASE/${{ env.RELEASE_FILE }})
-    - name: install tools
-      run: |
-        ${{ matrix.install }}
-        rustup target install ${{ matrix.target }}
-        pip install invoke
-    - name: build-${{ matrix.target }}
-      run: |
-        invoke ci.update-version --version=${{ steps.get_version.outputs.VERSION }}
-        cargo build --release --target ${{ matrix.target }}
-    - name: zip
-      run: cd ./target/${{ matrix.target }}/release && tar -zcvf ${{ matrix.target }}.tar.gz complate
-    - name: upload asset
-      uses: svenstaro/upload-release-action@v1-release
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ./target/${{ matrix.target }}/release/${{ matrix.target }}.tar.gz
-        asset_name: ${{ matrix.target }}.tar.gz
-        tag: ${{ steps.get_version.outputs.VERSION }}
-        overwrite: true
+      - uses: actions/checkout@v1
+      - name: get version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(git tag --points-at HEAD --sort -version:refname | head -1)
+      - name: download release id
+        uses: actions/download-artifact@v1.0.0
+        with:
+          name: RELEASE
+      - name: get release data
+        id: get_release_data
+        run: echo ::set-output name=upload_url::$(cat RELEASE/${{ env.RELEASE_FILE }})
+      - name: install tools
+        run: |
+          ${{ matrix.install }}
+          rustup target install ${{ matrix.target }}
+      - name: build-${{ matrix.target }}
+        run: |
+          sed 's/version = "0.0.0"/version = "'${{ steps.get_version.outputs.VERSION }}'"/g' Cargo.toml > Cargo.toml.tmp
+          mv Cargo.toml.tmp Cargo.toml
+          cargo build --release --target ${{ matrix.target }}
+      - name: zip
+        run: cd ./target/${{ matrix.target }}/release && tar -zcvf ${{ matrix.target }}.tar.gz complate
+      - name: upload asset
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./target/${{ matrix.target }}/release/${{ matrix.target }}.tar.gz
+          asset_name: ${{ matrix.target }}.tar.gz
+          tag: ${{ steps.get_version.outputs.VERSION }}
+          overwrite: true
