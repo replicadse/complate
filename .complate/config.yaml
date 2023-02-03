@@ -6,7 +6,7 @@ templates:
         {{ a.alpha }}
     values:
       a.alpha:
-        env: ALPHA
+        static: '"test"'
   one:
     content:
       file: ./.complate/templates/arbitraty-template-file.tpl
