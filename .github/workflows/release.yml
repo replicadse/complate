@@ -72,6 +72,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.version.outputs.upload_url }}
-          asset_path: ./target/debian/complate_${{ needs.version.outputs.version }}_amd64.deb
-          asset_name: complate_${{ needs.version.outputs.version }}_amd64.deb
+          asset_path: ./target/x86_64-unknown-linux-gnu/debian/complate_${{ needs.version.outputs.version }}_amd64.deb
+          asset_name: complate-amd64.deb
           asset_content_type: application/octet-stream
