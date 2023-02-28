@@ -14,13 +14,22 @@ impl CallArgs {
                     match args.backend {
                         #[cfg(feature = "backend+ui")]
                         Backend::UI => {
-                            return Err(Box::new(crate::error::NeedExperimentalFlag::default()))
+                            return Err(Box::new(crate::error::NeedExperimentalFlag::new(
+                                "to enable UI backend",
+                            )))
                         }
                         #[cfg(feature = "backend+cli")]
                         Backend::CLI => {}
                     };
                     if args.value_overrides.len() > 0 {
-                        return Err(Box::new(crate::error::NeedExperimentalFlag::default()));
+                        return Err(Box::new(crate::error::NeedExperimentalFlag::new(
+                            "to enable value overrides",
+                        )));
+                    }
+                    if args.helpers {
+                        return Err(Box::new(crate::error::NeedExperimentalFlag::new(
+                            "to enable helpers",
+                        )));
                     }
                     #[allow(unreachable_code)]
                     Ok(())
@@ -46,6 +55,7 @@ pub struct RenderArguments {
     pub configuration: String,
     pub template: Option<String>,
     pub value_overrides: std::collections::HashMap<String, String>,
+    pub helpers: bool,
     pub shell_trust: ShellTrust,
     pub strict: bool,
     pub backend: Backend,
@@ -127,6 +137,13 @@ impl ClapArgumentLoader {
                     .multiple(false)
                     .required(false)
                     .takes_value(true))
+                .arg(clap::Arg::with_name("helpers")
+                    .long("helpers")
+                    .value_name("HELPERS")
+                    .help("Enables handlebar helpers.")
+                    .multiple(false)
+                    .required(false)
+                    .takes_value(false))
                 .arg(clap::Arg::with_name("backend")
                     .short("b")
                     .long("backend")
@@ -218,6 +235,8 @@ impl ClapArgumentLoader {
                     None => Backend::UI,
                 };
 
+                let helpers = x.is_present("helpers");
+
                 Ok(CallArgs {
                     privileges,
                     command: Command::Render(RenderArguments {
@@ -227,6 +246,7 @@ impl ClapArgumentLoader {
                         shell_trust,
                         strict,
                         backend,
+                        helpers,
                     }),
                 })
             }

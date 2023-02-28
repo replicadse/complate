@@ -14,6 +14,7 @@ pub async fn render(
     args: &crate::args::RenderArguments,
     template: &str,
     values: &BTreeMap<String, String>,
+    helpers: &BTreeMap<String, crate::config::Helper>,
 ) -> Result<String, Box<dyn std::error::Error>> {
     fn recursive_add(
         namespace: &mut std::collections::VecDeque<String>,
@@ -52,6 +53,35 @@ pub async fn render(
     if args.strict {
         hb.set_strict_mode(true);
     }
+
+    if args.helpers {
+        for helper in helpers {
+            let h_func = move |h: &handlebars::Helper,
+                               _: &handlebars::Handlebars,
+                               _: &handlebars::Context,
+                               _: &mut handlebars::RenderContext,
+                               out: &mut dyn handlebars::Output|
+                  -> handlebars::HelperResult {
+                let param = h.param(0).unwrap();
+                // dbg!(param);
+                let cmd = helper.1.shell.to_owned();
+
+                let output = std::process::Command::new("sh")
+                    .arg("-c")
+                    .arg(cmd)
+                    .env("VALUE", param.value().as_str().unwrap())
+                    .output()?;
+                if output.status.code().unwrap() != 0 {
+                    return Err(handlebars::RenderError::new("failed to get command status"));
+                }
+
+                out.write(String::from_utf8(output.stdout).unwrap().as_str())?;
+                Ok(())
+            };
+            hb.register_helper(helper.0, Box::new(h_func))
+        }
+    }
+
     let rendered_template = hb.render_template(template, &values_json).unwrap();
     Ok(rendered_template)
 }
@@ -120,7 +150,7 @@ pub async fn select_and_render(
         &invoke_options.backend,
     )
     .await?;
-    render(&invoke_options, &template_str, &values).await
+    render(&invoke_options, &template_str, &values, &template.helpers).await
 }
 
 #[async_trait]

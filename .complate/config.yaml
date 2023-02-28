@@ -1,4 +1,4 @@
-version: 0.10
+version: 0.11
 templates:
   zero:
     content:
@@ -6,13 +6,13 @@ templates:
         {{ a.alpha }}
     values:
       a.alpha:
-        static: '"test"'
+        static: ALPHA
   one:
     content:
       file: ./.complate/templates/arbitraty-template-file.tpl
     values:
-      a.summary:
-        static: "random summary"
+      a.pwd:
+        env: "PWD"
   two:
     content:
       inline: |-
@@ -53,3 +53,14 @@ templates:
               display: bravo
               value:
                 shell: printf bravo
+      f.foxtrot:
+        env: "FOXTROT"
+  three:
+    content:
+      inline: |-
+        {{ _decode "dGVzdA==" }}
+    helpers:
+      "_decode":
+        shell: |-
+          printf "$(printf $VALUE | base64 -D)"
+    values: {}

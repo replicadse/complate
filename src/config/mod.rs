@@ -11,6 +11,14 @@ pub struct Template {
     pub content: Content,
     #[serde(default)]
     pub values: std::collections::BTreeMap<String, VariableDefinition>,
+    #[serde(default)]
+    pub helpers: std::collections::BTreeMap<String, Helper>,
+}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct Helper {
+    pub shell: String,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -52,82 +60,74 @@ pub enum VariableDefinition {
     },
 }
 
-impl Config {
-    pub fn new(version: String) -> Self {
-        Self {
-            version,
-            templates: std::collections::BTreeMap::new(),
-        }
-    }
-}
-
-impl Template {
-    pub fn new(content: Content) -> Self {
-        Self {
-            content,
-            values: std::collections::BTreeMap::new(),
-        }
-    }
-}
-
 pub async fn default_config() -> String {
-    r###"version: 0.10
+    r###"version: 0.11
 templates:
-    zero:
-        content:
-            inline: |-
-                {{ a.alpha }}
-        values:
-            a.alpha:
-                env: ALPHA
-    one:
-        content:
-            file: ./.complate/templates/arbitraty-template-file.tpl
-        values:
-            a.summary:
-                env: "random summary"
-    two:
-        content:
-            inline: |-
-                {{ a.alpha }}
-                {{ b.bravo }}
-                {{ c.charlie }}
-                {{ d.delta }}
-                {{ e.echo }}
-        values:
-            a.alpha:
-              prompt: "alpha"
-            b.bravo:
-              shell: "printf bravo"
-            c.charlie:
-              static: "charlie"
-            d.delta:
-                select:
-                    text: Select the version level that shall be incremented
-                    options:
-                      alpha:
-                        display: alpha
-                        value:
-                          static: alpha
-                      bravo:
-                        display: bravo
-                        value:
-                          shell: printf bravo
-            e.echo:
-                check:
-                    text: Select the components that are affected
-                    separator: ", "
-                    options:
-                      alpha:
-                        display: alpha
-                        value:
-                          static: alpha
-                      bravo:
-                        display: bravo
-                        value:
-                          shell: printf bravo
-            f.foxtrot:
-                env: "FOXTROT"
+  zero:
+    content:
+      inline: |-
+        {{ a.alpha }}
+    values:
+      a.alpha:
+        static: ALPHA
+  one:
+    content:
+      file: ./.complate/templates/arbitraty-template-file.tpl
+    values:
+      a.pwd:
+        env: "PWD"
+  two:
+    content:
+      inline: |-
+        {{ a.alpha }}
+        {{ b.bravo }}
+        {{ c.charlie }}
+        {{ d.delta }}
+        {{ e.echo }}
+    values:
+      a.alpha:
+        prompt: "alpha"
+      b.bravo:
+        shell: "printf bravo"
+      c.charlie:
+        static: "charlie"
+      d.delta:
+        select:
+          text: Select the version level that shall be incremented
+          options:
+            alpha:
+              display: alpha
+              value:
+                static: alpha
+            bravo:
+              display: bravo
+              value:
+                shell: printf bravo
+      e.echo:
+        check:
+          text: Select the components that are affected
+          separator: ", "
+          options:
+            alpha:
+              display: alpha
+              value:
+                static: alpha
+            bravo:
+              display: bravo
+              value:
+                shell: printf bravo
+      f.foxtrot:
+        env: "FOXTROT"
+  three:
+    content:
+      inline: |-
+        {{ _decode "dGVzdA==" }}
+    helpers:
+      "_decode":
+        shell: |-
+          printf "$(printf $VALUE | base64 -D)"
+    values: {}
+
 "###
     .to_owned()
 }

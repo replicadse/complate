@@ -56,6 +56,7 @@ Either one of the `backend+` features (or both) MUST be enabled for `complate` t
 |Template|-t|--template|Skip the template selection by defining the used template from the configuration via this argument||stable
 |Backend|-b|--backend|Defines the backend for the user interaction.||`CLI` is stable. `UI` is experimental (feature = "backend+ui").
 |Value|-v|--value|Overrides a certain variable with a given string value. Specify the variable and value with an equals sign as separator|Multiple allowed. Example: <br/> `-v"variable=some arbitrary value"`|experimental
+|Helpers||--helpers|Enables helper functions.||experimental
 |===
 
 === Examples:
@@ -63,6 +64,7 @@ Either one of the `backend+` features (or both) MUST be enabled for `complate` t
 * `complate render` +
 * `complate render -c .complate/alternative.yml` +
 * `complate -e render -c <(cat .complate/alternative.yaml) -bui -t0.default` +
+* `complate -e render -t three --helpers` +
 
 == Configuration file
 
