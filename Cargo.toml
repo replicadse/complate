@@ -9,6 +9,7 @@ homepage = "https://replicadse.github.io/complate/"
 repository = "https://github.com/replicadse/complate"
 keywords = ["cli", "template", "replace", "standardizing"]
 categories = ["command-line-utilities"]
+readme = "docs/README.md"
 
 [features]
   default = ["backend+cli"]
