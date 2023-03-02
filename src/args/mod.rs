@@ -8,6 +8,17 @@ pub struct CallArgs {
 impl CallArgs {
     #[allow(clippy::single_match)]
     pub async fn validate(&self) -> Result<(), Box<dyn std::error::Error>> {
+        match &self.command {
+            Command::Render(args) => {
+                if args.helpers && args.shell_trust != ShellTrust::Ultimate {
+                    return Err(Box::new(crate::error::NoShellTrust::new(
+                        "need ultimate shell trust for helper functions",
+                    )));
+                }
+            }
+            _ => {}
+        }
+
         match self.privileges {
             Privilege::Normal => match &self.command {
                 Command::Render(args) => {
@@ -61,6 +72,7 @@ pub struct RenderArguments {
     pub backend: Backend,
 }
 
+#[derive(Debug, Eq, PartialEq)]
 pub enum ShellTrust {
     None,
     Prompt,
@@ -89,7 +101,7 @@ impl ClapArgumentLoader {
         let command = clap::App::new("complate")
             .version(env!("CARGO_PKG_VERSION"))
             .about("A rusty text templating application for CLIs.")
-            .author("Weber, Alexander <aw@voidpointergroup.com>")
+            .author("replicadse <aw@voidpointergroup.com>")
             .arg(clap::Arg::with_name("experimental")
                     .short("e")
                     .long("experimental")
