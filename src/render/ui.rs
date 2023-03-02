@@ -2,9 +2,9 @@ use super::UserInput;
 use async_trait::async_trait;
 use cursive::traits::*;
 use cursive::views::Dialog;
-use std::collections::HashSet;
-use std::result::Result;
+use std::collections::{HashMap, HashSet};
 use std::ops::Deref;
+use std::result::Result;
 
 pub struct UIBackend<'a> {
     shell_trust: &'a super::ShellTrust,
@@ -27,7 +27,9 @@ impl<'a> UserInput for UIBackend<'a> {
         let form = fui::form::FormView::new()
             .field(fui::fields::Text::new(text))
             .on_submit(move |s, x| {
-                vx.set(Some(x.get(key.deref()).unwrap().as_str().unwrap().to_owned()));
+                vx.set(Some(
+                    x.get(key.deref()).unwrap().as_str().unwrap().to_owned(),
+                ));
                 s.quit()
             });
 
@@ -36,12 +38,8 @@ impl<'a> UserInput for UIBackend<'a> {
 
         match v.take() {
             Some(x) => Ok(x),
-            None => Err(Box::new(crate::error::UserAbort::default()))
+            None => Err(Box::new(crate::error::UserAbort::default())),
         }
-    }
-
-    async fn shell(&self, command: &str, shell_trust: &super::ShellTrust) -> Result<String, Box<dyn std::error::Error>> {
-        super::shell(command, shell_trust, &super::Backend::UI).await
     }
 
     async fn select(
@@ -91,7 +89,9 @@ impl<'a> UserInput for UIBackend<'a> {
         let selection = &options[&keys[display_vals.iter().position(|x| *x == sel_value).unwrap()]];
         match &selection.value {
             super::OptionValue::Static(x) => Ok(x.to_owned()),
-            super::OptionValue::Shell(cmd) => self.shell(cmd, &self.shell_trust).await,
+            super::OptionValue::Shell(cmd) => {
+                super::shell(cmd, &HashMap::new(), &self.shell_trust).await
+            }
         }
     }
 
@@ -157,7 +157,9 @@ impl<'a> UserInput for UIBackend<'a> {
             data.push(match opt {
                 super::OptionValue::Static(x) => x.to_owned(),
                 super::OptionValue::Shell(cmd) => {
-                    self.shell(&cmd, &self.shell_trust).await.unwrap()
+                    super::shell(&cmd, &HashMap::new(), &self.shell_trust)
+                        .await
+                        .unwrap()
                 }
             });
         }

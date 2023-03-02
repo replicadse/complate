@@ -1,6 +1,6 @@
 use super::UserInput;
 use async_trait::async_trait;
-use std::result::Result;
+use std::{collections::HashMap, result::Result};
 
 pub struct CLIBackend<'a> {
     shell_trust: &'a super::ShellTrust,
@@ -18,14 +18,11 @@ impl<'a> UserInput for CLIBackend<'a> {
         match dialoguer::Input::new()
             .allow_empty(true)
             .with_prompt(text)
-            .interact() {
-                Ok(res) => Ok(res),
-                Err(_) => Err(Box::new(crate::error::Failed::default()))
-            }
-    }
-
-    async fn shell(&self, command: &str, shell_trust: &super::ShellTrust) -> Result<String, Box<dyn std::error::Error>> {
-        super::shell(command, shell_trust, &super::Backend::CLI).await
+            .interact()
+        {
+            Ok(res) => Ok(res),
+            Err(_) => Err(Box::new(crate::error::Failed::default())),
+        }
     }
 
     async fn select(
@@ -47,7 +44,9 @@ impl<'a> UserInput for CLIBackend<'a> {
             .interact()?;
         match &options[&keys[result_idx]].value {
             super::OptionValue::Static(x) => Ok(x.to_owned()),
-            super::OptionValue::Shell(cmd) => self.shell(cmd, &self.shell_trust).await,
+            super::OptionValue::Shell(cmd) => {
+                super::shell(cmd, &HashMap::new(), &self.shell_trust).await
+            }
         }
     }
 
@@ -77,7 +76,7 @@ impl<'a> UserInput for CLIBackend<'a> {
                     let v = match &options[&keys[i]].value {
                         super::OptionValue::Static(x) => x.to_owned(),
                         super::OptionValue::Shell(cmd) => {
-                            self.shell(&cmd, &self.shell_trust).await?
+                            super::shell(&cmd, &HashMap::new(), &self.shell_trust).await?
                         }
                     };
                     d.push_str(&v);

@@ -75,7 +75,6 @@ pub struct RenderArguments {
 #[derive(Debug, Eq, PartialEq)]
 pub enum ShellTrust {
     None,
-    Prompt,
     Ultimate,
 }
 
@@ -134,7 +133,7 @@ impl ClapArgumentLoader {
                     .long("shell-trust")
                     .value_name("SHELL_TRUST")
                     .help("Enables the shell mode. This is potentially insecure and should only be done for trustworthy sources.")
-                    .possible_values(&["none", "prompt", "ultimate"])
+                    .possible_values(&["none", "ultimate"])
                     .multiple(false)
                     .required(false)
                     .default_value("none")
@@ -209,7 +208,6 @@ impl ClapArgumentLoader {
                 let shell_trust = match x.value_of("shell-trust") {
                     Some(x) => match x {
                         "none" => ShellTrust::None,
-                        "prompt" => ShellTrust::Prompt,
                         "ultimate" => ShellTrust::Ultimate,
                         _ => ShellTrust::None,
                     },

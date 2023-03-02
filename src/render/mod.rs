@@ -1,7 +1,7 @@
 use crate::args::{Backend, ShellTrust};
 use crate::config::{Config, Content, Option, OptionValue, Template, VariableDefinition};
 use async_trait::async_trait;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::env;
 use std::result::Result;
 
@@ -165,11 +165,6 @@ pub trait Resolve {
 #[async_trait]
 pub trait UserInput: Send + Sync {
     async fn prompt(&self, text: &str) -> Result<String, Box<dyn std::error::Error>>;
-    async fn shell(
-        &self,
-        command: &str,
-        shell_trust: &ShellTrust,
-    ) -> Result<String, Box<dyn std::error::Error>>;
     async fn select(
         &self,
         prompt: &str,
@@ -210,7 +205,7 @@ impl Resolve for VariableDefinition {
             VariableDefinition::Env(v) => Ok(env::var(v)?),
             VariableDefinition::Static(v) => Ok(v.to_owned()),
             VariableDefinition::Prompt(v) => backend_impl.prompt(v).await,
-            VariableDefinition::Shell(cmd) => backend_impl.shell(cmd, shell_trust).await,
+            VariableDefinition::Shell(cmd) => shell(cmd, &HashMap::new(), shell_trust).await,
             VariableDefinition::Select { text, options } => {
                 backend_impl.select(text, options).await
             }
@@ -225,41 +220,18 @@ impl Resolve for VariableDefinition {
 
 async fn shell(
     command: &str,
+    env: &HashMap<String, String>,
     shell_trust: &ShellTrust,
-    backend: &Backend,
 ) -> Result<String, Box<dyn std::error::Error>> {
     match shell_trust {
         ShellTrust::None => return Err(Box::new(crate::error::NoShellTrust::default())),
-        ShellTrust::Prompt => {
-            let be = backend.to_input(shell_trust)?;
-            let mut yesno = BTreeMap::new();
-            yesno.insert(
-                "0".to_owned(),
-                Option {
-                    display: "yes".to_owned(),
-                    value: OptionValue::Static("yes".to_owned()),
-                },
-            );
-            yesno.insert(
-                "1".to_owned(),
-                Option {
-                    display: "no".to_owned(),
-                    value: OptionValue::Static("no".to_owned()),
-                },
-            );
-
-            let sel = be.select(&format!("You are about to run a shell command. The command is:\n{}\nDo you confirm the execution?", command), &yesno).await;
-            if sel.unwrap_or_default() == "yes" {
-            } else {
-                return Err(Box::new(crate::error::UserAbort::default()));
-            }
-        }
         ShellTrust::Ultimate => {}
     }
 
     let output = std::process::Command::new("sh")
         .arg("-c")
         .arg(command)
+        .envs(env)
         .output()?;
     if output.status.code().unwrap() != 0 {
         return Err(Box::new(crate::error::Failed::default()));
