@@ -1,12 +1,3 @@
----
-doctype: article
-title: "1: Usage of ADRs"
-date: 2021-10-10
-draft: false
-weight: 1
----
-:toc:
-
-== 1: Usage of ADRs
+# 1: Usage of ADRs
 
 This project uses ADRs. ADRs are documented in this repository and format. In doubt, the documents in this repository and documentation are to be considered as the single source of truth.
