@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.env }}-nginx
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ .Values.env }}-nginx
+  strategy:
+    type: Recreate
+  revisionHistoryLimit: 0
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ .Values.env }}-nginx
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-{{ .Values.env }}-nginx
+          image: nginx:{{ .Chart.AppVersion }}
+          imagePullPolicy: Always
+          env: []
+          ports:
+            - containerPort: 80

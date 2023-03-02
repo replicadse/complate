@@ -1,0 +1,3 @@
+env: "{{ env }}"
+secret:
+  apikey: '{{ _decrypt "U2FsdGVkX19o7/B7vdP8iTC5ToQl8mq6i1SEdrRy5R9Q0GhIahXqCY8PXkhTrRIx" }}'

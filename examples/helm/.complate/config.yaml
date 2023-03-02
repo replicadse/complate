@@ -1,0 +1,28 @@
+version: 0.11
+templates:
+  chart:
+    content:
+      file: "./Chart.tpl.yaml"
+    values:
+      version:
+        prompt: "Enter the semver for the chart and app version"
+  dev:
+    content:
+      file: "./values.dev.yaml"
+    helpers:
+      "_decrypt":
+        shell: |-
+          printf "$(echo $VALUE | openssl aes-256-cbc -d -a -pass $MY_SECRET_PASS)"
+    values:
+      env:
+        static: "dev"
+  prod:
+    content:
+      file: "./values.prod.yaml"
+    helpers:
+      "_decrypt":
+        shell: |-
+          printf "$(echo $VALUE | openssl aes-256-cbc -d -a -pass $MY_SECRET_PASS)"
+    values:
+      env:
+        static: "prod"

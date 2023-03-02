@@ -1,0 +1,9 @@
+apiVersion: v2
+name: "complate-helm-example"
+description: none
+
+type: application
+version: "{{ version }}"
+appVersion: "{{ version }}"
+
+dependencies: []
