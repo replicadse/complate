@@ -58,9 +58,12 @@ templates:
   three:
     content:
       inline: |-
+        {{ test }}
         {{ _decode "dGVzdA==" }}
     helpers:
       "_decode":
         shell: |-
           printf "$(printf $VALUE | base64 -D)"
-    values: {}
+    values:
+      test:
+        static: "test"

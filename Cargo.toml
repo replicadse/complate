@@ -23,7 +23,7 @@ readme = "docs/README.md"
     opt-level = 3
 
 [dependencies]
-clap = "^2.34"
+clap = "^4.1.8"
 async-trait = "^0.1"
 tokio = { version = "1.26.0", features = ["rt", "rt-multi-thread", "macros" ] }
 handlebars = "^4.1"
@@ -36,3 +36,4 @@ serde_yaml = "^0.8"
 cursive = { version = "^0.16", optional = true }
 dialoguer = { version = "^0.8", optional = true }
 fui = { version = "^2.0", optional = true }
+clap_mangen = "0.2.9"
