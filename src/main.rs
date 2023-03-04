@@ -4,6 +4,8 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::result::Result;
 
+use args::ManualFormat;
+
 pub mod args;
 pub mod config;
 pub mod error;
@@ -16,10 +18,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     cmd.validate().await?;
 
     match cmd.command {
-        | crate::args::Command::Man(path) => {
+        | crate::args::Command::Manual(path, format) => {
             let out_path = PathBuf::from(path);
             std::fs::create_dir_all(&out_path)?;
-            reference::build_manpages(&out_path)?;
+            match format {
+                | ManualFormat::Manpages => {
+                    reference::build_manpages(&out_path)?;
+                },
+                | ManualFormat::Markdown => {
+                    reference::build_markdown(&out_path)?;
+                },
+            }
             Ok(())
         },
         | crate::args::Command::Autocomplete(path, shell) => {

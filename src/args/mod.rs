@@ -54,8 +54,14 @@ pub enum Privilege {
 }
 
 #[derive(Debug)]
+pub enum ManualFormat {
+    Manpages,
+    Markdown,
+}
+
+#[derive(Debug)]
 pub enum Command {
-    Man(String),
+    Manual(String, ManualFormat),
     Autocomplete(String, clap_complete::Shell),
     Init,
     Render(RenderArguments),
@@ -112,10 +118,15 @@ impl ClapArgumentLoader {
                     .num_args(0)
             ])
             .subcommand(clap::Command::new("man")
-                .about("Renders the manpages.")
+                .about("Renders the manual.")
                 .arg(clap::Arg::new("out")
                     .short('o')
                     .long("out")
+                    .required(true))
+                .arg(clap::Arg::new("format")
+                    .short('f')
+                    .long("format")
+                    .value_parser(["manpages", "markdown"])
                     .required(true)))
             .subcommand(clap::Command::new("autocomplete")
                 .about("Renders shell completion scripts.")
@@ -178,7 +189,14 @@ impl ClapArgumentLoader {
 
         if let Some(subc) = command_matches.subcommand_matches("man") {
             Ok(CallArgs {
-                command: Command::Man(subc.get_one::<String>("out").unwrap().into()),
+                command: Command::Manual(
+                    subc.get_one::<String>("out").unwrap().into(),
+                    match subc.get_one::<String>("format").unwrap().as_str() {
+                        | "manpages" => ManualFormat::Manpages,
+                        | "markdown" => ManualFormat::Markdown,
+                        | _ => return Err(Box::new(Error::Argument("unknown format".into()))),
+                    },
+                ),
                 privileges,
             })
         } else if let Some(subc) = command_matches.subcommand_matches("autocomplete") {

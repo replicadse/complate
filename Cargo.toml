@@ -39,3 +39,4 @@ cursive = { version = "^0.16", optional = true }
 dialoguer = { version = "^0.8", optional = true }
 fui = { version = "^2.0", optional = true }
 thiserror = "1.0.38"
+clap-markdown = "0.1.3"
