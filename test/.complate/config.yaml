@@ -1,25 +1,38 @@
 version: 0.12
 templates:
-  static:
+  "var:static":
     content:
       inline: |-
         {{ a.alpha }}
-        {{ b.bravo }}
     values:
       a.alpha:
         static: "alpha"
-      b.bravo:
-        env: "bravo"
+  "var:env":
+    content:
+      inline: |-
+        {{ a.alpha }}
+    values:
+      a.alpha:
+        env: "alpha"
+  "var:shell":
+    content:
+      inline: |-
+        {{ a.alpha }}
+    values:
+      a.alpha:
+        shell: 'printf "alpha"'
   override:
     content:
       inline: |-
         {{ a.alpha }}
-        {{ b.bravo }}
-        {{ c.charlie }}
     values:
       a.alpha:
-        static: "alpha"
-      b.bravo:
-        env: "bravo"
-      c.charlie:
         env: "DOES_NOT_EXIST"
+  helper:
+    content:
+      inline: |-
+        {{ _decode "YmFuYW5hcmFtYQ==" }}
+    helpers:
+      "_decode":
+        shell: |-
+          printf "$VALUE" | base64 -D
