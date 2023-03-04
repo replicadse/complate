@@ -22,7 +22,7 @@ Download and install from the GitHub releases
 An example:
 
 ```
-version: 0.11
+version: 0.12
 templates:
   zero:
     content:

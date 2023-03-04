@@ -61,7 +61,7 @@ pub enum VariableDefinition {
 }
 
 pub async fn default_config() -> String {
-    r###"version: 0.11
+    r###"version: 0.12
 templates:
   zero:
     content:
