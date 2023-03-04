@@ -1,8 +1,10 @@
+use std::collections::BTreeMap;
+
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct Config {
     pub version: String,
     #[serde(default)]
-    pub templates: std::collections::BTreeMap<String, Template>,
+    pub templates: BTreeMap<String, Template>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -10,9 +12,9 @@ pub struct Config {
 pub struct Template {
     pub content: Content,
     #[serde(default)]
-    pub values: std::collections::BTreeMap<String, VariableDefinition>,
+    pub values: BTreeMap<String, VariableDefinition>,
     #[serde(default)]
-    pub helpers: std::collections::BTreeMap<String, Helper>,
+    pub helpers: BTreeMap<String, Helper>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -51,12 +53,12 @@ pub enum VariableDefinition {
     Shell(String),
     Select {
         text: String,
-        options: std::collections::BTreeMap<String, Option>,
+        options: BTreeMap<String, Option>,
     },
     Check {
         text: String,
         separator: String,
-        options: std::collections::BTreeMap<String, Option>,
+        options: BTreeMap<String, Option>,
     },
 }
 

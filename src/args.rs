@@ -45,7 +45,7 @@ pub enum Command {
 pub struct RenderArguments {
     pub configuration: String,
     pub template: Option<String>,
-    pub value_overrides: std::collections::HashMap<String, String>,
+    pub value_overrides: HashMap<String, String>,
     pub shell_trust: ShellTrust,
     pub loose: bool,
     pub backend: Backend,
@@ -147,7 +147,7 @@ impl ClapArgumentLoader {
                     .help("Overrides a certain value definition with a string.")))
     }
 
-    pub async fn load_from_cli() -> std::result::Result<CallArgs, Box<dyn std::error::Error>> {
+    pub async fn load() -> Result<CallArgs, Box<dyn std::error::Error>> {
         let root_command = Self::root_command();
         let command_matches = root_command.get_matches();
 

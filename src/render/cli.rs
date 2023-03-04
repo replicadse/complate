@@ -2,7 +2,10 @@ use crate::error::Error;
 
 use super::UserInput;
 use async_trait::async_trait;
-use std::{collections::HashMap, result::Result};
+use std::{
+    collections::{BTreeMap, HashMap},
+    result::Result,
+};
 
 pub struct CLIBackend<'a> {
     shell_trust: &'a super::ShellTrust,
@@ -26,7 +29,7 @@ impl<'a> UserInput for CLIBackend<'a> {
     async fn select(
         &self,
         prompt: &str,
-        options: &std::collections::BTreeMap<String, super::Option>,
+        options: &BTreeMap<String, super::Option>,
     ) -> Result<String, Box<dyn std::error::Error>> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let display_vals = options.values().map(|x| x.display.to_owned()).collect::<Vec<String>>();
@@ -47,7 +50,7 @@ impl<'a> UserInput for CLIBackend<'a> {
         &self,
         prompt: &str,
         separator: &str,
-        options: &std::collections::BTreeMap<String, super::Option>,
+        options: &BTreeMap<String, super::Option>,
     ) -> Result<String, Box<dyn std::error::Error>> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let display_vals = options.values().map(|x| x.display.to_owned()).collect::<Vec<String>>();

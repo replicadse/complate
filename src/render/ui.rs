@@ -4,7 +4,7 @@ use super::UserInput;
 use async_trait::async_trait;
 use cursive::traits::*;
 use cursive::views::Dialog;
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::ops::Deref;
 use std::result::Result;
 
@@ -45,7 +45,7 @@ impl<'a> UserInput for UIBackend<'a> {
     async fn select(
         &self,
         prompt: &str,
-        options: &std::collections::BTreeMap<String, super::Option>,
+        options: &BTreeMap<String, super::Option>,
     ) -> Result<String, Box<dyn std::error::Error>> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let mut index_display = 0usize;
@@ -94,7 +94,7 @@ impl<'a> UserInput for UIBackend<'a> {
         &self,
         _: &str,
         separator: &str,
-        options: &std::collections::BTreeMap<String, super::Option>,
+        options: &BTreeMap<String, super::Option>,
     ) -> Result<String, Box<dyn std::error::Error>> {
         let mut opts = Vec::new();
         {
