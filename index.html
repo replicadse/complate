@@ -1,0 +1,284 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Index - complate</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html" class="active"><strong aria-hidden="true">1.</strong> Index</a></li><li class="chapter-item expanded "><a href="reference.html"><strong aria-hidden="true">2.</strong> Reference</a></li><li class="chapter-item expanded "><a href="#.html"><strong aria-hidden="true">3.</strong> Adrs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="adrs/1-usage-of-adrs.html"><strong aria-hidden="true">3.1.</strong> Usage of Adrs</a></li><li class="chapter-item expanded "><a href="adrs/2-usage-of-keywords.html"><strong aria-hidden="true">3.2.</strong> Usage of Keywords</a></li><li class="chapter-item expanded "><a href="adrs/3-versioning.html"><strong aria-hidden="true">3.3.</strong> Versioning</a></li><li class="chapter-item expanded "><a href="adrs/4-experimental-flag.html"><strong aria-hidden="true">3.4.</strong> Experimental Flag</a></li><li class="chapter-item expanded "><a href="adrs/5-feature-flags.html"><strong aria-hidden="true">3.5.</strong> Feature Flags</a></li><li class="chapter-item expanded "><a href="adrs/index.html"><strong aria-hidden="true">3.6.</strong> Index</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">complate</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="complate"><a class="header" href="#complate">complate</a></h1>
+<p><code>complate</code> is a general purpose text templating CLI program that supports interactive mode, prompting the user for values via TUI behaviour and headless mode for use in automation such as CI pipelines.</p>
+<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<ul>
+<li>The rusty way:<br />
+<code>cargo install complate --force</code></li>
+<li>The manual way:<br />
+Download and install from the GitHub releases</li>
+</ul>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<p>An example:</p>
+<pre><code>version: 0.12
+templates:
+  zero:
+    content:
+      inline: |-
+        {{ a.alpha }}
+    values:
+      a.alpha:
+        static: ALPHA
+  one:
+    content:
+      file: ./.complate/templates/arbitraty-template-file.tpl
+    values:
+      a.pwd:
+        env: &quot;PWD&quot;
+  two:
+    content:
+      inline: |-
+        {{ a.alpha }}
+        {{ b.bravo }}
+        {{ c.charlie }}
+        {{ d.delta }}
+        {{ e.echo }}
+    values:
+      a.alpha:
+        prompt: &quot;alpha&quot;
+      b.bravo:
+        shell: &quot;printf bravo&quot;
+      c.charlie:
+        static: &quot;charlie&quot;
+      d.delta:
+        select:
+          text: Select the version level that shall be incremented
+          options:
+            alpha:
+              display: alpha
+              value:
+                static: alpha
+            bravo:
+              display: bravo
+              value:
+                shell: printf bravo
+      e.echo:
+        check:
+          text: Select the components that are affected
+          separator: &quot;, &quot;
+          options:
+            alpha:
+              display: alpha
+              value:
+                static: alpha
+            bravo:
+              display: bravo
+              value:
+                shell: printf bravo
+      f.foxtrot:
+        env: &quot;FOXTROT&quot;
+  three:
+    content:
+      inline: |-
+        {{ _decode &quot;dGVzdA==&quot; }}
+    helpers:
+      &quot;_decode&quot;:
+        shell: |-
+          printf &quot;$(printf $VALUE | base64 -D)&quot;
+    values: {}
+
+</code></pre>
+<div class="table-wrapper"><table><thead><tr><th>Key</th><th>Behaviour</th><th>Input</th></tr></thead><tbody>
+<tr><td>env</td><td>Retrieves value from the specified env var</td><td>None</td></tr>
+<tr><td>static</td><td>Simply replaces the variable with a static value</td><td>None</td></tr>
+<tr><td>prompt</td><td>Asks the user for text input (can be empty)</td><td>The prompt</td></tr>
+<tr><td>shell</td><td>Invokes a shell command to resolve the variable (read from <code>STDOUT</code>)</td><td>None</td></tr>
+<tr><td>select</td><td>Asks the user to select one item from a list</td><td><code>text</code>: string (context), <code>options</code>: list (available options to select from)</td></tr>
+<tr><td>check</td><td>Asks the user to select <code>0..n</code> item(s) from a list (multiselect)</td><td><code>text</code>: string (context), <code>options</code>: list of options {display: str, value: str} (the available options to select from)</td></tr>
+</tbody></table>
+</div>
+<p>Since the <code>shell</code> value provider is able to run arbitrary shell commands, it is only allowed if and only if the <code>SHELL_TRUST</code> argument is explicitly set. See the <code>render</code> command reference for possible values for this setting. If <em>not</em> set, the provider will throw an unrecoverable error and the program will abort.</p>
+<h2 id="command-reference"><a class="header" href="#command-reference">Command reference</a></h2>
+<h3 id="disclaimer"><a class="header" href="#disclaimer">Disclaimer</a></h3>
+<p>All features that are marked as <code>experimental</code> are <em>not</em> considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see https://semver.org[semver v2]). Use these features on your own risk!</p>
+<hr />
+<hr />
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next" href="reference.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next" href="reference.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
