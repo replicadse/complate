@@ -13,15 +13,6 @@ pub struct CallArgs {
 impl CallArgs {
     #[allow(clippy::single_match)]
     pub async fn validate(&self) -> Result<(), Box<dyn std::error::Error>> {
-        match &self.command {
-            | Command::Render(args) => {
-                if args.helpers && args.shell_trust != ShellTrust::Ultimate {
-                    return Err(Box::new(Error::NoTrust));
-                }
-            },
-            | _ => {},
-        }
-
         match self.privileges {
             | Privilege::Normal => match &self.command {
                 | Command::Render(args) => {
@@ -32,9 +23,6 @@ impl CallArgs {
                         | Backend::CLI => {},
                     };
                     if args.value_overrides.len() > 0 {
-                        return Err(Box::new(Error::ExperimentalCommand));
-                    }
-                    if args.helpers {
                         return Err(Box::new(Error::ExperimentalCommand));
                     }
                     #[allow(unreachable_code)]
@@ -61,8 +49,8 @@ pub enum ManualFormat {
 
 #[derive(Debug)]
 pub enum Command {
-    Manual(String, ManualFormat),
-    Autocomplete(String, clap_complete::Shell),
+    Manual { path: String, format: ManualFormat },
+    Autocomplete { path: String, shell: clap_complete::Shell },
     Init,
     Render(RenderArguments),
 }
@@ -72,7 +60,6 @@ pub struct RenderArguments {
     pub configuration: String,
     pub template: Option<String>,
     pub value_overrides: std::collections::HashMap<String, String>,
-    pub helpers: bool,
     pub shell_trust: ShellTrust,
     pub loose: bool,
     pub backend: Backend,
@@ -161,10 +148,6 @@ impl ClapArgumentLoader {
                     .long("loose")
                     .action(ArgAction::SetTrue)
                     .help("Defines that the templating is done in non-strict mode (allow missing value for variable)."))
-                .arg(clap::Arg::new("helpers")
-                    .long("helpers")
-                    .action(ArgAction::SetTrue)
-                    .help("Enables handlebar helpers."))
                 .arg(clap::Arg::new("backend")
                     .short('b')
                     .long("backend")
@@ -189,22 +172,22 @@ impl ClapArgumentLoader {
 
         if let Some(subc) = command_matches.subcommand_matches("man") {
             Ok(CallArgs {
-                command: Command::Manual(
-                    subc.get_one::<String>("out").unwrap().into(),
-                    match subc.get_one::<String>("format").unwrap().as_str() {
+                command: Command::Manual {
+                    path: subc.get_one::<String>("out").unwrap().into(),
+                    format: match subc.get_one::<String>("format").unwrap().as_str() {
                         | "manpages" => ManualFormat::Manpages,
                         | "markdown" => ManualFormat::Markdown,
                         | _ => return Err(Box::new(Error::Argument("unknown format".into()))),
                     },
-                ),
+                },
                 privileges,
             })
         } else if let Some(subc) = command_matches.subcommand_matches("autocomplete") {
             Ok(CallArgs {
-                command: Command::Autocomplete(
-                    subc.get_one::<String>("out").unwrap().into(),
-                    clap_complete::Shell::from_str(subc.get_one::<String>("shell").unwrap().as_str()).unwrap(),
-                ),
+                command: Command::Autocomplete {
+                    path: subc.get_one::<String>("out").unwrap().into(),
+                    shell: clap_complete::Shell::from_str(subc.get_one::<String>("shell").unwrap().as_str()).unwrap(),
+                },
                 privileges,
             })
         } else if let Some(..) = command_matches.subcommand_matches("init") {
@@ -236,7 +219,6 @@ impl ClapArgumentLoader {
                 | "ui" => Backend::UI,
                 | _ => return Err(Box::new(Error::Argument("no backend specified".into()))),
             };
-            let helpers = subc.get_flag("helpers");
 
             Ok(CallArgs {
                 privileges,
@@ -247,7 +229,6 @@ impl ClapArgumentLoader {
                     shell_trust,
                     loose,
                     backend,
-                    helpers,
                 }),
             })
         } else {

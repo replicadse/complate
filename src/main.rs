@@ -18,7 +18,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     cmd.validate().await?;
 
     match cmd.command {
-        | crate::args::Command::Manual(path, format) => {
+        | crate::args::Command::Manual { path, format } => {
             let out_path = PathBuf::from(path);
             std::fs::create_dir_all(&out_path)?;
             match format {
@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             Ok(())
         },
-        | crate::args::Command::Autocomplete(path, shell) => {
+        | crate::args::Command::Autocomplete { path, shell } => {
             let out_path = PathBuf::from(path);
             std::fs::create_dir_all(&out_path)?;
             reference::build_shell_completion(&out_path, &shell)?;

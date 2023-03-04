@@ -15,7 +15,7 @@ pub(crate) enum Error {
     #[error("unknown command")]
     UnknownCommand,
     #[error("no trust")]
-    NoTrust,
+    NoTrust(String),
     #[error("shell command")]
     ShellCommand(String),
     #[error("user interact abort")]
