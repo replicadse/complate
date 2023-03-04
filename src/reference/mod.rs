@@ -1,4 +1,4 @@
-use clap_complete::{generate_to, Shell};
+use clap_complete::Shell;
 use clap_mangen::Man;
 use std::{
     fs::File,
@@ -8,7 +8,7 @@ use std::{
 
 pub fn build_shell_completion(outdir: &Path, shell: &Shell) -> Result<(), Error> {
     let mut app = crate::args::ClapArgumentLoader::root_command();
-    generate_to(*shell, &mut app, "complate", &outdir)?;
+    clap_complete::generate_to(*shell, &mut app, "complate", &outdir)?;
 
     Ok(())
 }
