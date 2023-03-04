@@ -16,28 +16,24 @@ pub async fn render(
     values: &BTreeMap<String, String>,
     helpers: &BTreeMap<String, crate::config::Helper>,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    fn recursive_add(
-        namespace: &mut std::collections::VecDeque<String>,
-        parent: &mut serde_json::Value,
-        value: &str,
-    ) {
+    fn recursive_add(namespace: &mut std::collections::VecDeque<String>, parent: &mut serde_json::Value, value: &str) {
         let current_namespace = namespace.pop_front().unwrap();
         match namespace.len() {
-            0 => {
+            | 0 => {
                 parent
                     .as_object_mut()
                     .unwrap()
                     .entry(&current_namespace)
                     .or_insert(serde_json::Value::String(value.to_owned()));
-            }
-            _ => {
+            },
+            | _ => {
                 let p = parent
                     .as_object_mut()
                     .unwrap()
                     .entry(&current_namespace)
                     .or_insert(serde_json::Value::Object(serde_json::Map::new()));
                 recursive_add(namespace, p, value);
-            }
+            },
         }
     }
 
@@ -108,8 +104,8 @@ pub async fn select_template<'a>(
     let selection = be.select("", &template_map).await?;
 
     match config.templates.get(&selection) {
-        Some(x) => Ok(x),
-        None => Err(Box::new(crate::error::Failed::default())),
+        | Some(x) => Ok(x),
+        | None => Err(Box::new(crate::error::Failed::default())),
     }
 }
 
@@ -136,12 +132,12 @@ pub async fn select_and_render(
     let cfg: Config = serde_yaml::from_str(&invoke_options.configuration).unwrap();
 
     let template = match &invoke_options.template {
-        Some(x) => cfg.templates.get(x).unwrap(),
-        None => select_template(&cfg, &invoke_options.backend, &invoke_options.shell_trust).await?,
+        | Some(x) => cfg.templates.get(x).unwrap(),
+        | None => select_template(&cfg, &invoke_options.backend, &invoke_options.shell_trust).await?,
     };
     let template_str = match &template.content {
-        Content::Inline(x) => x.to_owned(),
-        Content::File(x) => std::fs::read_to_string(x)?,
+        | Content::Inline(x) => x.to_owned(),
+        | Content::File(x) => std::fs::read_to_string(x)?,
     };
     let values = populate_variables(
         &template.values,
@@ -155,11 +151,7 @@ pub async fn select_and_render(
 
 #[async_trait]
 pub trait Resolve {
-    async fn execute(
-        &self,
-        shell_trust: &ShellTrust,
-        backend: &Backend,
-    ) -> Result<String, Box<dyn std::error::Error>>;
+    async fn execute(&self, shell_trust: &ShellTrust, backend: &Backend) -> Result<String, Box<dyn std::error::Error>>;
 }
 
 #[async_trait]
@@ -185,31 +177,25 @@ impl Backend {
     ) -> Result<Box<dyn UserInput + 'a>, Box<dyn std::error::Error>> {
         Ok(match self {
             #[cfg(feature = "backend+cli")]
-            Backend::CLI => Box::new(cli::CLIBackend::new(shell_trust)) as Box<dyn UserInput>,
+            | Backend::CLI => Box::new(cli::CLIBackend::new(shell_trust)) as Box<dyn UserInput>,
             #[cfg(feature = "backend+ui")]
-            Backend::UI => Box::new(ui::UIBackend::new(shell_trust)) as Box<dyn UserInput>,
+            | Backend::UI => Box::new(ui::UIBackend::new(shell_trust)) as Box<dyn UserInput>,
         })
     }
 }
 
 #[async_trait]
 impl Resolve for VariableDefinition {
-    async fn execute(
-        &self,
-        shell_trust: &ShellTrust,
-        backend: &Backend,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    async fn execute(&self, shell_trust: &ShellTrust, backend: &Backend) -> Result<String, Box<dyn std::error::Error>> {
         let backend_impl = backend.to_input(shell_trust)?;
 
         match self {
-            VariableDefinition::Env(v) => Ok(env::var(v)?),
-            VariableDefinition::Static(v) => Ok(v.to_owned()),
-            VariableDefinition::Prompt(v) => backend_impl.prompt(v).await,
-            VariableDefinition::Shell(cmd) => shell(cmd, &HashMap::new(), shell_trust).await,
-            VariableDefinition::Select { text, options } => {
-                backend_impl.select(text, options).await
-            }
-            VariableDefinition::Check {
+            | VariableDefinition::Env(v) => Ok(env::var(v)?),
+            | VariableDefinition::Static(v) => Ok(v.to_owned()),
+            | VariableDefinition::Prompt(v) => backend_impl.prompt(v).await,
+            | VariableDefinition::Shell(cmd) => shell(cmd, &HashMap::new(), shell_trust).await,
+            | VariableDefinition::Select { text, options } => backend_impl.select(text, options).await,
+            | VariableDefinition::Check {
                 text,
                 separator,
                 options,
@@ -224,8 +210,8 @@ async fn shell(
     shell_trust: &ShellTrust,
 ) -> Result<String, Box<dyn std::error::Error>> {
     match shell_trust {
-        ShellTrust::None => return Err(Box::new(crate::error::NoShellTrust::default())),
-        ShellTrust::Ultimate => {}
+        | ShellTrust::None => return Err(Box::new(crate::error::NoShellTrust::default())),
+        | ShellTrust::Ultimate => {},
     }
 
     let output = std::process::Command::new("sh")

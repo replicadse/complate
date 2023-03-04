@@ -15,13 +15,9 @@ impl<'a> CLIBackend<'a> {
 #[async_trait]
 impl<'a> UserInput for CLIBackend<'a> {
     async fn prompt(&self, text: &str) -> Result<String, Box<dyn std::error::Error>> {
-        match dialoguer::Input::new()
-            .allow_empty(true)
-            .with_prompt(text)
-            .interact()
-        {
-            Ok(res) => Ok(res),
-            Err(_) => Err(Box::new(crate::error::Failed::default())),
+        match dialoguer::Input::new().allow_empty(true).with_prompt(text).interact() {
+            | Ok(res) => Ok(res),
+            | Err(_) => Err(Box::new(crate::error::Failed::default())),
         }
     }
 
@@ -31,10 +27,7 @@ impl<'a> UserInput for CLIBackend<'a> {
         options: &std::collections::BTreeMap<String, super::Option>,
     ) -> Result<String, Box<dyn std::error::Error>> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
-        let display_vals = options
-            .values()
-            .map(|x| x.display.to_owned())
-            .collect::<Vec<String>>();
+        let display_vals = options.values().map(|x| x.display.to_owned()).collect::<Vec<String>>();
 
         let result_idx = dialoguer::Select::new()
             .with_prompt(prompt)
@@ -43,10 +36,8 @@ impl<'a> UserInput for CLIBackend<'a> {
             .paged(false)
             .interact()?;
         match &options[&keys[result_idx]].value {
-            super::OptionValue::Static(x) => Ok(x.to_owned()),
-            super::OptionValue::Shell(cmd) => {
-                super::shell(cmd, &HashMap::new(), &self.shell_trust).await
-            }
+            | super::OptionValue::Static(x) => Ok(x.to_owned()),
+            | super::OptionValue::Shell(cmd) => super::shell(cmd, &HashMap::new(), &self.shell_trust).await,
         }
     }
 
@@ -57,10 +48,7 @@ impl<'a> UserInput for CLIBackend<'a> {
         options: &std::collections::BTreeMap<String, super::Option>,
     ) -> Result<String, Box<dyn std::error::Error>> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
-        let display_vals = options
-            .values()
-            .map(|x| x.display.to_owned())
-            .collect::<Vec<String>>();
+        let display_vals = options.values().map(|x| x.display.to_owned()).collect::<Vec<String>>();
 
         let indices = dialoguer::MultiSelect::new()
             .with_prompt(prompt)
@@ -69,22 +57,22 @@ impl<'a> UserInput for CLIBackend<'a> {
             .unwrap();
 
         match indices.len() {
-            0usize => Ok("".to_owned()),
-            _ => {
+            | 0usize => Ok("".to_owned()),
+            | _ => {
                 let mut d = String::new();
                 for i in indices {
                     let v = match &options[&keys[i]].value {
-                        super::OptionValue::Static(x) => x.to_owned(),
-                        super::OptionValue::Shell(cmd) => {
+                        | super::OptionValue::Static(x) => x.to_owned(),
+                        | super::OptionValue::Shell(cmd) => {
                             super::shell(&cmd, &HashMap::new(), &self.shell_trust).await?
-                        }
+                        },
                     };
                     d.push_str(&v);
                     d.push_str(separator);
                 }
                 d.truncate(d.len() - 2);
                 Ok(d)
-            }
+            },
         }
     }
 }

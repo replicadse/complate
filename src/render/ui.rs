@@ -27,9 +27,7 @@ impl<'a> UserInput for UIBackend<'a> {
         let form = fui::form::FormView::new()
             .field(fui::fields::Text::new(text))
             .on_submit(move |s, x| {
-                vx.set(Some(
-                    x.get(key.deref()).unwrap().as_str().unwrap().to_owned(),
-                ));
+                vx.set(Some(x.get(key.deref()).unwrap().as_str().unwrap().to_owned()));
                 s.quit()
             });
 
@@ -37,8 +35,8 @@ impl<'a> UserInput for UIBackend<'a> {
         siv.run();
 
         match v.take() {
-            Some(x) => Ok(x),
-            None => Err(Box::new(crate::error::UserAbort::default())),
+            | Some(x) => Ok(x),
+            | None => Err(Box::new(crate::error::UserAbort::default())),
         }
     }
 
@@ -77,10 +75,7 @@ impl<'a> UserInput for UIBackend<'a> {
                     s.quit();
                 });
             select.add_all_str(&display_vals);
-            siv.add_layer(
-                cursive::views::Dialog::around(select.scrollable().fixed_size((20, 10)))
-                    .title(prompt),
-            );
+            siv.add_layer(cursive::views::Dialog::around(select.scrollable().fixed_size((20, 10))).title(prompt));
             siv.run();
             sel.set(v.take().unwrap());
         }
@@ -88,10 +83,8 @@ impl<'a> UserInput for UIBackend<'a> {
         let sel_value = sel.take();
         let selection = &options[&keys[display_vals.iter().position(|x| *x == sel_value).unwrap()]];
         match &selection.value {
-            super::OptionValue::Static(x) => Ok(x.to_owned()),
-            super::OptionValue::Shell(cmd) => {
-                super::shell(cmd, &HashMap::new(), &self.shell_trust).await
-            }
+            | super::OptionValue::Static(x) => Ok(x.to_owned()),
+            | super::OptionValue::Shell(cmd) => super::shell(cmd, &HashMap::new(), &self.shell_trust).await,
         }
     }
 
@@ -105,8 +98,7 @@ impl<'a> UserInput for UIBackend<'a> {
         {
             let ok_pressed = std::sync::Arc::new(std::cell::Cell::new(false));
             let ok_pressed_siv = ok_pressed.clone();
-            let items =
-                std::sync::Arc::new(std::sync::RwLock::new(HashSet::<std::string::String>::new()));
+            let items = std::sync::Arc::new(std::sync::RwLock::new(HashSet::<std::string::String>::new()));
             let items_view = items.clone();
             let items_view2 = items.clone();
 
@@ -155,12 +147,10 @@ impl<'a> UserInput for UIBackend<'a> {
         let mut data = Vec::new();
         for opt in opts {
             data.push(match opt {
-                super::OptionValue::Static(x) => x.to_owned(),
-                super::OptionValue::Shell(cmd) => {
-                    super::shell(&cmd, &HashMap::new(), &self.shell_trust)
-                        .await
-                        .unwrap()
-                }
+                | super::OptionValue::Static(x) => x.to_owned(),
+                | super::OptionValue::Shell(cmd) => {
+                    super::shell(&cmd, &HashMap::new(), &self.shell_trust).await.unwrap()
+                },
             });
         }
         Ok(data.join(separator))
@@ -172,9 +162,7 @@ struct ArrOptions {
 }
 impl ArrOptions {
     pub fn new(opts: &[String]) -> Self {
-        Self {
-            opts: Vec::from(opts),
-        }
+        Self { opts: Vec::from(opts) }
     }
 }
 impl fui::feeders::Feeder for ArrOptions {

@@ -1,10 +1,6 @@
 use clap_complete::Shell;
 use clap_mangen::Man;
-use std::{
-    fs::File,
-    io::Error,
-    path::Path,
-};
+use std::{fs::File, io::Error, path::Path};
 
 pub fn build_shell_completion(outdir: &Path, shell: &Shell) -> Result<(), Error> {
     let mut app = crate::args::ClapArgumentLoader::root_command();

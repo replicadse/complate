@@ -1,4 +1,4 @@
-use std::{result::Result, collections::HashMap};
+use std::{collections::HashMap, result::Result};
 
 use clap::{Arg, ArgAction};
 
@@ -12,28 +12,28 @@ impl CallArgs {
     #[allow(clippy::single_match)]
     pub async fn validate(&self) -> Result<(), Box<dyn std::error::Error>> {
         match &self.command {
-            Command::Render(args) => {
+            | Command::Render(args) => {
                 if args.helpers && args.shell_trust != ShellTrust::Ultimate {
                     return Err(Box::new(crate::error::NoShellTrust::new(
                         "need ultimate shell trust for helper functions",
                     )));
                 }
-            }
-            _ => {}
+            },
+            | _ => {},
         }
 
         match self.privileges {
-            Privilege::Normal => match &self.command {
-                Command::Render(args) => {
+            | Privilege::Normal => match &self.command {
+                | Command::Render(args) => {
                     match args.backend {
                         #[cfg(feature = "backend+ui")]
-                        Backend::UI => {
+                        | Backend::UI => {
                             return Err(Box::new(crate::error::NeedExperimentalFlag::new(
                                 "to enable UI backend",
                             )))
-                        }
+                        },
                         #[cfg(feature = "backend+cli")]
-                        Backend::CLI => {}
+                        | Backend::CLI => {},
                     };
                     if args.value_overrides.len() > 0 {
                         return Err(Box::new(crate::error::NeedExperimentalFlag::new(
@@ -41,16 +41,14 @@ impl CallArgs {
                         )));
                     }
                     if args.helpers {
-                        return Err(Box::new(crate::error::NeedExperimentalFlag::new(
-                            "to enable helpers",
-                        )));
+                        return Err(Box::new(crate::error::NeedExperimentalFlag::new("to enable helpers")));
                     }
                     #[allow(unreachable_code)]
                     Ok(())
-                }
-                _ => Ok(()),
+                },
+                | _ => Ok(()),
             },
-            Privilege::Experimental => Ok(()),
+            | Privilege::Experimental => Ok(()),
         }
     }
 }
@@ -187,24 +185,27 @@ impl ClapArgumentLoader {
         if let Some(subc) = command_matches.subcommand_matches("man") {
             Ok(CallArgs {
                 command: Command::Man(subc.get_one::<String>("out").unwrap().into()),
-                privileges
+                privileges,
             })
         } else if let Some(subc) = command_matches.subcommand_matches("autocomplete") {
             Ok(CallArgs {
-                command: Command::Autocomplete(subc.get_one::<String>("out").unwrap().into(), match subc.get_one::<String>("shell").unwrap().as_str() {
-                    "bash" => clap_complete::Shell::Bash,
-                    "zsh" => clap_complete::Shell::Zsh,
-                    "fish" => clap_complete::Shell::Fish,
-                    "elvish" => clap_complete::Shell::Elvish,
-                    "ps" => clap_complete::Shell::PowerShell,
-                    _ => return Err(Box::new(crate::error::Failed::new("unknown shell type"))),
-                }),
-                privileges
+                command: Command::Autocomplete(
+                    subc.get_one::<String>("out").unwrap().into(),
+                    match subc.get_one::<String>("shell").unwrap().as_str() {
+                        | "bash" => clap_complete::Shell::Bash,
+                        | "zsh" => clap_complete::Shell::Zsh,
+                        | "fish" => clap_complete::Shell::Fish,
+                        | "elvish" => clap_complete::Shell::Elvish,
+                        | "ps" => clap_complete::Shell::PowerShell,
+                        | _ => return Err(Box::new(crate::error::Failed::new("unknown shell type"))),
+                    },
+                ),
+                privileges,
             })
         } else if let Some(..) = command_matches.subcommand_matches("init") {
             Ok(CallArgs {
                 command: Command::Init,
-                privileges
+                privileges,
             })
         } else if let Some(subc) = command_matches.subcommand_matches("render") {
             let config = std::fs::read_to_string(subc.get_one::<String>("config").unwrap())?;
@@ -225,10 +226,10 @@ impl ClapArgumentLoader {
             }
             let backend = match subc.get_one::<String>("backend").unwrap().as_str() {
                 #[cfg(feature = "backend+cli")]
-                "cli" => Backend::CLI,
+                | "cli" => Backend::CLI,
                 #[cfg(feature = "backend+ui")]
-                "ui" => Backend::UI,
-                _ => return Err(Box::new(crate::error::Failed::new("no backend specified"))),
+                | "ui" => Backend::UI,
+                | _ => return Err(Box::new(crate::error::Failed::new("no backend specified"))),
             };
             let helpers = subc.get_flag("helpers");
 
@@ -245,7 +246,7 @@ impl ClapArgumentLoader {
                 }),
             })
         } else {
-            return Err(Box::new(crate::error::Failed::new("unknown subcommand")))
+            return Err(Box::new(crate::error::Failed::new("unknown subcommand")));
         }
     }
 }
