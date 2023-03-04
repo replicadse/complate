@@ -2,6 +2,8 @@ use std::{collections::HashMap, result::Result, str::FromStr};
 
 use clap::{Arg, ArgAction};
 
+use crate::error::Error;
+
 #[derive(Debug)]
 pub struct CallArgs {
     pub privileges: Privilege,
@@ -14,9 +16,7 @@ impl CallArgs {
         match &self.command {
             | Command::Render(args) => {
                 if args.helpers && args.shell_trust != ShellTrust::Ultimate {
-                    return Err(Box::new(crate::error::NoShellTrust::new(
-                        "need ultimate shell trust for helper functions",
-                    )));
+                    return Err(Box::new(Error::NoTrust));
                 }
             },
             | _ => {},
@@ -27,21 +27,15 @@ impl CallArgs {
                 | Command::Render(args) => {
                     match args.backend {
                         #[cfg(feature = "backend+ui")]
-                        | Backend::UI => {
-                            return Err(Box::new(crate::error::NeedExperimentalFlag::new(
-                                "to enable UI backend",
-                            )))
-                        },
+                        | Backend::UI => return Err(Box::new(Error::ExperimentalCommand)),
                         #[cfg(feature = "backend+cli")]
                         | Backend::CLI => {},
                     };
                     if args.value_overrides.len() > 0 {
-                        return Err(Box::new(crate::error::NeedExperimentalFlag::new(
-                            "to enable value overrides",
-                        )));
+                        return Err(Box::new(Error::ExperimentalCommand));
                     }
                     if args.helpers {
-                        return Err(Box::new(crate::error::NeedExperimentalFlag::new("to enable helpers")));
+                        return Err(Box::new(Error::ExperimentalCommand));
                     }
                     #[allow(unreachable_code)]
                     Ok(())
@@ -222,7 +216,7 @@ impl ClapArgumentLoader {
                 | "cli" => Backend::CLI,
                 #[cfg(feature = "backend+ui")]
                 | "ui" => Backend::UI,
-                | _ => return Err(Box::new(crate::error::Failed::new("no backend specified"))),
+                | _ => return Err(Box::new(Error::Argument("no backend specified".into()))),
             };
             let helpers = subc.get_flag("helpers");
 
@@ -239,7 +233,7 @@ impl ClapArgumentLoader {
                 }),
             })
         } else {
-            return Err(Box::new(crate::error::Failed::new("unknown subcommand")));
+            return Err(Box::new(Error::UnknownCommand));
         }
     }
 }

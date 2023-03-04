@@ -1,3 +1,5 @@
+use crate::error::Error;
+
 use super::UserInput;
 use async_trait::async_trait;
 use std::{collections::HashMap, result::Result};
@@ -17,7 +19,7 @@ impl<'a> UserInput for CLIBackend<'a> {
     async fn prompt(&self, text: &str) -> Result<String, Box<dyn std::error::Error>> {
         match dialoguer::Input::new().allow_empty(true).with_prompt(text).interact() {
             | Ok(res) => Ok(res),
-            | Err(_) => Err(Box::new(crate::error::Failed::default())),
+            | Err(_) => Err(Box::new(Error::InteractAbort)),
         }
     }
 
@@ -53,8 +55,7 @@ impl<'a> UserInput for CLIBackend<'a> {
         let indices = dialoguer::MultiSelect::new()
             .with_prompt(prompt)
             .items(&display_vals)
-            .interact()
-            .unwrap();
+            .interact()?;
 
         match indices.len() {
             | 0usize => Ok("".to_owned()),

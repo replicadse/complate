@@ -1,0 +1,13 @@
+version: 0.3
+
+chains:
+  "test:regression":
+    env:
+      config: "./test/.complate/config.yaml"
+    tasks:
+      - script: |
+          set -e
+          export RUST_BACKTRACE=1
+          printf $config
+          bravo="bravo" cargo run -- render -c $config -t static
+          bravo="bravo" cargo run -- -e render -c $config -t override -v c.charlie="charlie"

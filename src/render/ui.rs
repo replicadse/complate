@@ -1,3 +1,5 @@
+use crate::error::Error;
+
 use super::UserInput;
 use async_trait::async_trait;
 use cursive::traits::*;
@@ -36,7 +38,7 @@ impl<'a> UserInput for UIBackend<'a> {
 
         match v.take() {
             | Some(x) => Ok(x),
-            | None => Err(Box::new(crate::error::UserAbort::default())),
+            | None => Err(Box::new(Error::InteractAbort)),
         }
     }
 
@@ -136,7 +138,7 @@ impl<'a> UserInput for UIBackend<'a> {
             siv.run();
 
             if !ok_pressed.take() {
-                return Err(Box::new(crate::error::UserAbort::default()));
+                return Err(Box::new(Error::InteractAbort));
             }
             for x in items.try_read().unwrap().iter() {
                 let pos = display_vals.iter().position(|v| x == v).unwrap();

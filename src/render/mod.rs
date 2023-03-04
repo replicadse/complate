@@ -1,5 +1,6 @@
 use crate::args::{Backend, ShellTrust};
 use crate::config::{Config, Content, Option, OptionValue, Template, VariableDefinition};
+use crate::error::Error;
 use async_trait::async_trait;
 use std::collections::{BTreeMap, HashMap};
 use std::env;
@@ -58,14 +59,24 @@ pub async fn render(
                                _: &mut handlebars::RenderContext,
                                out: &mut dyn handlebars::Output|
                   -> handlebars::HelperResult {
-                let param = h.param(0).unwrap();
+                let param = h
+                    .param(0)
+                    .ok_or_else(|| Error::Helper("no parameter to helper function found".into()))
+                    .unwrap();
                 // dbg!(param);
                 let cmd = helper.1.shell.to_owned();
 
                 let output = std::process::Command::new("sh")
                     .arg("-c")
                     .arg(cmd)
-                    .env("VALUE", param.value().as_str().unwrap())
+                    .env(
+                        "VALUE",
+                        param
+                            .value()
+                            .as_str()
+                            .ok_or_else(|| Error::Helper("parameter is not a string".into()))
+                            .unwrap(),
+                    )
                     .output()?;
                 if output.status.code().unwrap() != 0 {
                     return Err(handlebars::RenderError::new("failed to get command status"));
@@ -78,8 +89,7 @@ pub async fn render(
         }
     }
 
-    let rendered_template = hb.render_template(template, &values_json).unwrap();
-    Ok(rendered_template)
+    Ok(hb.render_template(template, &values_json)?)
 }
 
 #[allow(clippy::needless_lifetimes)]
@@ -105,7 +115,7 @@ pub async fn select_template<'a>(
 
     match config.templates.get(&selection) {
         | Some(x) => Ok(x),
-        | None => Err(Box::new(crate::error::Failed::default())),
+        | None => Err(Box::new(Error::Generic("invalid template selection".into()))),
     }
 }
 
@@ -132,7 +142,10 @@ pub async fn select_and_render(
     let cfg: Config = serde_yaml::from_str(&invoke_options.configuration).unwrap();
 
     let template = match &invoke_options.template {
-        | Some(x) => cfg.templates.get(x).unwrap(),
+        | Some(x) => cfg
+            .templates
+            .get(x)
+            .ok_or_else(|| Error::Generic("template not found".into()))?,
         | None => select_template(&cfg, &invoke_options.backend, &invoke_options.shell_trust).await?,
     };
     let template_str = match &template.content {
@@ -210,7 +223,7 @@ async fn shell(
     shell_trust: &ShellTrust,
 ) -> Result<String, Box<dyn std::error::Error>> {
     match shell_trust {
-        | ShellTrust::None => return Err(Box::new(crate::error::NoShellTrust::default())),
+        | ShellTrust::None => return Err(Box::new(Error::NoTrust)),
         | ShellTrust::Ultimate => {},
     }
 
@@ -220,7 +233,7 @@ async fn shell(
         .envs(env)
         .output()?;
     if output.status.code().unwrap() != 0 {
-        return Err(Box::new(crate::error::Failed::default()));
+        return Err(Box::new(Error::ShellCommand(command.into())));
     }
-    Ok(String::from_utf8(output.stdout).unwrap())
+    Ok(String::from_utf8(output.stdout)?)
 }

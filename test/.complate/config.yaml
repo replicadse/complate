@@ -1,0 +1,25 @@
+version: 0.12
+templates:
+  static:
+    content:
+      inline: |-
+        {{ a.alpha }}
+        {{ b.bravo }}
+    values:
+      a.alpha:
+        static: "alpha"
+      b.bravo:
+        env: "bravo"
+  override:
+    content:
+      inline: |-
+        {{ a.alpha }}
+        {{ b.bravo }}
+        {{ c.charlie }}
+    values:
+      a.alpha:
+        static: "alpha"
+      b.bravo:
+        env: "bravo"
+      c.charlie:
+        env: "DOES_NOT_EXIST"
