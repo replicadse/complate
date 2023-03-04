@@ -9,9 +9,6 @@ jobs:
   website:
     name: website
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./docs
     steps:
       - uses: actions/checkout@v3
       - name: install rust
