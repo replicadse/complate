@@ -1,0 +1,14 @@
+version: 0.11
+templates:
+  commit:
+    content:
+      inline: |-
+        {{ a.ticket }}: {{ b.summary }}
+        {{ c.remarks }}
+    values:
+      a.ticket:
+        prompt: "Enter the ticket number"
+      b.summary:
+        prompt: "Enter your work summary"
+      c.remarks:
+        prompt: "Other remarks"
