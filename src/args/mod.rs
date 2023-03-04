@@ -63,6 +63,8 @@ pub enum Privilege {
 
 #[derive(Debug)]
 pub enum Command {
+    Man(String),
+    Autocomplete(String, clap_complete::Shell),
     Init,
     Render(RenderArguments),
 }
@@ -117,6 +119,23 @@ impl ClapArgumentLoader {
                     .help("enables experimental features")
                     .num_args(0)
             ])
+            .subcommand(clap::Command::new("man")
+                .about("Renders the manpages.")
+                .arg(clap::Arg::new("out")
+                    .short('o')
+                    .long("out")
+                    .required(true)))
+            .subcommand(clap::Command::new("autocomplete")
+                .about("Renders shell completion scripts.")
+                .arg(clap::Arg::new("out")
+                    .short('o')
+                    .long("out")
+                    .required(true))
+                .arg(clap::Arg::new("shell")
+                    .short('s')
+                    .long("shell")
+                    .value_parser(["bash", "zsh", "fish", "elvish", "ps"])
+                    .required(true)))
             .subcommand(clap::Command::new("init")
                 .about("Initializes a dummy default configuration in \"./.complate/config.yaml\"."))
             .subcommand(clap::Command::new("render")
@@ -165,7 +184,24 @@ impl ClapArgumentLoader {
             Privilege::Normal
         };
 
-        if let Some(..) = command_matches.subcommand_matches("init") {
+        if let Some(subc) = command_matches.subcommand_matches("man") {
+            Ok(CallArgs {
+                command: Command::Man(subc.get_one::<String>("out").unwrap().into()),
+                privileges
+            })
+        } else if let Some(subc) = command_matches.subcommand_matches("autocomplete") {
+            Ok(CallArgs {
+                command: Command::Autocomplete(subc.get_one::<String>("out").unwrap().into(), match subc.get_one::<String>("shell").unwrap().as_str() {
+                    "bash" => clap_complete::Shell::Bash,
+                    "zsh" => clap_complete::Shell::Zsh,
+                    "fish" => clap_complete::Shell::Fish,
+                    "elvish" => clap_complete::Shell::Elvish,
+                    "ps" => clap_complete::Shell::PowerShell,
+                    _ => return Err(Box::new(crate::error::Failed::new("unknown shell type"))),
+                }),
+                privileges
+            })
+        } else if let Some(..) = command_matches.subcommand_matches("init") {
             Ok(CallArgs {
                 command: Command::Init,
                 privileges
