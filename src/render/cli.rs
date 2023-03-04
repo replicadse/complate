@@ -38,7 +38,7 @@ impl<'a> UserInput for CLIBackend<'a> {
             .paged(false)
             .interact()?;
         match &options[&keys[result_idx]].value {
-            | super::OptionValue::Static(x) => Ok(x.to_owned()),
+            | super::OptionValue::Static(x) => Ok(x.into()),
             | super::OptionValue::Shell(cmd) => super::shell(cmd, &HashMap::new(), &self.shell_trust).await,
         }
     }
@@ -58,12 +58,12 @@ impl<'a> UserInput for CLIBackend<'a> {
             .interact()?;
 
         match indices.len() {
-            | 0usize => Ok("".to_owned()),
+            | 0usize => Ok("".into()),
             | _ => {
                 let mut d = String::new();
                 for i in indices {
                     let v = match &options[&keys[i]].value {
-                        | super::OptionValue::Static(x) => x.to_owned(),
+                        | super::OptionValue::Static(x) => x.into(),
                         | super::OptionValue::Shell(cmd) => {
                             super::shell(&cmd, &HashMap::new(), &self.shell_trust).await?
                         },

@@ -1,0 +1,5 @@
+[hooks]
+pre-push = "neomake x -c \"hook:pre-push\""
+
+[logging]
+verbose = true

@@ -12,7 +12,7 @@ fn collect_commands() -> Vec<(String, clap::Command)> {
     let mut cmds: Vec<(String, clap::Command)> = Vec::new();
     fn rec_add(path: &str, cmds: &mut Vec<(String, clap::Command)>, parent: &clap::Command) {
         let new_path = &format!("{}-{}", path, parent.get_name());
-        cmds.push((new_path.to_owned(), parent.clone()));
+        cmds.push((new_path.into(), parent.clone()));
         for subc in parent.get_subcommands() {
             rec_add(new_path, cmds, subc);
         }

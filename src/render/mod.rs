@@ -26,7 +26,7 @@ pub async fn render(
                     .as_object_mut()
                     .unwrap()
                     .entry(&current_namespace)
-                    .or_insert(serde_json::Value::String(value.to_owned()));
+                    .or_insert(serde_json::Value::String(value.into()));
             },
             | _ => {
                 let p = parent
@@ -47,7 +47,7 @@ pub async fn render(
     }
 
     let mut hb = handlebars::Handlebars::new();
-    hb.register_escape_fn(|s| s.to_owned());
+    hb.register_escape_fn(|s| s.into());
     hb.set_strict_mode(!args.loose);
 
     if helpers.len() > 0 && args.shell_trust != ShellTrust::Ultimate {
@@ -94,7 +94,6 @@ pub async fn render(
     Ok(hb.render_template(template, &values_json)?)
 }
 
-#[allow(clippy::needless_lifetimes)]
 pub async fn select_template<'a>(
     config: &'a Config,
     backend: &Backend,
@@ -107,7 +106,7 @@ pub async fn select_template<'a>(
             t.to_owned(),
             Option {
                 display: t.to_owned(),
-                value: OptionValue::Static(t.to_owned()),
+                value: OptionValue::Static(t.into()),
             },
         );
     }
@@ -130,9 +129,9 @@ pub async fn populate_variables(
     let mut values = BTreeMap::new();
     for var in vars {
         if let Some(v) = value_overrides.get(var.0) {
-            values.insert(var.0.to_owned(), v.to_owned());
+            values.insert(var.0.into(), v.into());
         } else {
-            values.insert(var.0.to_owned(), var.1.execute(shell_trust, backend).await?);
+            values.insert(var.0.into(), var.1.execute(shell_trust, backend).await?);
         }
     }
     Ok(values)
@@ -151,7 +150,7 @@ pub async fn select_and_render(
         | None => select_template(&cfg, &invoke_options.backend, &invoke_options.shell_trust).await?,
     };
     let template_str = match &template.content {
-        | Content::Inline(x) => x.to_owned(),
+        | Content::Inline(x) => x.into(),
         | Content::File(x) => std::fs::read_to_string(x)?,
     };
     let values = populate_variables(
@@ -207,7 +206,7 @@ impl Resolve for VariableDefinition {
 
         match self {
             | VariableDefinition::Env(v) => Ok(env::var(v)?),
-            | VariableDefinition::Static(v) => Ok(v.to_owned()),
+            | VariableDefinition::Static(v) => Ok(v.into()),
             | VariableDefinition::Prompt(v) => backend_impl.prompt(v).await,
             | VariableDefinition::Shell(cmd) => shell(cmd, &HashMap::new(), shell_trust).await,
             | VariableDefinition::Select { text, options } => backend_impl.select(text, options).await,

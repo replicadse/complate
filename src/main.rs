@@ -1,5 +1,3 @@
-include!("check_features.rs");
-
 use std::io::Write;
 use std::path::PathBuf;
 use std::result::Result;

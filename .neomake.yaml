@@ -1,7 +1,30 @@
 version: 0.3
 
 chains:
+  build:
+    matrix:
+      - - env:
+            RELEASE: ""
+        - env:
+            RELEASE: "--release"
+      - - env:
+            FEATURES: "--no-default-features"
+        - env:
+            FEATURES: ""
+        - env:
+            FEATURES: "--features=backend+cli"
+        - env:
+            FEATURES: "--features=backend+ui"
+        - env:
+            FEATURES: "--features=backend+cli --features=backend+ui"
+    tasks:
+      - script: |
+          set -e
+          cargo build $FEATURES $RELEASE
+
   "test:regression":
+    pre:
+      - build
     env:
       config: "./test/.complate/config.yaml"
     tasks:
@@ -11,3 +34,9 @@ chains:
           printf $config
           bravo="bravo" cargo run -- render -c $config -t static
           bravo="bravo" cargo run -- -e render -c $config -t override -v c.charlie="charlie"
+
+  "hook:pre-push":
+    pre:
+      - build
+      - "test:regression"
+    tasks: []

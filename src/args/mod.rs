@@ -11,24 +11,9 @@ pub struct CallArgs {
 }
 
 impl CallArgs {
-    #[allow(clippy::single_match)]
     pub async fn validate(&self) -> Result<(), Box<dyn std::error::Error>> {
         match self.privileges {
             | Privilege::Normal => match &self.command {
-                | Command::Render(args) => {
-                    match args.backend {
-                        | Backend::Headless => {},
-                        #[cfg(feature = "backend+ui")]
-                        | Backend::UI => return Err(Box::new(Error::ExperimentalCommand)),
-                        #[cfg(feature = "backend+cli")]
-                        | Backend::CLI => {},
-                    };
-                    if args.value_overrides.len() > 0 {
-                        return Err(Box::new(Error::ExperimentalCommand));
-                    }
-                    #[allow(unreachable_code)]
-                    Ok(())
-                },
                 | _ => Ok(()),
             },
             | Privilege::Experimental => Ok(()),
@@ -199,7 +184,7 @@ impl ClapArgumentLoader {
             })
         } else if let Some(subc) = command_matches.subcommand_matches("render") {
             let config = std::fs::read_to_string(subc.get_one::<String>("config").unwrap())?;
-            let template = subc.get_one::<String>("template").map(|v| v.to_owned());
+            let template = subc.get_one::<String>("template").map(|v| v.into());
             let shell_trust = if subc.get_flag("trust") {
                 ShellTrust::Ultimate
             } else {
@@ -211,7 +196,7 @@ impl ClapArgumentLoader {
             if let Some(vo_arg) = subc.get_many::<String>("value") {
                 for vo in vo_arg {
                     let spl = vo.splitn(2, "=").collect::<Vec<_>>();
-                    value_overrides.insert(spl[0].to_owned(), spl[1].to_owned());
+                    value_overrides.insert(spl[0].into(), spl[1].into());
                 }
             }
             let backend = match subc.get_one::<String>("backend").unwrap().as_str() {

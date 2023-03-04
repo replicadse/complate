@@ -10,8 +10,8 @@ pub(crate) enum Error {
     // Many(Vec<Self>),
     #[error("argument")]
     Argument(String),
-    #[error("experimental command")]
-    ExperimentalCommand,
+    // #[error("experimental command")]
+    // ExperimentalCommand,
     #[error("unknown command")]
     UnknownCommand,
     #[error("no trust")]

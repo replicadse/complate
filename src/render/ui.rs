@@ -29,7 +29,7 @@ impl<'a> UserInput for UIBackend<'a> {
         let form = fui::form::FormView::new()
             .field(fui::fields::Text::new(text))
             .on_submit(move |s, x| {
-                vx.set(Some(x.get(key.deref()).unwrap().as_str().unwrap().to_owned()));
+                vx.set(Some(x.get(key.deref()).unwrap().as_str().unwrap().into()));
                 s.quit()
             });
 
@@ -73,7 +73,7 @@ impl<'a> UserInput for UIBackend<'a> {
                 .h_align(cursive::align::HAlign::Left)
                 .autojump()
                 .on_submit(move |s, x: &str| {
-                    vx.set(Some(x.to_owned()));
+                    vx.set(Some(x.into()));
                     s.quit();
                 });
             select.add_all_str(&display_vals);
@@ -85,7 +85,7 @@ impl<'a> UserInput for UIBackend<'a> {
         let sel_value = sel.take();
         let selection = &options[&keys[display_vals.iter().position(|x| *x == sel_value).unwrap()]];
         match &selection.value {
-            | super::OptionValue::Static(x) => Ok(x.to_owned()),
+            | super::OptionValue::Static(x) => Ok(x.into()),
             | super::OptionValue::Shell(cmd) => super::shell(cmd, &HashMap::new(), &self.shell_trust).await,
         }
     }
@@ -125,7 +125,7 @@ impl<'a> UserInput for UIBackend<'a> {
 
             let view = fui::views::Multiselect::new(ArrOptions::new(&display_vals))
                 .on_select(move |_, v| {
-                    items_view.try_write().unwrap().insert(v.deref().to_owned());
+                    items_view.try_write().unwrap().insert(v.deref().into());
                 })
                 .on_deselect(move |_, v| {
                     items_view2.try_write().unwrap().remove(v.deref());
@@ -149,7 +149,7 @@ impl<'a> UserInput for UIBackend<'a> {
         let mut data = Vec::new();
         for opt in opts {
             data.push(match opt {
-                | super::OptionValue::Static(x) => x.to_owned(),
+                | super::OptionValue::Static(x) => x.into(),
                 | super::OptionValue::Shell(cmd) => {
                     super::shell(&cmd, &HashMap::new(), &self.shell_trust).await.unwrap()
                 },
@@ -173,7 +173,7 @@ impl fui::feeders::Feeder for ArrOptions {
             .iter()
             .skip(position)
             .take(items_count)
-            .map(|x| x.to_owned())
+            .map(|x| x.into())
             .collect()
     }
 }
