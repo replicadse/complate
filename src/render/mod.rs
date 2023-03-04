@@ -47,9 +47,7 @@ pub async fn render(
 
     let mut hb = handlebars::Handlebars::new();
     hb.register_escape_fn(|s| s.to_owned());
-    if args.loose {
-        hb.set_strict_mode(false);
-    }
+    hb.set_strict_mode(!args.loose);
 
     if args.helpers {
         for helper in helpers {
