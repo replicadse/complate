@@ -1,4 +1,4 @@
-use std::{collections::HashMap, result::Result};
+use std::{collections::HashMap, result::Result, str::FromStr};
 
 use clap::{Arg, ArgAction};
 
@@ -132,7 +132,7 @@ impl ClapArgumentLoader {
                 .arg(clap::Arg::new("shell")
                     .short('s')
                     .long("shell")
-                    .value_parser(["bash", "zsh", "fish", "elvish", "ps"])
+                    .value_parser(["bash", "zsh", "fish", "elvish", "powershell"])
                     .required(true)))
             .subcommand(clap::Command::new("init")
                 .about("Initializes a dummy default configuration in \"./.complate/config.yaml\"."))
@@ -191,14 +191,7 @@ impl ClapArgumentLoader {
             Ok(CallArgs {
                 command: Command::Autocomplete(
                     subc.get_one::<String>("out").unwrap().into(),
-                    match subc.get_one::<String>("shell").unwrap().as_str() {
-                        | "bash" => clap_complete::Shell::Bash,
-                        | "zsh" => clap_complete::Shell::Zsh,
-                        | "fish" => clap_complete::Shell::Fish,
-                        | "elvish" => clap_complete::Shell::Elvish,
-                        | "ps" => clap_complete::Shell::PowerShell,
-                        | _ => return Err(Box::new(crate::error::Failed::new("unknown shell type"))),
-                    },
+                    clap_complete::Shell::from_str(subc.get_one::<String>("shell").unwrap().as_str()).unwrap(),
                 ),
                 privileges,
             })
