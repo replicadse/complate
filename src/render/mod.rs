@@ -8,6 +8,7 @@ use std::result::Result;
 
 #[cfg(feature = "backend+cli")]
 mod cli;
+mod headless;
 #[cfg(feature = "backend+ui")]
 mod ui;
 
@@ -190,6 +191,7 @@ impl Backend {
         shell_trust: &'a ShellTrust,
     ) -> Result<Box<dyn UserInput + 'a>, Box<dyn std::error::Error>> {
         Ok(match self {
+            | Backend::Headless => Box::new(headless::HeadlessBackend::new()) as Box<dyn UserInput>,
             #[cfg(feature = "backend+cli")]
             | Backend::CLI => Box::new(cli::CLIBackend::new(shell_trust)) as Box<dyn UserInput>,
             #[cfg(feature = "backend+ui")]

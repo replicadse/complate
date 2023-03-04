@@ -17,6 +17,7 @@ impl CallArgs {
             | Privilege::Normal => match &self.command {
                 | Command::Render(args) => {
                     match args.backend {
+                        | Backend::Headless => {},
                         #[cfg(feature = "backend+ui")]
                         | Backend::UI => return Err(Box::new(Error::ExperimentalCommand)),
                         #[cfg(feature = "backend+cli")]
@@ -73,6 +74,7 @@ pub enum ShellTrust {
 
 #[derive(Debug)]
 pub enum Backend {
+    Headless,
     #[cfg(feature = "backend+cli")]
     CLI,
     #[cfg(feature = "backend+ui")]
@@ -83,7 +85,7 @@ pub struct ClapArgumentLoader {}
 
 impl ClapArgumentLoader {
     pub fn root_command() -> clap::Command {
-        let mut backend_values = Vec::new();
+        let mut backend_values = Vec::from(["headless"]);
         if cfg!(feature = "backend+cli") {
             backend_values.push("cli");
         }
@@ -153,7 +155,7 @@ impl ClapArgumentLoader {
                     .long("backend")
                     .help("The execution backend (cli=native-terminal, ui=ui emulator in terminal).")
                     .value_parser(backend_values.clone())
-                    .default_value(backend_values.first().unwrap()))
+                    .default_value("headless"))
                 .arg(clap::Arg::new("value")
                     .short('v')
                     .long("value")
@@ -213,6 +215,7 @@ impl ClapArgumentLoader {
                 }
             }
             let backend = match subc.get_one::<String>("backend").unwrap().as_str() {
+                | "headless" => Backend::Headless,
                 #[cfg(feature = "backend+cli")]
                 | "cli" => Backend::CLI,
                 #[cfg(feature = "backend+ui")]
