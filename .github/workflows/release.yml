@@ -48,7 +48,7 @@ jobs:
         run: |
           ./target/x86_64-unknown-linux-gnu/release/complate man -o ./manpages
           cd ./manpages
-          tar -czf ./manpages.tar.gz .
+          tar -czf ../manpages.tar.gz .
       - name: package assets (shell completion)
         run: |
           export GEN_CMD="./target/x86_64-unknown-linux-gnu/release/complate autocomplete -o ./shell-completion"
@@ -58,14 +58,14 @@ jobs:
           $GEN_CMD -s elvish
           $GEN_CMD -s ps
           cd ./shell-completion
-          tar -czf ./shell-completion.tar.gz .
+          tar -czf ../shell-completion.tar.gz .
       - name: upload asset (manpages)
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.version.outputs.upload_url }}
-          asset_path: ./manpages/manpages.tar.gz
+          asset_path: ./manpages.tar.gz
           asset_name: manpages.tar.gz
           asset_content_type: application/tar+gzip
       - name: upload asset (shell completion)
@@ -74,7 +74,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.version.outputs.upload_url }}
-          asset_path: ./shell-completion/shell-completion.tar.gz
+          asset_path: ./shell-completion.tar.gz
           asset_name: shell-completion.tar.gz
           asset_content_type: application/tar+gzip
       - name: publish
