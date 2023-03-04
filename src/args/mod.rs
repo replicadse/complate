@@ -74,7 +74,7 @@ pub struct RenderArguments {
     pub value_overrides: std::collections::HashMap<String, String>,
     pub helpers: bool,
     pub shell_trust: ShellTrust,
-    pub strict: bool,
+    pub loose: bool,
     pub backend: Backend,
 }
 
@@ -95,7 +95,7 @@ pub enum Backend {
 pub struct ClapArgumentLoader {}
 
 impl ClapArgumentLoader {
-    pub async fn load_from_cli() -> std::result::Result<CallArgs, Box<dyn std::error::Error>> {
+    pub fn root_command() -> clap::Command {
         let mut backend_values = Vec::new();
         if cfg!(feature = "backend+cli") {
             backend_values.push("cli");
@@ -104,7 +104,7 @@ impl ClapArgumentLoader {
             backend_values.push("ui");
         }
 
-        let root_command = clap::Command::new("complate")
+        clap::Command::new("complate")
             .version(env!("CARGO_PKG_VERSION"))
             .about("A rusty text templating application for CLIs.")
             .author("replicadse <aw@voidpointergroup.com>")
@@ -134,11 +134,11 @@ impl ClapArgumentLoader {
                     .long("trust")
                     .help("Enables the shell command execution. This is potentially insecure and should only be done for trustworthy sources.")
                     .action(ArgAction::SetTrue))
-                .arg(clap::Arg::new("strict")
-                    .short('s')
-                    .long("strict")
+                .arg(clap::Arg::new("loose")
+                    .short('l')
+                    .long("loose")
                     .action(ArgAction::SetTrue)
-                    .help("Defines whether the templating is done in strict mode (fail on missing value for variable)."))
+                    .help("Defines that the templating is done in non-strict mode (allow missing value for variable)."))
                 .arg(clap::Arg::new("helpers")
                     .long("helpers")
                     .action(ArgAction::SetTrue)
@@ -152,7 +152,11 @@ impl ClapArgumentLoader {
                 .arg(clap::Arg::new("value")
                     .short('v')
                     .long("value")
-                    .help("Overrides a certain value definition with a string.")));
+                    .help("Overrides a certain value definition with a string.")))
+    }
+
+    pub async fn load_from_cli() -> std::result::Result<CallArgs, Box<dyn std::error::Error>> {
+        let root_command = Self::root_command();
         let command_matches = root_command.get_matches();
 
         let privileges = if command_matches.get_flag("experimental") {
@@ -174,7 +178,7 @@ impl ClapArgumentLoader {
             } else {
                 ShellTrust::None
             };
-            let strict = subc.get_flag("strict");
+            let loose = subc.get_flag("loose");
 
             let mut value_overrides = HashMap::<String, String>::new();
             if let Some(vo_arg) = subc.get_many::<String>("value") {
@@ -199,7 +203,7 @@ impl ClapArgumentLoader {
                     template,
                     value_overrides,
                     shell_trust,
-                    strict,
+                    loose,
                     backend,
                     helpers,
                 }),

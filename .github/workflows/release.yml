@@ -43,7 +43,33 @@ jobs:
           cargo login ${{ secrets.CRATES_IO_TOKEN }}
           sed 's/version = "0.0.0"/version = "'${{ needs.version.outputs.version }}'"/g' Cargo.toml > Cargo.toml.tmp
           mv Cargo.toml.tmp Cargo.toml
-          cargo publish --target=x86_64-unknown-linux-gnu --allow-dirty
+          cargo publish --allow-dirty
+      - name: package assets (manpages)
+        run: |
+          cd ./target/assets/man
+          tar -czf ../../../manpages.tar.gz
+      - name: package assets (shell completion)
+        run: |
+          cd ./target/assets/shell
+          tar -czf ../../../shell-completion.tar.gz
+      - name: upload asset (manpages)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.version.outputs.upload_url }}
+          asset_path: ./manpages.tar.gz
+          asset_name: manpages.tar.gz
+          asset_content_type: application/tar+gzip
+      - name: upload asset (shell completion)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.version.outputs.upload_url }}
+          asset_path: ./shell-completion.tar.gz
+          asset_name: shell-completion.tar.gz
+          asset_content_type: application/tar+gzip
 
   deb:
     name: "deb"

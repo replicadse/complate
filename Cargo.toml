@@ -10,6 +10,7 @@ repository = "https://github.com/replicadse/complate"
 keywords = ["cli", "template", "replace", "standardizing"]
 categories = ["command-line-utilities"]
 readme = "docs/README.md"
+build = "src/build.rs"
 
 [features]
   default = ["backend+cli"]
@@ -36,4 +37,10 @@ serde_yaml = "^0.8"
 cursive = { version = "^0.16", optional = true }
 dialoguer = { version = "^0.8", optional = true }
 fui = { version = "^2.0", optional = true }
+clap_mangen = "0.2.9"
+clap_complete = "4.1.4"
+
+[build-dependencies]
+clap = "^4.1.8"
+clap_complete = "4.1.4"
 clap_mangen = "0.2.9"
