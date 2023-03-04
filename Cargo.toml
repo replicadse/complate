@@ -11,6 +11,10 @@ keywords = ["cli", "template", "replace", "standardizing"]
 categories = ["command-line-utilities"]
 readme = "docs/README.md"
 
+[[bin]]
+name = "complate"
+path = "./src/main.rs"
+
 [features]
   default = ["backend+cli"]
   "backend+cli" = ["dialoguer"]
