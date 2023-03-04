@@ -22,7 +22,7 @@ jobs:
           cargo install book-summary
       - name: render manual
         run: |
-          cargo run -- man -o ./markdown -f markdown
+          cargo run --target=x86_64-unknown-linux-gnu -- man -o ./markdown -f markdown
           cat ./markdown/complate.md >> ./docs/wiki/src/reference.md
           cat ./docs/README.md >> ./docs/wiki/src/index.md
           cd ./docs/wiki
