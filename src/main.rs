@@ -109,4 +109,9 @@ mod tests {
     fn template_helper() {
         assert!("bananarama" == exec(&format!("cargo run -- render -c {} -t helper --trust", CONFIG_PATH)).unwrap())
     }
+
+    #[test]
+    fn template_vals_multiple() {
+        assert!("alpha\nbravo" == exec(&format!("cargo run -- render -c {} --trust -t vals:multiple -v a.alpha=alpha -v b.bravo=bravo", CONFIG_PATH)).unwrap())
+    }
 }

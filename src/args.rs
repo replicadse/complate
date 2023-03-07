@@ -144,6 +144,7 @@ impl ClapArgumentLoader {
                 .arg(clap::Arg::new("value")
                     .short('v')
                     .long("value")
+                    .action(ArgAction::Append)
                     .help("Overrides a certain value definition with a string.")))
     }
 

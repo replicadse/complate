@@ -21,6 +21,16 @@ templates:
     values:
       a.alpha:
         shell: 'printf "alpha"'
+  "vals:multiple":
+    content:
+      inline: |-
+        {{ a.alpha }}
+        {{ b.bravo }}
+    values:
+      a.alpha:
+        shell: "exit 1"
+      b.bravo:
+        shell: "exit 1"
   override:
     content:
       inline: |-
