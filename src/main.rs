@@ -112,6 +112,25 @@ mod tests {
 
     #[test]
     fn template_vals_multiple() {
-        assert!("alpha\nbravo" == exec(&format!("cargo run -- render -c {} --trust -t vals:multiple -v a.alpha=alpha -v b.bravo=bravo", CONFIG_PATH)).unwrap())
+        assert!(
+            "alpha\nbravo"
+                == exec(&format!(
+                    "cargo run -- render -c {} --trust -t vals:multiple -v a.alpha=alpha -v b.bravo=bravo",
+                    CONFIG_PATH
+                ))
+                .unwrap()
+        )
+    }
+
+    #[test]
+    fn template_var_argument() {
+        assert!(
+            "alpha"
+                == exec(&format!(
+                    "cargo run -- render -c {} -t var:argument -v a.alpha=alpha",
+                    CONFIG_PATH
+                ))
+                .unwrap()
+        )
     }
 }

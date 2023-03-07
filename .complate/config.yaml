@@ -4,13 +4,16 @@ templates:
     content:
       inline: |-
         {{ a.alpha }}
-    values:
+        {{ b.bravo }}
+    variables:
       a.alpha:
-        static: ALPHA
+        static:
+          alpha
+
   one:
     content:
       file: ./.complate/templates/arbitraty-template-file.tpl
-    values:
+    variables:
       a.pwd:
         env: "PWD"
   two:
@@ -21,7 +24,7 @@ templates:
         {{ c.charlie }}
         {{ d.delta }}
         {{ e.echo }}
-    values:
+    variables:
       a.alpha:
         prompt: "alpha"
       b.bravo:
@@ -64,6 +67,6 @@ templates:
       "_decode":
         shell: |-
           printf "$(printf $VALUE | base64 -D)"
-    values:
+    variables:
       test:
         static: "test"

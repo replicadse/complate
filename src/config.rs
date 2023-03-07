@@ -13,7 +13,7 @@ pub struct Config {
 pub struct Template {
     pub content: Content,
     #[serde(default)]
-    pub values: BTreeMap<String, VariableDefinition>,
+    pub variables: BTreeMap<String, VariableDefinition>,
     #[serde(default)]
     pub helpers: BTreeMap<String, Helper>,
 }
@@ -70,13 +70,13 @@ templates:
     content:
       inline: |-
         {{ a.alpha }}
-    values:
+    variables:
       a.alpha:
         static: ALPHA
   one:
     content:
       file: ./.complate/templates/arbitraty-template-file.tpl
-    values:
+    variables:
       a.pwd:
         env: "PWD"
   two:
@@ -87,7 +87,7 @@ templates:
         {{ c.charlie }}
         {{ d.delta }}
         {{ e.echo }}
-    values:
+    variables:
       a.alpha:
         prompt: "alpha"
       b.bravo:
@@ -129,7 +129,6 @@ templates:
       "_decode":
         shell: |-
           printf "$(printf $VALUE | base64 -D)"
-    values: {}
 
 "###
     .into()

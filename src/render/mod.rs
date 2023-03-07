@@ -126,11 +126,13 @@ pub async fn populate_variables(
     shell_trust: &ShellTrust,
     backend: &Backend,
 ) -> Result<BTreeMap<String, String>, Box<dyn std::error::Error>> {
-    let mut values = BTreeMap::new();
+    let mut values = BTreeMap::<String, String>::new();
+    for v_override in value_overrides {
+        values.insert(v_override.0.into(), v_override.1.into());
+    }
+
     for var in vars {
-        if let Some(v) = value_overrides.get(var.0) {
-            values.insert(var.0.into(), v.into());
-        } else {
+        if None == values.get(var.0) {
             values.insert(var.0.into(), var.1.execute(shell_trust, backend).await?);
         }
     }
@@ -154,7 +156,7 @@ pub async fn select_and_render(
         | Content::File(x) => std::fs::read_to_string(x)?,
     };
     let values = populate_variables(
-        &template.values,
+        &template.variables,
         &invoke_options.value_overrides,
         &invoke_options.shell_trust,
         &invoke_options.backend,

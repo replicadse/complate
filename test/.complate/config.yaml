@@ -4,21 +4,21 @@ templates:
     content:
       inline: |-
         {{ a.alpha }}
-    values:
+    variables:
       a.alpha:
         static: "alpha"
   "var:env":
     content:
       inline: |-
         {{ a.alpha }}
-    values:
+    variables:
       a.alpha:
         env: "alpha"
   "var:shell":
     content:
       inline: |-
         {{ a.alpha }}
-    values:
+    variables:
       a.alpha:
         shell: 'printf "alpha"'
   "vals:multiple":
@@ -26,16 +26,20 @@ templates:
       inline: |-
         {{ a.alpha }}
         {{ b.bravo }}
-    values:
+    variables:
       a.alpha:
         shell: "exit 1"
       b.bravo:
         shell: "exit 1"
+  "var:argument":
+    content:
+      inline: |-
+        {{ a.alpha }}
   override:
     content:
       inline: |-
         {{ a.alpha }}
-    values:
+    variables:
       a.alpha:
         env: "DOES_NOT_EXIST"
   helper:
