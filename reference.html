@@ -88,11 +88,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -152,6 +174,7 @@
 <li><a href="#complate-man"><code>complate man</code>↴</a></li>
 <li><a href="#complate-autocomplete"><code>complate autocomplete</code>↴</a></li>
 <li><a href="#complate-init"><code>complate init</code>↴</a></li>
+<li><a href="#complate-schema"><code>complate schema</code>↴</a></li>
 <li><a href="#complate-render"><code>complate render</code>↴</a></li>
 </ul>
 <h2 id="complate"><a class="header" href="#complate"><code>complate</code></a></h2>
@@ -162,6 +185,7 @@
 <li><code>man</code> — Renders the manual.</li>
 <li><code>autocomplete</code> — Renders shell completion scripts.</li>
 <li><code>init</code> — Initializes a dummy default configuration in &quot;./.complate/config.yaml&quot;.</li>
+<li><code>schema</code> — Renders the configuration schema.</li>
 <li><code>render</code> — Renders a template by replacing values as specified by the configuration.</li>
 </ul>
 <h6 id="options"><a class="header" href="#options"><strong>Options:</strong></a></h6>
@@ -197,6 +221,9 @@
 <h2 id="complate-init"><a class="header" href="#complate-init"><code>complate init</code></a></h2>
 <p>Initializes a dummy default configuration in &quot;./.complate/config.yaml&quot;.</p>
 <p><strong>Usage:</strong> <code>complate init</code></p>
+<h2 id="complate-schema"><a class="header" href="#complate-schema"><code>complate schema</code></a></h2>
+<p>Renders the configuration schema.</p>
+<p><strong>Usage:</strong> <code>complate schema</code></p>
 <h2 id="complate-render"><a class="header" href="#complate-render"><code>complate render</code></a></h2>
 <p>Renders a template by replacing values as specified by the configuration.</p>
 <p><strong>Usage:</strong> <code>complate render [OPTIONS]</code></p>

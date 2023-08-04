@@ -89,11 +89,33 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
@@ -150,27 +172,28 @@
 <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
 <ul>
 <li>The rusty way:<br />
-<code>cargo install complate --force</code></li>
+<code>cargo install complate</code></li>
 <li>The manual way:<br />
-Download and install from the GitHub releases</li>
+Download and install from the GitHub releases.</li>
 </ul>
-<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
-<p>An example:</p>
+<h2 id="config-example"><a class="header" href="#config-example">Config example</a></h2>
 <pre><code>version: 0.12
 templates:
   zero:
     content:
       inline: |-
         {{ a.alpha }}
-    values:
+    variables:
       a.alpha:
         static: ALPHA
+
   one:
     content:
       file: ./.complate/templates/arbitraty-template-file.tpl
     values:
       a.pwd:
         env: &quot;PWD&quot;
+
   two:
     content:
       inline: |-
@@ -179,7 +202,7 @@ templates:
         {{ c.charlie }}
         {{ d.delta }}
         {{ e.echo }}
-    values:
+    variables:
       a.alpha:
         prompt: &quot;alpha&quot;
       b.bravo:
@@ -213,6 +236,7 @@ templates:
                 shell: printf bravo
       f.foxtrot:
         env: &quot;FOXTROT&quot;
+
   three:
     content:
       inline: |-
@@ -221,7 +245,7 @@ templates:
       &quot;_decode&quot;:
         shell: |-
           printf &quot;$(printf $VALUE | base64 -D)&quot;
-    values: {}
+    variables: {}
 
 </code></pre>
 <div class="table-wrapper"><table><thead><tr><th>Key</th><th>Behaviour</th><th>Input</th></tr></thead><tbody>
@@ -237,8 +261,6 @@ templates:
 <h2 id="command-reference"><a class="header" href="#command-reference">Command reference</a></h2>
 <h3 id="disclaimer"><a class="header" href="#disclaimer">Disclaimer</a></h3>
 <p>All features that are marked as <code>experimental</code> are <em>not</em> considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see https://semver.org[semver v2]). Use these features on your own risk!</p>
-<hr />
-<hr />
 <div style="break-before: page; page-break-before: always;"></div><h1 id="command-line-help-for-complate"><a class="header" href="#command-line-help-for-complate">Command-Line Help for <code>complate</code></a></h1>
 <p>This document contains the help content for the <code>complate</code> command-line program.</p>
 <p><strong>Command Overview:</strong></p>
@@ -247,6 +269,7 @@ templates:
 <li><a href="reference.html#complate-man"><code>complate man</code>↴</a></li>
 <li><a href="reference.html#complate-autocomplete"><code>complate autocomplete</code>↴</a></li>
 <li><a href="reference.html#complate-init"><code>complate init</code>↴</a></li>
+<li><a href="reference.html#complate-schema"><code>complate schema</code>↴</a></li>
 <li><a href="reference.html#complate-render"><code>complate render</code>↴</a></li>
 </ul>
 <h2 id="complate-1"><a class="header" href="#complate-1"><code>complate</code></a></h2>
@@ -257,6 +280,7 @@ templates:
 <li><code>man</code> — Renders the manual.</li>
 <li><code>autocomplete</code> — Renders shell completion scripts.</li>
 <li><code>init</code> — Initializes a dummy default configuration in &quot;./.complate/config.yaml&quot;.</li>
+<li><code>schema</code> — Renders the configuration schema.</li>
 <li><code>render</code> — Renders a template by replacing values as specified by the configuration.</li>
 </ul>
 <h6 id="options"><a class="header" href="#options"><strong>Options:</strong></a></h6>
@@ -292,6 +316,9 @@ templates:
 <h2 id="complate-init"><a class="header" href="#complate-init"><code>complate init</code></a></h2>
 <p>Initializes a dummy default configuration in &quot;./.complate/config.yaml&quot;.</p>
 <p><strong>Usage:</strong> <code>complate init</code></p>
+<h2 id="complate-schema"><a class="header" href="#complate-schema"><code>complate schema</code></a></h2>
+<p>Renders the configuration schema.</p>
+<p><strong>Usage:</strong> <code>complate schema</code></p>
 <h2 id="complate-render"><a class="header" href="#complate-render"><code>complate render</code></a></h2>
 <p>Renders a template by replacing values as specified by the configuration.</p>
 <p><strong>Usage:</strong> <code>complate render [OPTIONS]</code></p>
