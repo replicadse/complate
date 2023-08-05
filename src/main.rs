@@ -1,8 +1,8 @@
-use std::io::Write;
-use std::path::PathBuf;
-use std::result::Result;
-
-use args::ManualFormat;
+use {
+    anyhow::Result,
+    args::ManualFormat,
+    std::path::PathBuf,
+};
 
 pub mod args;
 pub mod config;
@@ -11,7 +11,7 @@ pub mod reference;
 pub mod render;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<()> {
     let cmd = args::ClapArgumentLoader::load().await?;
     cmd.validate().await?;
 
@@ -42,7 +42,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
         | args::Command::Render(x) => {
             let res = render::select_and_render(x).await?;
-            std::io::stdout().write_all(res.as_bytes())?;
+            print!("{}", res);
+            Ok(())
+        },
+        | args::Command::Schema => {
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&schemars::schema_for!(config::Config))?
+            );
             Ok(())
         },
     }
@@ -50,14 +57,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 mod tests {
-    use std::{error::Error, process::Command};
+    use {
+        crate::error::Error,
+        anyhow::Result,
+        std::process::Command,
+    };
 
-    fn exec(command: &str) -> Result<String, Box<dyn Error>> {
+    fn exec(command: &str) -> Result<String> {
         let output = Command::new("sh").arg("-c").arg(command).output()?;
         if output.status.code().unwrap() != 0 {
-            return Err(Box::new(crate::error::Error::ShellCommand(
-                String::from_utf8(output.stderr).unwrap(),
-            )));
+            return Err(Error::ShellCommand(String::from_utf8(output.stderr)?).into());
         }
         Ok(String::from_utf8(output.stdout)?)
     }

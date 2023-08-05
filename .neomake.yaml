@@ -1,22 +1,20 @@
-version: 0.3
+version: "0.5"
 
-chains:
+nodes:
   build:
     matrix:
-      - - env:
-            RELEASE: ""
-        - env:
-            RELEASE: "--release"
-      - - env:
-            FEATURES: "--no-default-features"
-        - env:
-            FEATURES: ""
-        - env:
-            FEATURES: "--features=backend+cli"
-        - env:
-            FEATURES: "--features=backend+ui"
-        - env:
-            FEATURES: "--features=backend+cli --features=backend+ui"
+      dense:
+        dimensions:
+          - - env:
+                RELEASE: ""
+            - env:
+                RELEASE: "--release"
+          - - env:
+                FEATURES: "--no-default-features"
+            - env:
+                FEATURES: ""
+            - env:
+                FEATURES: "--features=backend+cli"
     tasks:
       - script: |
           set -e
@@ -24,7 +22,8 @@ chains:
 
   "test:regression":
     env:
-      config: "./test/.complate/config.yaml"
+      vars:
+        config: "./test/.complate/config.yaml"
     tasks:
       - script: |
           set -e

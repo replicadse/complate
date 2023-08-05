@@ -1,5 +1,5 @@
 [hooks]
-pre-push = "neomake x -c \"hook:pre-push\""
+pre-push = "neomake plan -n \"hook:pre-push\" | neomake x -w1"
 
 [logging]
 verbose = true

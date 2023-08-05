@@ -1,4 +1,4 @@
-version: 0.12
+version: 0.13
 templates:
   "var:static":
     content:
@@ -7,6 +7,7 @@ templates:
     variables:
       a.alpha:
         static: "alpha"
+
   "var:env":
     content:
       inline: |-
@@ -14,6 +15,7 @@ templates:
     variables:
       a.alpha:
         env: "alpha"
+
   "var:shell":
     content:
       inline: |-
@@ -21,6 +23,7 @@ templates:
     variables:
       a.alpha:
         shell: 'printf "alpha"'
+
   "vals:multiple":
     content:
       inline: |-
@@ -31,22 +34,26 @@ templates:
         shell: "exit 1"
       b.bravo:
         shell: "exit 1"
+
   "var:argument":
     content:
       inline: |-
         {{ a.alpha }}
-  override:
+    variables:
+      a.alpha: arg
+
+  "override":
     content:
       inline: |-
         {{ a.alpha }}
     variables:
       a.alpha:
         env: "DOES_NOT_EXIST"
-  helper:
+
+  "helper":
     content:
       inline: |-
         {{ _decode "YmFuYW5hcmFtYQ==" }}
     helpers:
-      "_decode":
-        shell: |-
-          printf "$VALUE" | base64 -D
+      "_decode": |-
+        printf "$VALUE" | base64 -D

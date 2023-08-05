@@ -1,10 +1,12 @@
-use crate::error::Error;
-
-use super::UserInput;
-use async_trait::async_trait;
-use std::{
-    collections::{BTreeMap, HashMap},
-    result::Result,
+use {
+    super::UserInput,
+    crate::error::Error,
+    anyhow::Result,
+    async_trait::async_trait,
+    std::collections::{
+        BTreeMap,
+        HashMap,
+    },
 };
 
 pub struct CLIBackend<'a> {
@@ -19,18 +21,14 @@ impl<'a> CLIBackend<'a> {
 
 #[async_trait]
 impl<'a> UserInput for CLIBackend<'a> {
-    async fn prompt(&self, text: &str) -> Result<String, Box<dyn std::error::Error>> {
+    async fn prompt(&self, text: &str) -> Result<String> {
         match dialoguer::Input::new().allow_empty(true).with_prompt(text).interact() {
             | Ok(res) => Ok(res),
-            | Err(_) => Err(Box::new(Error::InteractAbort)),
+            | Err(_) => Err(Error::InteractAbort.into()),
         }
     }
 
-    async fn select(
-        &self,
-        prompt: &str,
-        options: &BTreeMap<String, super::Option>,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    async fn select(&self, prompt: &str, options: &BTreeMap<String, super::Option>) -> Result<String> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let display_vals = options.values().map(|x| x.display.to_owned()).collect::<Vec<String>>();
 
@@ -38,7 +36,6 @@ impl<'a> UserInput for CLIBackend<'a> {
             .with_prompt(prompt)
             .items(&display_vals)
             .default(0)
-            .paged(false)
             .interact()?;
         match &options[&keys[result_idx]].value {
             | super::OptionValue::Static(x) => Ok(x.into()),
@@ -46,12 +43,7 @@ impl<'a> UserInput for CLIBackend<'a> {
         }
     }
 
-    async fn check(
-        &self,
-        prompt: &str,
-        separator: &str,
-        options: &BTreeMap<String, super::Option>,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    async fn check(&self, prompt: &str, separator: &str, options: &BTreeMap<String, super::Option>) -> Result<String> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let display_vals = options.values().map(|x| x.display.to_owned()).collect::<Vec<String>>();
 

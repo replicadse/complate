@@ -5,28 +5,29 @@
 ## Installation
 
 * The rusty way:\
-`cargo install complate --force`
+`cargo install complate`
 * The manual way:\
-Download and install from the GitHub releases
+Download and install from the GitHub releases.
 
-## Configuration
-
-An example:
+## Config example
 
 ```
-version: 0.12
+version: 0.13
 templates:
   zero:
     content:
       inline: |-
         {{ a.alpha }}
-    values:
+        {{ b.bravo }}
+    variables:
       a.alpha:
-        static: ALPHA
+        static: alpha
+      b.bravo: arg
+
   one:
     content:
       file: ./.complate/templates/arbitraty-template-file.tpl
-    values:
+    variables:
       a.pwd:
         env: "PWD"
   two:
@@ -37,7 +38,7 @@ templates:
         {{ c.charlie }}
         {{ d.delta }}
         {{ e.echo }}
-    values:
+    variables:
       a.alpha:
         prompt: "alpha"
       b.bravo:
@@ -74,12 +75,13 @@ templates:
   three:
     content:
       inline: |-
+        {{ test }}
         {{ _decode "dGVzdA==" }}
     helpers:
-      "_decode":
-        shell: |-
-          printf "$(printf $VALUE | base64 -D)"
-    values: {}
+      "_decode": printf "$(printf $VALUE | base64 -D)"
+    variables:
+      test:
+        static: "test"
 
 ```
 
@@ -99,8 +101,3 @@ Since the `shell` value provider is able to run arbitrary shell commands, it is 
 ### Disclaimer
 
 All features that are marked as `experimental` are _not_ considered a public API and therefore eplicitly not covered by the backwards-compatibility policy inside a major version (see https://semver.org[semver v2]). Use these features on your own risk!
-
-
----
----
-
