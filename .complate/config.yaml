@@ -1,4 +1,4 @@
-version: 0.12
+version: 0.13
 templates:
   zero:
     content:
@@ -7,8 +7,8 @@ templates:
         {{ b.bravo }}
     variables:
       a.alpha:
-        static:
-          alpha
+        static: alpha
+      b.bravo: arg
 
   one:
     content:
@@ -64,9 +64,7 @@ templates:
         {{ test }}
         {{ _decode "dGVzdA==" }}
     helpers:
-      "_decode":
-        shell: |-
-          printf "$(printf $VALUE | base64 -D)"
+      "_decode": printf "$(printf $VALUE | base64 -D)"
     variables:
       test:
         static: "test"

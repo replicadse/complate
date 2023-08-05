@@ -1,12 +1,17 @@
-use clap_complete::Shell;
-use clap_mangen::Man;
-use std::{
-    fs::File,
-    io::{Error, Write},
-    path::Path,
+use {
+    crate::args::ClapArgumentLoader,
+    anyhow::Result,
+    clap_complete::Shell,
+    clap_mangen::Man,
+    std::{
+        fs::File,
+        io::{
+            Error,
+            Write,
+        },
+        path::Path,
+    },
 };
-
-use crate::args::ClapArgumentLoader;
 
 fn collect_commands() -> Vec<(String, clap::Command)> {
     let mut cmds: Vec<(String, clap::Command)> = Vec::new();
@@ -21,7 +26,7 @@ fn collect_commands() -> Vec<(String, clap::Command)> {
     cmds
 }
 
-pub fn build_shell_completion(outdir: &Path, shell: &Shell) -> Result<(), Error> {
+pub fn build_shell_completion(outdir: &Path, shell: &Shell) -> Result<()> {
     let mut app = ClapArgumentLoader::root_command();
     clap_complete::generate_to(*shell, &mut app, "complate", &outdir)?;
 
