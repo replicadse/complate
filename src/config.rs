@@ -1,6 +1,9 @@
-use std::collections::{
-    BTreeMap,
-    HashMap,
+use {
+    indoc::indoc,
+    std::collections::{
+        BTreeMap,
+        HashMap,
+    },
 };
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -65,7 +68,8 @@ pub enum VariableDefinition {
 }
 
 pub async fn default_config() -> String {
-    r###"version: 0.13
+    indoc! {
+      r#"version: 0.13
     templates:
       zero:
         content:
@@ -76,7 +80,7 @@ pub async fn default_config() -> String {
           a.alpha:
             static: alpha
           b.bravo: arg
-    
+
       one:
         content:
           file: ./.complate/templates/arbitraty-template-file.tpl
@@ -135,7 +139,8 @@ pub async fn default_config() -> String {
         variables:
           test:
             static: "test"
-    
-"###
+"#
+
+    }
     .into()
 }

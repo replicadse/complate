@@ -38,6 +38,7 @@ anyhow = "1.0.72"
 dialoguer = { version = "0.10.4", optional = true }
 schemars = "0.8.12"
 fancy-regex = "0.11.0"
+indoc = "2.0.3"
 
 [dev-dependencies]
 rusty-hook = "0.11.2"
