@@ -2,6 +2,8 @@
 
 `complate` is a general purpose text templating CLI program that supports interactive mode, prompting the user for values via TUI behaviour and headless mode for use in automation such as CI pipelines.
 
+![](complate.png)
+
 ## Installation
 
 * The rusty way:\
