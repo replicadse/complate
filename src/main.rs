@@ -4,11 +4,10 @@ use {
     std::path::PathBuf,
 };
 
-pub mod args;
-pub mod config;
-pub mod error;
-pub mod reference;
-pub mod render;
+mod args;
+mod config;
+mod reference;
+mod render;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -58,7 +57,6 @@ async fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use {
-        crate::error::Error,
         anyhow::Result,
         std::process::Command,
     };
@@ -66,7 +64,7 @@ mod tests {
     fn exec(command: &str) -> Result<String> {
         let output = Command::new("sh").arg("-c").arg(command).output()?;
         if output.status.code().unwrap() != 0 {
-            return Err(Error::ShellCommand(String::from_utf8(output.stderr)?).into());
+            return Err(anyhow::anyhow!(String::from_utf8(output.stderr)?));
         }
         Ok(String::from_utf8(output.stdout)?)
     }

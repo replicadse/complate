@@ -1,5 +1,4 @@
 use {
-    crate::error::Error,
     anyhow::Result,
     clap::{
         Arg,
@@ -48,30 +47,7 @@ pub enum Command {
     Autocomplete { path: String, shell: clap_complete::Shell },
     Init,
     Schema,
-    Render(RenderArguments),
-}
-
-#[derive(Debug)]
-pub struct RenderArguments {
-    pub configuration: String,
-    pub template: Option<String>,
-    pub value_overrides: HashMap<String, String>,
-    pub shell_trust: ShellTrust,
-    pub loose: bool,
-    pub backend: Backend,
-}
-
-#[derive(Debug, Eq, PartialEq)]
-pub enum ShellTrust {
-    None,
-    Ultimate,
-}
-
-#[derive(Debug)]
-pub enum Backend {
-    Headless,
-    #[cfg(feature = "backend+cli")]
-    CLI,
+    Render(crate::render::RenderArguments),
 }
 
 pub struct ClapArgumentLoader {}
@@ -193,7 +169,7 @@ impl ClapArgumentLoader {
                     format: match subc.get_one::<String>("format").unwrap().as_str() {
                         | "manpages" => ManualFormat::Manpages,
                         | "markdown" => ManualFormat::Markdown,
-                        | _ => return Err(Error::Argument("unknown format".into()).into()),
+                        | _ => return Err(anyhow::anyhow!("unknown format")),
                     },
                 },
                 privileges,
@@ -220,9 +196,9 @@ impl ClapArgumentLoader {
             let config = std::fs::read_to_string(subc.get_one::<String>("config").unwrap())?;
             let template = subc.get_one::<String>("template").map(|v| v.into());
             let shell_trust = if subc.get_flag("trust") {
-                ShellTrust::Ultimate
+                crate::render::ShellTrust::Ultimate
             } else {
-                ShellTrust::None
+                crate::render::ShellTrust::None
             };
             let loose = subc.get_flag("loose");
 
@@ -234,15 +210,15 @@ impl ClapArgumentLoader {
                 }
             }
             let backend = match subc.get_one::<String>("backend").unwrap().as_str() {
-                | "headless" => Backend::Headless,
+                | "headless" => crate::render::Backend::Headless,
                 #[cfg(feature = "backend+cli")]
-                | "cli" => Backend::CLI,
-                | _ => return Err(Error::Argument("no backend specified".into()).into()),
+                | "cli" => crate::render::Backend::CLI,
+                | _ => return Err(anyhow::anyhow!("no backend specified")),
             };
 
             Ok(CallArgs {
                 privileges,
-                command: Command::Render(RenderArguments {
+                command: Command::Render(crate::render::RenderArguments {
                     configuration: config,
                     template,
                     value_overrides,
@@ -252,7 +228,7 @@ impl ClapArgumentLoader {
                 }),
             })
         } else {
-            return Err(Error::UnknownCommand.into());
+            return Err(anyhow::anyhow!("unknown command"));
         }
     }
 }

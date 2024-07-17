@@ -1,6 +1,5 @@
 use {
     super::UserInput,
-    crate::error::Error,
     anyhow::Result,
     async_trait::async_trait,
     std::collections::{
@@ -24,11 +23,11 @@ impl<'a> UserInput for CLIBackend<'a> {
     async fn prompt(&self, text: &str) -> Result<String> {
         match dialoguer::Input::new().allow_empty(true).with_prompt(text).interact() {
             | Ok(res) => Ok(res),
-            | Err(_) => Err(Error::InteractAbort.into()),
+            | Err(_) => Err(anyhow::anyhow!("interaction aborted")),
         }
     }
 
-    async fn select(&self, prompt: &str, options: &BTreeMap<String, super::Option>) -> Result<String> {
+    async fn select(&self, prompt: &str, options: &BTreeMap<String, crate::config::Option>) -> Result<String> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let display_vals = options.values().map(|x| x.display.to_owned()).collect::<Vec<String>>();
 
@@ -43,7 +42,7 @@ impl<'a> UserInput for CLIBackend<'a> {
         }
     }
 
-    async fn check(&self, prompt: &str, separator: &str, options: &BTreeMap<String, super::Option>) -> Result<String> {
+    async fn check(&self, prompt: &str, separator: &str, options: &BTreeMap<String, crate::config::Option>) -> Result<String> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let display_vals = options.values().map(|x| x.display.to_owned()).collect::<Vec<String>>();
 

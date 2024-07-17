@@ -1,18 +1,10 @@
 use {
-    crate::{
-        args::{
-            Backend,
-            ShellTrust,
-        },
-        config::{
-            Config,
-            Content,
-            Option,
-            OptionValue,
-            Template,
-            VariableDefinition,
-        },
-        error::Error,
+    crate::config::{
+        Config,
+        Content,
+        OptionValue,
+        Template,
+        VariableDefinition,
     },
     anyhow::Result,
     async_trait::async_trait,
@@ -28,15 +20,38 @@ use {
 };
 
 #[cfg(feature = "backend+cli")]
-mod cli;
-mod headless;
+pub mod cli;
+pub mod headless;
 
-pub async fn render(
-    args: &crate::args::RenderArguments,
-    template: &str,
-    values: &HashMap<String, String>,
-    helpers: &std::option::Option<HashMap<String, String>>,
-) -> Result<String> {
+#[derive(Debug)]
+pub enum Backend {
+    Headless,
+    #[cfg(feature = "backend+cli")]
+    CLI,
+}
+
+#[derive(Debug)]
+pub struct RenderArguments {
+    pub configuration: String,
+    pub template: Option<String>,
+    pub value_overrides: HashMap<String, String>,
+    pub shell_trust: ShellTrust,
+    pub loose: bool,
+    pub backend: Backend,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub enum ShellTrust {
+    None,
+    Ultimate,
+}
+
+pub async fn make_handlebars<'a>(
+    variable_values: &HashMap<String, String>,
+    helpers: &'a std::option::Option<HashMap<String, String>>,
+    shell_trust: &ShellTrust,
+    strict: bool,
+) -> Result<(handlebars::Handlebars<'a>, serde_json::Value)> {
     fn recursive_add(namespace: &mut std::collections::VecDeque<String>, parent: &mut serde_json::Value, value: &str) {
         let current_namespace = namespace.pop_front().unwrap();
         match namespace.len() {
@@ -59,7 +74,7 @@ pub async fn render(
     }
 
     let mut values_json = serde_json::Value::Object(serde_json::Map::new());
-    for val in values {
+    for val in variable_values {
         let namespaces_vec: Vec<String> = val.0.split('.').map(|s| s.to_string()).collect();
         let mut namespaces = std::collections::VecDeque::from(namespaces_vec);
         recursive_add(&mut namespaces, &mut values_json, val.1);
@@ -67,11 +82,11 @@ pub async fn render(
 
     let mut hb = handlebars::Handlebars::new();
     hb.register_escape_fn(|s| s.into());
-    hb.set_strict_mode(!args.loose);
+    hb.set_strict_mode(strict);
 
     if let Some(helpers) = helpers {
-        if helpers.len() > 0 && args.shell_trust != ShellTrust::Ultimate {
-            return Err(Error::NoTrust("need trust for executing helper functions".into()).into());
+        if helpers.len() > 0 && shell_trust != &ShellTrust::Ultimate {
+            return Err(anyhow::anyhow!("need trust for executing helper functions").into());
         }
 
         for helper in helpers {
@@ -107,7 +122,7 @@ pub async fn render(
         }
     }
 
-    Ok(hb.render_template(template, &values_json)?)
+    Ok((hb, values_json))
 }
 
 pub async fn select_template<'a>(
@@ -118,7 +133,7 @@ pub async fn select_template<'a>(
     let templates = config.templates.keys().cloned().collect::<Vec<String>>();
     let mut template_map = BTreeMap::new();
     for t in templates {
-        template_map.insert(t.to_owned(), Option {
+        template_map.insert(t.to_owned(), crate::config::Option {
             display: t.to_owned(),
             value: OptionValue::Static(t.into()),
         });
@@ -129,7 +144,7 @@ pub async fn select_template<'a>(
 
     match config.templates.get(&selection) {
         | Some(x) => Ok(x),
-        | None => Err(Error::Generic("invalid template selection".into()).into()),
+        | None => Err(anyhow::anyhow!("invalid template selection")),
     }
 }
 
@@ -138,6 +153,7 @@ pub async fn populate_variables(
     value_overrides: &std::collections::HashMap<String, String>,
     shell_trust: &ShellTrust,
     backend: &Backend,
+    prefix: Option<String>,
 ) -> Result<HashMap<String, String>> {
     let mut values = HashMap::<String, String>::new();
     for v_override in value_overrides {
@@ -149,37 +165,21 @@ pub async fn populate_variables(
             values.insert(var.0.into(), var.1.execute(shell_trust, backend).await?);
         }
     }
+
+    let values = values
+        .iter()
+        .map(|(k, v)| {
+            let mut key = k.clone();
+            if let Some(p) = &prefix {
+                key = format!("{}.{}", p, key);
+            }
+            (key, v.clone())
+        })
+        .collect::<HashMap<String, String>>();
     Ok(values)
 }
 
-pub async fn select_and_render(invoke_options: crate::args::RenderArguments) -> Result<String> {
-    #[derive(serde::Deserialize)]
-    struct WithVersion {
-        version: String,
-    }
-    let version_check: WithVersion = serde_yaml::from_str(&invoke_options.configuration)
-        .or::<anyhow::Error>(Err(Error::Invalid("config missing version field".to_owned()).into()))?;
-
-    let version_regex = Regex::new("^([0-9]+)\\.([0-9]+)$")?;
-    if !version_regex.is_match(&version_check.version)? {
-        return Err(Error::Invalid(format!("invalid version: {}", version_check.version)).into());
-    }
-    let expected_version = env!("CARGO_PKG_VERSION").split(".").collect::<Vec<_>>()[..2].join(".");
-    if env!("CARGO_PKG_VERSION") != "0.0.0" {
-        if &version_check.version != &expected_version {
-            return Err(Error::Invalid("config file version mismatch to binary".to_owned()).into());
-        }
-    }
-
-    let cfg: Config = serde_yaml::from_str(&invoke_options.configuration)?;
-    let template = match &invoke_options.template {
-        | Some(x) => {
-            cfg.templates
-                .get(x)
-                .ok_or_else(|| Error::Generic("template not found".into()))?
-        },
-        | None => select_template(&cfg, &invoke_options.backend, &invoke_options.shell_trust).await?,
-    };
+pub async fn render_template(template: &Template, value_overrides: &HashMap<String, String>, shell_trust: &ShellTrust, backend: &Backend, strict: bool) -> Result<String> {
     let template_str = match &template.content {
         | Content::Inline(x) => x.into(),
         | Content::File(x) => std::fs::read_to_string(x)?,
@@ -188,16 +188,50 @@ pub async fn select_and_render(invoke_options: crate::args::RenderArguments) -> 
     let values = if let Some(variables) = &template.variables {
         populate_variables(
             variables,
-            &invoke_options.value_overrides,
-            &invoke_options.shell_trust,
-            &invoke_options.backend,
+            value_overrides,
+            shell_trust,
+            backend,
+            None,
         )
         .await?
     } else {
         HashMap::<_, _>::new()
     };
 
-    render(&invoke_options, &template_str, &values, &template.helpers).await
+    let hb = make_handlebars(&values, &template.helpers, shell_trust, strict).await?;
+    hb.0.render_template(&template_str, &hb.1).map_err(|e| anyhow::anyhow!(e))
+}
+
+pub async fn select_and_render(invoke_options: RenderArguments) -> Result<String> {
+    #[derive(serde::Deserialize)]
+    struct WithVersion {
+        version: String,
+    }
+    let version_check: WithVersion = serde_yaml::from_str(&invoke_options.configuration)
+        .or::<anyhow::Error>(Err(anyhow::anyhow!("config missing version field")))?;
+
+    let version_regex = Regex::new("^([0-9]+)\\.([0-9]+)$")?;
+    if !version_regex.is_match(&version_check.version)? {
+        return Err(anyhow::anyhow!("invalid version: {}", version_check.version));
+    }
+    let expected_version = env!("CARGO_PKG_VERSION").split(".").collect::<Vec<_>>()[..2].join(".");
+    if env!("CARGO_PKG_VERSION") != "0.0.0" {
+        if &version_check.version != &expected_version {
+            return Err(anyhow::anyhow!("config file version mismatch to binary"));
+        }
+    }
+
+    let cfg: Config = serde_yaml::from_str(&invoke_options.configuration)?;
+    let template = match &invoke_options.template {
+        | Some(x) => {
+            cfg.templates
+                .get(x)
+                .ok_or_else(|| anyhow::anyhow!("template not found"))?
+        },
+        | None => select_template(&cfg, &invoke_options.backend, &invoke_options.shell_trust).await?,
+    };
+
+    render_template(template, &invoke_options.value_overrides, &invoke_options.shell_trust, &invoke_options.backend, !invoke_options.loose).await
 }
 
 #[async_trait]
@@ -208,8 +242,8 @@ pub trait Resolve {
 #[async_trait]
 pub trait UserInput: Send+Sync {
     async fn prompt(&self, text: &str) -> Result<String>;
-    async fn select(&self, prompt: &str, options: &BTreeMap<String, Option>) -> Result<String>;
-    async fn check(&self, prompt: &str, separator: &str, options: &BTreeMap<String, Option>) -> Result<String>;
+    async fn select(&self, prompt: &str, options: &BTreeMap<String, crate::config::Option>) -> Result<String>;
+    async fn check(&self, prompt: &str, separator: &str, options: &BTreeMap<String, crate::config::Option>) -> Result<String>;
 }
 
 impl Backend {
@@ -228,7 +262,7 @@ impl Resolve for VariableDefinition {
         let backend_impl = backend.to_input(shell_trust)?;
 
         match self {
-            | VariableDefinition::Arg => Err(Error::Invalid("variable missing".to_owned()).into()),
+            | VariableDefinition::Arg => Err(anyhow::anyhow!("variable missing")),
             | VariableDefinition::Env(v) => Ok(env::var(v)?),
             | VariableDefinition::Static(v) => Ok(v.into()),
             | VariableDefinition::Prompt(v) => backend_impl.prompt(v).await,
@@ -245,7 +279,7 @@ impl Resolve for VariableDefinition {
 
 async fn shell(command: &str, env: &HashMap<String, String>, shell_trust: &ShellTrust) -> Result<String> {
     match shell_trust {
-        | ShellTrust::None => return Err(Error::NoTrust("need trust for executing shell commands".into()).into()),
+        | ShellTrust::None => return Err(anyhow::anyhow!("need trust for executing shell commands")),
         | ShellTrust::Ultimate => {},
     }
 
@@ -255,7 +289,7 @@ async fn shell(command: &str, env: &HashMap<String, String>, shell_trust: &Shell
         .envs(env)
         .output()?;
     if output.status.code().unwrap() != 0 {
-        return Err(Error::ShellCommand(command.into()).into());
+        return Err(anyhow::anyhow!("shell command error:\n{}", command));
     }
     Ok(String::from_utf8(output.stdout)?)
 }
