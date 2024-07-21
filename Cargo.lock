@@ -80,6 +80,9 @@ name = "anyhow"
 version = "1.0.86"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b3d1d046238990b9cf5bcde22a3fb3584ee5cf65fb2765f454ed428c7a0063da"
+dependencies = [
+ "backtrace",
+]
 
 [[package]]
 name = "async-trait"
@@ -250,6 +253,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "clitest"
+version = "0.0.0"
+source = "git+https://github.com/replicadse/clitest_rs?branch=master#94291c7f48f81a88ba03af331417ec7888f5eaa9"
+dependencies = [
+ "anyhow",
+]
+
+[[package]]
 name = "colorchoice"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -266,6 +277,7 @@ dependencies = [
  "clap-markdown",
  "clap_complete",
  "clap_mangen",
+ "clitest",
  "dialoguer",
  "fancy-regex",
  "handlebars",

@@ -56,88 +56,55 @@ async fn main() -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use {
-        anyhow::Result,
-        std::process::Command,
-    };
-
-    fn exec(command: &str) -> Result<String> {
-        let output = Command::new("sh").arg("-c").arg(command).output()?;
-        if output.status.code().unwrap() != 0 {
-            return Err(anyhow::anyhow!(String::from_utf8(output.stderr)?));
-        }
-        Ok(String::from_utf8(output.stdout)?)
+    fn setup_test() -> clitest::CliTestSetup {
+        let mut x = clitest::CliTestSetup::new();
+        x.with_env("CFG", CONFIG_PATH);
+        x
     }
 
     const CONFIG_PATH: &'static str = "./test/.complate/config.yaml";
 
     #[test]
     fn template_var_static() {
-        assert!("alpha" == exec(&format!("cargo run -- render -c {} -t var:static", CONFIG_PATH)).unwrap())
+        assert!("alpha" == setup_test()
+            .run("render -c $CFG -t var:static").unwrap().success().unwrap().stdout_str());
     }
 
     #[test]
     fn template_var_env() {
-        assert!(
-            "alpha"
-                == exec(&format!(
-                    "alpha=\"alpha\" cargo run -- render -c {} -t var:env",
-                    CONFIG_PATH
-                ))
-                .unwrap()
-        )
+        assert!("alpha" == setup_test()
+            .with_env("alpha", "alpha")
+            .run("render -c $CFG -t var:env").unwrap().success().unwrap().stdout_str());
     }
 
     #[test]
     fn template_var_shell() {
-        assert!(
-            "alpha"
-                == exec(&format!(
-                    "alpha=\"alpha\" cargo run -- render -c {} -t var:shell --trust",
-                    CONFIG_PATH
-                ))
-                .unwrap()
-        )
+        assert!("alpha" == setup_test()
+            .with_env("alpha", "alpha")
+            .run("render -c $CFG -t var:shell --trust").unwrap().success().unwrap().stdout_str());
     }
 
     #[test]
     fn template_overrides() {
-        assert!(
-            "alpha"
-                == exec(&format!(
-                    "cargo run -- render -c {} -t override -v a.alpha=\"alpha\"",
-                    CONFIG_PATH
-                ))
-                .unwrap()
-        )
+        assert!("alpha" == setup_test()
+            .run("render -c $CFG -t override -v a.alpha=\"alpha\"").unwrap().success().unwrap().stdout_str());
     }
 
     #[test]
     fn template_helper() {
-        assert!("bananarama" == exec(&format!("cargo run -- render -c {} -t helper --trust", CONFIG_PATH)).unwrap())
+        assert!("bananarama" == setup_test()
+            .run("render -c $CFG -t helper --trust").unwrap().success().unwrap().stdout_str());
     }
 
     #[test]
     fn template_vals_multiple() {
-        assert!(
-            "alpha\nbravo"
-                == exec(&format!(
-                    "cargo run -- render -c {} --trust -t vals:multiple -v a.alpha=alpha -v b.bravo=bravo",
-                    CONFIG_PATH
-                ))
-                .unwrap()
-        )
+        assert!("alpha\nbravo" == setup_test()
+            .run("render -c $CFG --trust -t vals:multiple -v a.alpha=alpha -v b.bravo=bravo").unwrap().success().unwrap().stdout_str());
     }
 
     #[test]
     fn template_var_argument() {
-        assert!(
-            "alpha"
-                == exec(&format!(
-                    "cargo run -- render -c {} -t var:argument -v a.alpha=alpha",
-                    CONFIG_PATH
-                ))
-                .unwrap()
-        )
+        assert!("alpha" == setup_test()
+            .run("render -c $CFG -t var:argument -v a.alpha=alpha").unwrap().success().unwrap().stdout_str());
     }
 }
