@@ -179,27 +179,27 @@ pub async fn populate_variables(
     Ok(values)
 }
 
-pub async fn render_template(template: &Template, value_overrides: &HashMap<String, String>, shell_trust: &ShellTrust, backend: &Backend, strict: bool) -> Result<String> {
+pub async fn render_template(
+    template: &Template,
+    value_overrides: &HashMap<String, String>,
+    shell_trust: &ShellTrust,
+    backend: &Backend,
+    strict: bool,
+) -> Result<String> {
     let template_str = match &template.content {
         | Content::Inline(x) => x.into(),
         | Content::File(x) => std::fs::read_to_string(x)?,
     };
 
     let values = if let Some(variables) = &template.variables {
-        populate_variables(
-            variables,
-            value_overrides,
-            shell_trust,
-            backend,
-            None,
-        )
-        .await?
+        populate_variables(variables, value_overrides, shell_trust, backend, None).await?
     } else {
         HashMap::<_, _>::new()
     };
 
     let hb = make_handlebars(&values, &template.helpers, shell_trust, strict).await?;
-    hb.0.render_template(&template_str, &hb.1).map_err(|e| anyhow::anyhow!(e))
+    hb.0.render_template(&template_str, &hb.1)
+        .map_err(|e| anyhow::anyhow!(e))
 }
 
 pub async fn select_and_render(invoke_options: RenderArguments) -> Result<String> {
@@ -231,7 +231,14 @@ pub async fn select_and_render(invoke_options: RenderArguments) -> Result<String
         | None => select_template(&cfg, &invoke_options.backend, &invoke_options.shell_trust).await?,
     };
 
-    render_template(template, &invoke_options.value_overrides, &invoke_options.shell_trust, &invoke_options.backend, !invoke_options.loose).await
+    render_template(
+        template,
+        &invoke_options.value_overrides,
+        &invoke_options.shell_trust,
+        &invoke_options.backend,
+        !invoke_options.loose,
+    )
+    .await
 }
 
 #[async_trait]
@@ -243,7 +250,12 @@ pub trait Resolve {
 pub trait UserInput: Send+Sync {
     async fn prompt(&self, text: &str) -> Result<String>;
     async fn select(&self, prompt: &str, options: &BTreeMap<String, crate::config::Option>) -> Result<String>;
-    async fn check(&self, prompt: &str, separator: &str, options: &BTreeMap<String, crate::config::Option>) -> Result<String>;
+    async fn check(
+        &self,
+        prompt: &str,
+        separator: &str,
+        options: &BTreeMap<String, crate::config::Option>,
+    ) -> Result<String>;
 }
 
 impl Backend {

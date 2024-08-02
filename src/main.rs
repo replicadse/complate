@@ -66,45 +66,94 @@ mod tests {
 
     #[test]
     fn template_var_static() {
-        assert!("alpha" == setup_test()
-            .run("render -c $CFG -t var:static").unwrap().success().unwrap().stdout_str());
+        assert!(
+            "alpha"
+                == setup_test()
+                    .run("render -c $CFG -t var:static")
+                    .unwrap()
+                    .success()
+                    .unwrap()
+                    .stdout_str()
+        );
     }
 
     #[test]
     fn template_var_env() {
-        assert!("alpha" == setup_test()
-            .with_env("alpha", "alpha")
-            .run("render -c $CFG -t var:env").unwrap().success().unwrap().stdout_str());
+        assert!(
+            "alpha"
+                == setup_test()
+                    .with_env("alpha", "alpha")
+                    .run("render -c $CFG -t var:env")
+                    .unwrap()
+                    .success()
+                    .unwrap()
+                    .stdout_str()
+        );
     }
 
     #[test]
     fn template_var_shell() {
-        assert!("alpha" == setup_test()
-            .with_env("alpha", "alpha")
-            .run("render -c $CFG -t var:shell --trust").unwrap().success().unwrap().stdout_str());
+        assert!(
+            "alpha"
+                == setup_test()
+                    .with_env("alpha", "alpha")
+                    .run("render -c $CFG -t var:shell --trust")
+                    .unwrap()
+                    .success()
+                    .unwrap()
+                    .stdout_str()
+        );
     }
 
     #[test]
     fn template_overrides() {
-        assert!("alpha" == setup_test()
-            .run("render -c $CFG -t override -v a.alpha=\"alpha\"").unwrap().success().unwrap().stdout_str());
+        assert!(
+            "alpha"
+                == setup_test()
+                    .run("render -c $CFG -t override -v a.alpha=\"alpha\"")
+                    .unwrap()
+                    .success()
+                    .unwrap()
+                    .stdout_str()
+        );
     }
 
     #[test]
     fn template_helper() {
-        assert!("bananarama" == setup_test()
-            .run("render -c $CFG -t helper --trust").unwrap().success().unwrap().stdout_str());
+        assert!(
+            "bananarama"
+                == setup_test()
+                    .run("render -c $CFG -t helper --trust")
+                    .unwrap()
+                    .success()
+                    .unwrap()
+                    .stdout_str()
+        );
     }
 
     #[test]
     fn template_vals_multiple() {
-        assert!("alpha\nbravo" == setup_test()
-            .run("render -c $CFG --trust -t vals:multiple -v a.alpha=alpha -v b.bravo=bravo").unwrap().success().unwrap().stdout_str());
+        assert!(
+            "alpha\nbravo"
+                == setup_test()
+                    .run("render -c $CFG --trust -t vals:multiple -v a.alpha=alpha -v b.bravo=bravo")
+                    .unwrap()
+                    .success()
+                    .unwrap()
+                    .stdout_str()
+        );
     }
 
     #[test]
     fn template_var_argument() {
-        assert!("alpha" == setup_test()
-            .run("render -c $CFG -t var:argument -v a.alpha=alpha").unwrap().success().unwrap().stdout_str());
+        assert!(
+            "alpha"
+                == setup_test()
+                    .run("render -c $CFG -t var:argument -v a.alpha=alpha")
+                    .unwrap()
+                    .success()
+                    .unwrap()
+                    .stdout_str()
+        );
     }
 }

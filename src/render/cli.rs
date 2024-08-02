@@ -42,7 +42,12 @@ impl<'a> UserInput for CLIBackend<'a> {
         }
     }
 
-    async fn check(&self, prompt: &str, separator: &str, options: &BTreeMap<String, crate::config::Option>) -> Result<String> {
+    async fn check(
+        &self,
+        prompt: &str,
+        separator: &str,
+        options: &BTreeMap<String, crate::config::Option>,
+    ) -> Result<String> {
         let keys = options.keys().cloned().collect::<Vec<String>>();
         let display_vals = options.values().map(|x| x.display.to_owned()).collect::<Vec<String>>();
 
