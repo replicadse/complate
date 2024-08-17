@@ -1,18 +1,14 @@
 version: "0.0.0"
-verbosity: all
 
-.cargo_fmt_check: &cargo_fmt_check |-
+.cargo_all: &cargo_all !inline |-
+  set -e
+  cargo build --all-features
   cargo +nightly fmt --all -- --check
-.cargo_test: &cargo_test |-
   cargo test --all
+  cargo doc --no-deps
 
 hooks:
-  "pre-commit":
-    - command: *cargo_fmt_check
-    - command: *cargo_test
-    - command: 'cargo doc --no-deps'
-      verbosity: stderr
-      severity: warn
-  "pre-push":
-    - command: *cargo_fmt_check
-    - command: *cargo_test
+  "pre-commit": # pre-commit hook
+    - command: *cargo_all
+  "pre-push": # pre-push hook
+    - command: *cargo_all
