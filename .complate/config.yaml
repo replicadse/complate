@@ -1,4 +1,4 @@
-version: 0.13
+version: 0.14
 templates:
   zero:
     content:
@@ -16,6 +16,7 @@ templates:
     variables:
       a.pwd:
         env: "PWD"
+
   two:
     content:
       inline: |-
@@ -58,6 +59,7 @@ templates:
                 shell: printf bravo
       f.foxtrot:
         env: "FOXTROT"
+
   three:
     content:
       inline: |-
@@ -68,3 +70,25 @@ templates:
     variables:
       test:
         static: "test"
+
+  four:
+    content:
+      inline: |-
+        --- begin message ---
+        {{#if (eq include "true")}}
+        included message
+        {{/if}}
+        --- end message ---
+    variables:
+      include:
+        select:
+          text: "Include message?"
+          options:
+            yes:
+              display: "Yes"
+              value:
+                static: "true"
+            no:
+              display: "No"
+              value:
+                static: "false"

@@ -97,7 +97,6 @@ pub async fn make_handlebars<'a>(
                                out: &mut dyn handlebars::Output|
                   -> handlebars::HelperResult {
                 let param = h.param(0).ok_or(RenderError::new("parameter is not a string"))?;
-                // dbg!(param);
                 let cmd = helper.1;
 
                 let output = std::process::Command::new("sh")
@@ -112,7 +111,7 @@ pub async fn make_handlebars<'a>(
                     )
                     .output()?;
                 if output.status.code().unwrap() != 0 {
-                    return Err(handlebars::RenderError::new("failed to get command status"));
+                    return Err(RenderError::new("failed to get command status"));
                 }
 
                 out.write(String::from_utf8(output.stdout)?.as_str())?;
