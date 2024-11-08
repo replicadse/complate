@@ -1,9 +1,6 @@
-use {
-    indoc::indoc,
-    std::collections::{
-        BTreeMap,
-        HashMap,
-    },
+use std::collections::{
+    BTreeMap,
+    HashMap,
 };
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -67,80 +64,6 @@ pub enum VariableDefinition {
     },
 }
 
-pub async fn default_config() -> String {
-    indoc! {
-      r#"version: 0.13
-    templates:
-      zero:
-        content:
-          inline: |-
-            {{ a.alpha }}
-            {{ b.bravo }}
-        variables:
-          a.alpha:
-            static: alpha
-          b.bravo: arg
-
-      one:
-        content:
-          file: ./.complate/templates/arbitraty-template-file.tpl
-        variables:
-          a.pwd:
-            env: "PWD"
-      two:
-        content:
-          inline: |-
-            {{ a.alpha }}
-            {{ b.bravo }}
-            {{ c.charlie }}
-            {{ d.delta }}
-            {{ e.echo }}
-        variables:
-          a.alpha:
-            prompt: "alpha"
-          b.bravo:
-            shell: "printf bravo"
-          c.charlie:
-            static: "charlie"
-          d.delta:
-            select:
-              text: Select the version level that shall be incremented
-              options:
-                alpha:
-                  display: alpha
-                  value:
-                    static: alpha
-                bravo:
-                  display: bravo
-                  value:
-                    shell: printf bravo
-          e.echo:
-            check:
-              text: Select the components that are affected
-              separator: ", "
-              options:
-                alpha:
-                  display: alpha
-                  value:
-                    static: alpha
-                bravo:
-                  display: bravo
-                  value:
-                    shell: printf bravo
-          f.foxtrot:
-            env: "FOXTROT"
-      three:
-        content:
-          inline: |-
-            {{ test }}
-            {{ _decode "dGVzdA==" }}
-        helpers:
-          "_decode": printf "$(printf $VALUE | base64 -D)"
-        variables:
-          test:
-            static: "test"
-"#
-
-    }
-    .into()
+pub async fn default_config() -> &'static str {
+    include_str!("../.complate/config.yaml")
 }
