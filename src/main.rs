@@ -44,6 +44,13 @@ async fn main() -> Result<()> {
             print!("{}", res);
             Ok(())
         },
+        | args::Command::Direct(x) => {
+            let template = std::fs::read_to_string(x.template)?;
+            let values = std::fs::read_to_string(x.values)?;
+
+            print!("{}", render::render_direct(template, values).await?);
+            Ok(())
+        },
         | args::Command::Schema => {
             println!(
                 "{}",

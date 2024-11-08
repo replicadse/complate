@@ -40,6 +40,12 @@ pub struct RenderArguments {
     pub backend: Backend,
 }
 
+#[derive(Debug)]
+pub struct DirectArguments {
+    pub template: String,
+    pub values: String,
+}
+
 #[derive(Debug, Eq, PartialEq)]
 pub enum ShellTrust {
     None,
@@ -199,6 +205,16 @@ pub async fn render_template(
     let hb = make_handlebars(&values, &template.helpers, shell_trust, strict).await?;
     hb.0.render_template(&template_str, &hb.1)
         .map_err(|e| anyhow::anyhow!(e))
+}
+
+pub async fn render_direct(template: String, values: String) -> Result<String> {
+    let values = serde_json::from_str::<serde_json::Value>(&values)?;
+
+    let mut hb = handlebars::Handlebars::new();
+    hb.register_escape_fn(|s| s.into());
+    hb.set_strict_mode(true);
+
+    Ok(hb.render_template(&template, &values)?)
 }
 
 pub async fn select_and_render(invoke_options: RenderArguments) -> Result<String> {

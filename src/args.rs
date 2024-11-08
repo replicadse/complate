@@ -1,4 +1,5 @@
 use {
+    crate::render::DirectArguments,
     anyhow::Result,
     clap::{
         Arg,
@@ -48,6 +49,7 @@ pub enum Command {
     Init,
     Schema,
     Render(crate::render::RenderArguments),
+    Direct(crate::render::DirectArguments),
 }
 
 pub struct ClapArgumentLoader {}
@@ -150,6 +152,17 @@ impl ClapArgumentLoader {
                             .help("Overrides a certain value definition with a string."),
                     ),
             )
+            .subcommand(
+                clap::Command::new("direct")
+                    .about("Simply renders a template with a values file. No fancy business here.")
+                    .arg(
+                        clap::Arg::new("template")
+                            .short('t')
+                            .long("template")
+                            .help("Template file."),
+                    )
+                    .arg(clap::Arg::new("values").short('v').long("values").help("Values file.")),
+            )
     }
 
     pub async fn load() -> Result<CallArgs> {
@@ -190,6 +203,14 @@ impl ClapArgumentLoader {
         } else if let Some(..) = command_matches.subcommand_matches("init") {
             Ok(CallArgs {
                 command: Command::Init,
+                privileges,
+            })
+        } else if let Some(subc) = command_matches.subcommand_matches("direct") {
+            Ok(CallArgs {
+                command: Command::Direct(DirectArguments {
+                    template: subc.get_one::<String>("template").unwrap().to_owned(),
+                    values: subc.get_one::<String>("values").unwrap().to_owned(),
+                }),
                 privileges,
             })
         } else if let Some(subc) = command_matches.subcommand_matches("render") {
