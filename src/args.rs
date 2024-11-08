@@ -22,6 +22,7 @@ impl CallArgs {
         match self.privileges {
             | Privilege::Normal => {
                 match &self.command {
+                    | Command::Direct(..) => Err(anyhow::anyhow!("experimental command")),
                     | _ => Ok(()),
                 }
             },
