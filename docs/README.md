@@ -14,7 +14,7 @@ Download and install from the GitHub releases.
 ## Config example
 
 ```
-version: 0.13
+version: 0.15
 templates:
   zero:
     content:
