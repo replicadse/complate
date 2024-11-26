@@ -45,7 +45,7 @@ anyhow = "1.0.86"
 
 [dev-dependencies]
 clitest = { git = "https://github.com/replicadse/clitest_rs", branch = "master" }
-hoox = "0.1.4"
+hoox = "0.3.0"
 
 [profile.release]
 lto = true

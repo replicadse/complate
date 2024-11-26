@@ -127,14 +127,14 @@ mod tests {
 
     #[test]
     fn template_helper() {
-        assert!(
-            "bananarama"
-                == setup_test()
-                    .run("render -c $CFG -t helper --trust")
-                    .unwrap()
-                    .success()
-                    .unwrap()
-                    .stdout_str()
+        assert_eq!(
+            "bananarama",
+            setup_test()
+                .run("render -c $CFG -t helper --trust")
+                .unwrap()
+                .success()
+                .unwrap()
+                .stdout_str()
         );
     }
 

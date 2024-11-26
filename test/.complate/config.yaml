@@ -31,9 +31,9 @@ templates:
         {{ b.bravo }}
     variables:
       a.alpha:
-        shell: "exit 1"
+        shell: "printf alpha"
       b.bravo:
-        shell: "exit 1"
+        shell: "printf bravo"
 
   "var:argument":
     content:
